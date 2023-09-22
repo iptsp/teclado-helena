@@ -74,7 +74,10 @@ The build process requires the `signtool.exe` and `makeappx.exe` tools from the 
 
 Ensure that `C:\Program Files (x86)\Windows Kits\10\bin\<win build>\x64` is in the PATH environment variable.
 
-The code signing certificate must be installed in the Local Machine certificate store. The certificate thumbprint must be updated in pom.xml.
+The code signing certificate must be installed in the Local Machine certificate store. 
+The certificate thumbprint must be updated in pom.xml.
+
+For dev purposes you can install the certificate located at ```server\jpackage\certificate\THL.pfx``` in your local machine.
 
 The Maven ```install``` task must be executed as administrator to allow the signing certificate to be read from the Windows certificate store.
 
