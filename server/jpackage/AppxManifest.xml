@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Package xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3"
+         xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10"
+         xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+         xmlns:uap10="http://schemas.microsoft.com/appx/manifest/uap/windows10/10"
+         xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
+         xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+         IgnorableNamespaces="uap uap10 rescap">
+    <!--Package created by MSIX Packaging Tool version: 1.2023.319.0-->
+    <Identity Name="THL" Publisher="CN=THL, O=IPT, C=BR" Version="{THLVERSION}.0" ProcessorArchitecture="x64"/>
+    <Properties>
+        <DisplayName>THL</DisplayName>
+        <PublisherDisplayName>IPT</PublisherDisplayName>
+        <Description>Teclado Helena</Description>
+        <Logo>Assets\StoreLogo.png</Logo>
+        <uap10:PackageIntegrity>
+            <uap10:Content Enforcement="on" />
+        </uap10:PackageIntegrity>
+    </Properties>
+    <Resources>
+        <Resource Language="pt-br" />
+    </Resources>
+    <Dependencies>
+        <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.17763.0" MaxVersionTested="10.0.22000.1" />
+    </Dependencies>
+    <Applications>
+        <Application Id="THL" Executable="PsfLauncher64.exe" EntryPoint="Windows.FullTrustApplication">
+            <uap:VisualElements BackgroundColor="transparent" DisplayName="THL" Square150x150Logo="Assets\THL-Square150x150Logo.png" Square44x44Logo="Assets\THL-Square44x44Logo.png" Description="THL">
+                <uap:DefaultTile Wide310x150Logo="Assets\THL-Wide310x150Logo.png" Square310x310Logo="Assets\THL-Square310x310Logo.png" Square71x71Logo="Assets\THL-Square71x71Logo.png" />
+            </uap:VisualElements>
+            <Extensions xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10">
+                <uap3:Extension Category="windows.appExecutionAlias" Executable="PsfLauncher64.exe"
+                                EntryPoint="Windows.FullTrustApplication">
+                    <uap3:AppExecutionAlias>
+                        <desktop:ExecutionAlias Alias="THL.exe"/>
+                    </uap3:AppExecutionAlias>
+                </uap3:Extension>
+            </Extensions>
+        </Application>
+    </Applications>
+
+    <Capabilities><rescap:Capability Name="runFullTrust" /></Capabilities></Package>

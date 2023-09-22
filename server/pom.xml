@@ -19,6 +19,10 @@
         <java.source.version>21</java.source.version>
         <java.target.version>21</java.target.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.name>THL</project.name>
+        <project.jpackage.directory>${project.basedir}/jpackage</project.jpackage.directory>
+        <project.build.dist.directory>${project.build.directory}/dist</project.build.dist.directory>
+        <certificate.fingerprint>6DBE75B10AC32E435A5118805C3FB8CDB012BAF2</certificate.fingerprint>
     </properties>
 
     <dependencies>
@@ -41,6 +45,11 @@
             <artifactId>snakeyaml</artifactId>
             <version>2.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-exec</artifactId>
+            <version>1.3</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -56,6 +65,181 @@
                     <source>${java.source.version}</source>
                     <target>${java.target.version}</target>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>jpackage-publish</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <workingDirectory>${project.build.dist.directory}</workingDirectory>
+                            <executable>jpackage</executable>
+                            <arguments>
+                                <argument>--verbose</argument>
+                                <argument>--temp</argument>
+                                <argument>${project.build.directory}/jpackagetmp</argument>
+                                <argument>--type</argument>
+                                <argument>app-image</argument>
+                                <argument>--input</argument>
+                                <argument>${project.build.dist.directory}</argument>
+                                <argument>--dest</argument>
+                                <argument>${project.build.directory}</argument>
+                                <argument>--vendor</argument>
+                                <argument>IPT</argument>
+                                <argument>--description</argument>
+                                <argument>IPT Teclado Helena</argument>
+                                <argument>--name</argument>
+                                <argument>${project.name}</argument>
+                                <argument>--icon</argument>
+                                <argument>favicon.ico</argument>
+                                <argument>--app-version</argument>
+                                <argument>1.0</argument>
+                                <argument>--resource-dir</argument>
+                                <argument>${project.jpackage.directory}</argument>
+                                <argument>--main-jar</argument>
+                                <argument>${project.artifactId}-${project.version}.jar</argument>
+                                <argument>--java-options</argument>
+                                <argument>-Djavafx.preloader=br.ipt.thl.UiApplicationSplashScreen</argument>
+                                <argument>--java-options</argument>
+                                <argument>-Djava.awt.headless=false</argument>
+                                <argument>--java-options</argument>
+                                <argument>-Dspring.profiles.active=prod</argument>
+                                <argument>--java-options</argument>
+                                <argument>-Dthl.version=${project.version}</argument>
+                                <argument>--java-options</argument>
+                                <argument>-Xms512m</argument>
+                                <argument>--java-options</argument>
+                                <argument>-Xmx1g</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>jpackage-prepare</id>
+                        <phase>package</phase>
+                        <configuration>
+                            <target>
+                                <copy todir="${project.build.dist.directory}">
+                                    <fileset
+                                            file="${project.build.directory}/${project.artifactId}-${project.version}.jar"/>
+                                </copy>
+                                <copy todir="${project.build.dist.directory}">
+                                    <fileset
+                                            file="${project.jpackage.directory}/favicon.ico"/>
+                                </copy>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>msix-pack</id>
+                        <phase>install</phase>
+                        <configuration>
+                            <target>
+                                <copy todir="${project.build.directory}/${project.name}/Assets">
+                                    <fileset
+                                            dir="${project.jpackage.directory}/Assets"/>
+                                </copy>
+                                <copy todir="${project.build.directory}/${project.name}/Icons">
+                                    <fileset
+                                            dir="${project.jpackage.directory}/Icons"/>
+                                </copy>
+                                <copy todir="${project.build.directory}/${project.name}">
+                                    <fileset dir="${project.jpackage.directory}"
+                                             casesensitive="yes">
+                                        <include name="**/*.dll"/>
+                                        <include name="**/*.exe"/>
+                                        <include name="**/*.xml"/>
+                                        <include name="**/*.pri"/>
+                                        <include name="**/*.ps1"/>
+                                        <include name="**/*.json"/>
+                                    </fileset>
+                                </copy>
+                                <replace file="${project.build.directory}/${project.name}/AppxManifest.xml">
+                                    <replacetoken>{THLVERSION}</replacetoken>
+                                    <replacevalue>${project.version}</replacevalue>
+                                </replace>
+                                <exec executable="MakeAppx.exe">
+                                    <arg value="pack"/>
+                                    <arg value="/d"/>
+                                    <arg value="${project.build.directory}/${project.name}"/>
+                                    <arg value="/p"/>
+                                    <arg value="${project.build.directory}/${project.name}-1.0.msix"/>
+                                </exec>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>msix-sign</id>
+                        <phase>install</phase>
+                        <configuration>
+                            <target>
+                                <attrib file="${project.build.directory}/${project.name}-1.0.msix" readonly="false"/>
+                                <exec executable="signtool.exe">
+                                    <arg value="sign"/>
+                                    <arg value="/debug"/>
+                                    <arg value="/sm"/>
+                                    <arg value="/s"/>
+                                    <arg value="My"/>
+                                    <arg value="/sha1"/>
+                                    <arg value="${certificate.fingerprint}"/>
+                                    <arg value="/fd"/>
+                                    <arg value="SHA256"/>
+                                    <arg value="/d"/>
+                                    <arg value="IPT THL"/>
+                                    <arg value="/tr"/>
+                                    <arg value="http://timestamp.sectigo.com"/>
+                                    <arg value="/td"/>
+                                    <arg value="SHA256"/>
+                                    <arg value="${project.build.directory}/${project.name}-1.0.msix"/>
+                                </exec>
+                                <exec executable="signtool.exe">
+                                    <arg value="sign"/>
+                                    <arg value="/debug"/>
+                                    <arg value="/sm"/>
+                                    <arg value="/s"/>
+                                    <arg value="My"/>
+                                    <arg value="/sha1"/>
+                                    <arg value="${certificate.fingerprint}"/>
+                                    <arg value="/fd"/>
+                                    <arg value="SHA256"/>
+                                    <arg value="/tr"/>
+                                    <arg value="http://timestamp.sectigo.com"/>
+                                    <arg value="/td"/>
+                                    <arg value="SHA256"/>
+                                    <arg value="/p7"/>
+                                    <arg value="${project.build.directory}"/>
+                                    <arg value="/p7co"/>
+                                    <arg value="1.2.840.113549.1.7.2"/>
+                                    <arg value="/p7ce"/>
+                                    <arg value="pkcs7DetachedSignedData"/>
+                                    <arg value="${project.build.directory}/${project.name}-1.0.msix"/>
+                                </exec>
+                                <attrib file="${project.build.directory}/${project.name}-1.0.msix" readonly="true"/>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
