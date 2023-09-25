@@ -2,3 +2,4 @@
 .vscode
 target
 *.iml
+server/src/main/resources/public/*

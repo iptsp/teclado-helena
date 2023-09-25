@@ -18,7 +18,7 @@ public class KeyboardInputController {
         this.eventDispatcher = eventDispatcher;
     }
 
-    @GetMapping("/systems/keyboards/inputs")
+    @GetMapping("/api/v1/systems/keyboards/inputs")
     KeyboardInputControllerResponse handleKeyboardInput() {
         var keyCode = "A";
         eventDispatcher.keyboardInputEvent(KeyCode.getKeyCode(keyCode));

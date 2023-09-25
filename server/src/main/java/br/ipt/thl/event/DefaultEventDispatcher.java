@@ -22,4 +22,10 @@ public class DefaultEventDispatcher implements EventDispatcher {
     public void keyboardInputEvent(final KeyCode keyCode) {
         this.publish(new KeyboardInputEvent(keyCode));
     }
+
+    @Override
+    public void mouseMoveEvent(final int x,
+                               final int y) {
+        this.iocContainer.publishEvent(new MouseMoveEvent(x, y));
+    }
 }
