@@ -20,11 +20,11 @@ public class KeyboardInputListener {
     @EventListener
     public void keyboardInputEvent(final KeyboardInputEvent keyboardInputEvent) {
         var keyCode = keyboardInputEvent.source();
-        asyncKeyboardInputService
+        /*asyncKeyboardInputService
                 .send(keyCode)
                 .thenAccept(result -> {
                     LOGGER.debug("Keyboard input sent: {}", result);
-                });
+                });*/
     }
 
 }

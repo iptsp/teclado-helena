@@ -17,7 +17,7 @@ public class AsyncKeyboardInputService {
 
     private Robot robot;
 
-    @Async(ExecutorsConfig.SEND_KEYS)
+    @Async(ExecutorsConfig.OS)
     public CompletableFuture<Boolean> send(final KeyCode keyCode) {
         var result = Platforms.runOnPlatformAsFunction(() -> {
             robot = Optional.ofNullable(robot)

@@ -14,8 +14,7 @@ import java.util.concurrent.ThreadFactory;
 public class ExecutorsConfig {
 
     private static final String TASK_PREFIX = "thl-task-";
-    public static final String SEND_KEYS = TASK_PREFIX + "send-keys";
-    public static final String MOUSE = TASK_PREFIX + "mouse";
+    public static final String OS = TASK_PREFIX + "os";
     public static final String DEFAULT = TASK_PREFIX + "default";
 
     private static ThreadFactory threadFactory(final String threadNamePrefix) {
@@ -26,17 +25,10 @@ public class ExecutorsConfig {
         };
     }
 
-    @Bean(SEND_KEYS)
+    @Bean(OS)
     public Executor sendKeysExecutor() {
         return Executors.newSingleThreadExecutor(
-                threadFactory(SEND_KEYS)
-        );
-    }
-
-    @Bean(MOUSE)
-    public Executor mouseExecutor() {
-        return Executors.newSingleThreadExecutor(
-                threadFactory(MOUSE)
+                threadFactory(OS)
         );
     }
 

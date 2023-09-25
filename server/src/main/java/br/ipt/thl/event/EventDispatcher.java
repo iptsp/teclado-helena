@@ -4,8 +4,6 @@ import javafx.scene.input.KeyCode;
 
 public interface EventDispatcher {
 
-    void keyboardInputEvent(final KeyCode keyCode);
+    void keyboardInputEvent(final String text);
 
-    void mouseMoveEvent(final int x,
-                        final int y);
 }

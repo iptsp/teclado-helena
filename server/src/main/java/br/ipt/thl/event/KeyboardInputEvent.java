@@ -1,17 +1,16 @@
 package br.ipt.thl.event;
 
-import javafx.scene.input.KeyCode;
 import org.springframework.context.ApplicationEvent;
 
 public class KeyboardInputEvent extends ApplicationEvent
-        implements SystemApplicationEvent<KeyCode> {
+        implements SystemApplicationEvent<String> {
 
-    public KeyboardInputEvent(final KeyCode keyCode) {
-        super(keyCode);
+    public KeyboardInputEvent(final String text) {
+        super(text);
     }
 
     @Override
-    public KeyCode source() {
-        return (KeyCode) super.getSource();
+    public String source() {
+        return (String) super.getSource();
     }
 }

@@ -1,10 +1,8 @@
 package br.ipt.thl.controller;
 
 import br.ipt.thl.event.EventDispatcher;
-import javafx.scene.input.KeyCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 
@@ -19,15 +17,16 @@ public class KeyboardInputController {
     }
 
     @GetMapping("/api/v1/systems/keyboards/inputs")
-    KeyboardInputControllerResponse handleKeyboardInput() {
-        var keyCode = "A";
-        eventDispatcher.keyboardInputEvent(KeyCode.getKeyCode(keyCode));
-        return new KeyboardInputControllerResponse(keyCode);
+    KeyboardInputControllerResponse handleKeyboardInput(final KeyboardInputControllerRequest
+                                                                keyboardInputControllerRequest) {
+        var text = keyboardInputControllerRequest.text();
+        eventDispatcher.keyboardInputEvent(text);
+        return new KeyboardInputControllerResponse(text);
     }
 
-    record KeyboardInputControllerResponse(String keyCode) {
+    record KeyboardInputControllerResponse(String text) {
     }
 
-    record KeyboardInputControllerRequest(String keyCode) {
+    record KeyboardInputControllerRequest(String text) {
     }
 }
