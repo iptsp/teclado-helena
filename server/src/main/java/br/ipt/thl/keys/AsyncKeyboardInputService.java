@@ -21,10 +21,6 @@ public class AsyncKeyboardInputService {
 
     static {
 
-        maps.put("x", List.of(
-                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_X),
-                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_X)
-        ));
 
         maps.put("q", List.of(
                 new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_Q),
@@ -131,6 +127,54 @@ public class AsyncKeyboardInputService {
                 new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_SHIFT),
                 new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_F),
                 new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_F),
+                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_SHIFT)
+        ));
+
+        maps.put("z", List.of(
+                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_Z),
+                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_Z)
+        ));
+
+        maps.put("Z", List.of(
+                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_SHIFT),
+                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_Z),
+                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_Z),
+                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_SHIFT)
+        ));
+
+        maps.put("x", List.of(
+                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_X),
+                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_X)
+        ));
+
+        maps.put("X", List.of(
+                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_SHIFT),
+                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_X),
+                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_X),
+                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_SHIFT)
+        ));
+
+        maps.put("c", List.of(
+                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_C),
+                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_C)
+        ));
+
+        maps.put("C", List.of(
+                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_SHIFT),
+                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_C),
+                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_C),
+                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_SHIFT)
+        ));
+
+        maps.put("v", List.of(
+                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_V),
+                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_V)
+        ));
+
+        maps.put("V", List.of(
+                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_SHIFT),
+                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_V),
+                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_V),
                 new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_SHIFT)
         ));
 

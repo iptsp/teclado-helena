@@ -1,5 +1,6 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
     entry: './src/index.js',
@@ -18,12 +19,19 @@ module.exports = {
     },
     plugins: [
         new HtmlWebpackPlugin({
-            template: './index.html',
-            filename: 'index.html',
+            template: 'src/index.html'
+        }),
+        new CopyWebpackPlugin({
+            patterns: [
+                {
+                    from: 'src/audio',
+                    to: 'audio',
+                },
+            ],
         }),
     ],
     devServer: {
-        watchFiles: ["./src/**/*","./index.html"],
+        watchFiles: ["./src/**/*"],
         port: 9000,
         open: true,
         hot: true,
