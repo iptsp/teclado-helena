@@ -1,0 +1,21 @@
+{
+  "name": "Teclado Helena",
+  "short_name": "THL",
+  "description": "IPT Teclado Helena",
+  "start_url": "/",
+  "display": "standalone",
+  "icons": [
+    {
+      "src": "/images/192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/images/512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "background_color": "#ffffff",
+  "theme_color": "#000000"
+}

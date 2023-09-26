@@ -27,6 +27,14 @@ module.exports = {
                     from: 'src/audio',
                     to: 'audio',
                 },
+                {
+                    from: 'src/images',
+                    to: 'images',
+                },
+                {
+                    from: 'src/manifest.json',
+                    to: 'manifest.json',
+                }
             ],
         }),
     ],
