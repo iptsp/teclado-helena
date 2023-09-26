@@ -4,5 +4,7 @@ import java.util.concurrent.CompletableFuture;
 
 public interface OsDispatcher {
 
-    CompletableFuture<Void> keyPress(final int keyCode);
+    void keyPress(final int keyCode);
+
+    void keyRelease(final int keyCode);
 }

@@ -2,7 +2,8 @@ package br.ipt.thl.controller;
 
 import br.ipt.thl.event.EventDispatcher;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 
@@ -16,17 +17,17 @@ public class KeyboardInputController {
         this.eventDispatcher = eventDispatcher;
     }
 
-    @GetMapping("/api/v1/systems/keyboards/inputs")
-    KeyboardInputControllerResponse handleKeyboardInput(final KeyboardInputControllerRequest
+    @PostMapping("/api/v1/systems/keyboards/inputs")
+    KeyboardInputControllerResponse handleKeyboardInput(@RequestBody final KeyboardInputControllerRequest
                                                                 keyboardInputControllerRequest) {
         var text = keyboardInputControllerRequest.text();
         eventDispatcher.keyboardInputEvent(text);
         return new KeyboardInputControllerResponse(text);
     }
 
-    record KeyboardInputControllerResponse(String text) {
+    public record KeyboardInputControllerResponse(String text) {
     }
 
-    record KeyboardInputControllerRequest(String text) {
+    public record KeyboardInputControllerRequest(String text) {
     }
 }

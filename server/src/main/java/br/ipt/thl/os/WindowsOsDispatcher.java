@@ -1,13 +1,10 @@
 package br.ipt.thl.os;
 
 import br.ipt.thl.common.Platforms;
-import br.ipt.thl.executors.ExecutorsConfig;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.awt.*;
 import java.util.concurrent.Callable;
-import java.util.concurrent.CompletableFuture;
 
 @Component
 public class WindowsOsDispatcher implements OsDispatcher {
@@ -33,10 +30,16 @@ public class WindowsOsDispatcher implements OsDispatcher {
     }
 
     @Override
-    @Async(ExecutorsConfig.OS)
-    public CompletableFuture<Void> keyPress(int keyCode) {
-        return runOnPlatformAsFunction(() -> {
+    public void keyPress(final int keyCode) {
+        runOnPlatformAsFunction(() -> {
             robot.keyPress(keyCode);
+            return null;
+        });
+    }
+
+    @Override
+    public void keyRelease(final int keyCode) {
+        runOnPlatformAsFunction(() -> {
             robot.keyRelease(keyCode);
             return null;
         });
