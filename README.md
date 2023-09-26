@@ -24,7 +24,7 @@ Java 21.x Docs      (https://docs.oracle.com/en/java/javase/21/docs/api/index.ht
 
 ## Java FX
 
-JavaFX 16.x Docs    (https://openjfx.io/javadoc/16/)
+JavaFX 20.x Docs    (https://openjfx.io/javadoc/20/)
 
 ***
 
@@ -41,6 +41,12 @@ Maven 3.x Docs   (https://maven.apache.org/guides/index.html)
 Git 2.x         (https://git-scm.com/downloads)
 
 Git 2.x Docs    (https://git-scm.com/doc)
+
+## Node
+
+Node 18.x       (https://nodejs.org/en/download/)
+
+Node 18.x Docs  (https://nodejs.org/dist/latest-v18.x/docs/api/)
 
 
 # Generate MSIX Resources Pri
@@ -89,9 +95,20 @@ mvn clean install
 
 After the build, the Windows MSIX Installer will be available in the target directory.
 
+
 ***
 
-## Running project from IDE
+## Running client project from IDE
+
+```
+cd client
+npm install
+npm run start
+```
+
+***
+
+## Running server project from IDE
 
 Import the project as maven project in your favorite IDE.
 

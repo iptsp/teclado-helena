@@ -1,3 +1,5 @@
+import '../styles/style.css';
+
 const endpoint = 'http://localhost:8080/api/v1';
 
 let isShift = false;
