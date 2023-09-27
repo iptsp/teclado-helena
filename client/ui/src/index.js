@@ -1,6 +1,9 @@
-const endpoint = 'http://localhost:8080/api/v1';
+import './styles/style.css';
 
-let isShift = false;
+const keyReleaseAudio = new Audio('./audio/key-release.wav');
+
+const endpoint = 'http://192.168.3.108:8080/api/v1';
+let isCaps = false;
 
 const inputText = async (text) => {
     const request = {
@@ -11,7 +14,7 @@ const inputText = async (text) => {
         }
     }
     const response = await fetch(`${endpoint}/systems/keyboards/inputs`, request);
-    const json = await response.json();
+    return await response.json();
 }
 
 const api = {
@@ -20,35 +23,56 @@ const api = {
     }
 }
 
-const toggleShift = () => {
-    const shift = document.querySelector('[data-type="shift"]');
+const playKeyReleaseAudio = async () => {
+    await keyReleaseAudio.play();
+}
 
-    shift.addEventListener('mousedown', (event) => {
+const vibrateOnKeyRelease = async () => {
+    if (!navigator.vibrate) {
+        return;
+    }
+    return navigator.vibrate(100);
+}
+
+const keyReleaseFeedback = async () => {
+    await playKeyReleaseAudio();
+    await vibrateOnKeyRelease();
+}
+
+const toggleCaps = () => {
+    const caps = document.querySelector('[data-type="caps"]');
+
+    caps.addEventListener('mousedown', (event) => {
         event.preventDefault();
         event.stopPropagation();
     });
 
-    shift.addEventListener('mouseup', async (event) => {
+    caps.addEventListener('mouseup', async (event) => {
+
+        await keyReleaseFeedback();
+
         document.querySelectorAll('[data-type="key"]')
             .forEach((element) => {
-                const textForShift = () => {
-                    if (isShift) {
+                const textForCaps = () => {
+                    if (isCaps) {
                         return element.dataset.key
                             .toLowerCase();
                     }
                     return element.dataset.key
                         .toUpperCase();
                 };
-                const newText = textForShift();
+                const newText = textForCaps();
                 element.dataset.key = newText;
                 element.innerHTML = newText;
 
             });
-        isShift = !isShift;
+        isCaps = !isCaps;
     });
 }
 
+
 const bindKeys = () => {
+
     document.querySelectorAll('[data-type="key"]')
         .forEach((element) => {
 
@@ -58,17 +82,24 @@ const bindKeys = () => {
             });
 
             element.addEventListener('mouseup', async (event) => {
+
+                await keyReleaseFeedback();
+
                 const key = event.target.dataset
                     .key;
-                await api.keyboard
-                    .inputText(key);
+
+                try {
+                    const text = await api.keyboard.inputText(key);
+                } catch (error) {
+                    console.error(error);
+                }
             });
         })
 }
 
 document.addEventListener('DOMContentLoaded', () => {
     bindKeys();
-    toggleShift();
+    toggleCaps();
 });
 
 

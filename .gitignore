@@ -2,4 +2,6 @@
 .vscode
 target
 *.iml
+dist
+node_modules
 server/src/main/resources/public/*
