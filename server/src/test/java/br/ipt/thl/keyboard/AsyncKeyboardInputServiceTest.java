@@ -1,4 +1,4 @@
-package br.ipt.thl.keys;
+package br.ipt.thl.keyboard;
 
 import br.ipt.thl.junit.AbstractIntegrationTest;
 import br.ipt.thl.os.OsDispatcher;
