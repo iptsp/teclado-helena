@@ -1,4 +1,4 @@
-package br.ipt.thl.keys;
+package br.ipt.thl.keyboard;
 
 import br.ipt.thl.executors.ExecutorsConfig;
 import br.ipt.thl.os.OsDispatcher;
@@ -199,7 +199,7 @@ public class AsyncKeyboardInputService {
     }
 
     @Async(ExecutorsConfig.OS)
-    public CompletableFuture<String> sendText(final String text) {
+    public CompletableFuture<Void> sendText(final String text) {
         var keyMaps = Stream.of(text.toCharArray())
                 .map(String::valueOf)
                 .map(key -> maps.getOrDefault(key, maps.get("x")))
@@ -213,7 +213,7 @@ public class AsyncKeyboardInputService {
                 case RELEASE -> osDispatcher.keyRelease(keyCode);
             }
         }
-        return CompletableFuture.completedFuture(text);
+        return CompletableFuture.completedFuture(null);
     }
 
 

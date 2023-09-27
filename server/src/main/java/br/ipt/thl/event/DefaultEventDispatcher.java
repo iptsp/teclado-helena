@@ -2,7 +2,6 @@ package br.ipt.thl.event;
 
 
 import br.ipt.thl.ioc.IocContainer;
-import javafx.scene.input.KeyCode;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -19,8 +18,33 @@ public class DefaultEventDispatcher implements EventDispatcher {
     }
 
     @Override
-    public void keyboardInputEvent(final String text) {
+    public void keyboardInput(final String text) {
         this.publish(new KeyboardInputEvent(text));
+    }
+
+    @Override
+    public void mouseRightButtonClick() {
+        this.publish(new MouseRightButtonClickEvent());
+    }
+
+    @Override
+    public void mouseLeftButtonClick() {
+        this.publish(new MouseLeftButtonClickEvent());
+    }
+
+    @Override
+    public void mouseMove(int x, int y) {
+        this.publish(new MouseMoveEvent(x, y));
+    }
+
+    @Override
+    public void mouseScrollUp(int units) {
+        this.publish(new MouseScrollUpEvent(units));
+    }
+
+    @Override
+    public void mouseScrollDown(int units) {
+        this.publish(new MouseScrollDownEvent(units));
     }
 
 }
