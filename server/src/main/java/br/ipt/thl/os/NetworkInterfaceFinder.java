@@ -1,6 +1,7 @@
 package br.ipt.thl.os;
 
 import br.ipt.thl.common.func.Try;
+import org.springframework.stereotype.Component;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -8,7 +9,8 @@ import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.stream.StreamSupport;
 
-public class NetworkInterfaces {
+@Component
+public class NetworkInterfaceFinder {
 
     public String getMainNetworkInterface() {
 

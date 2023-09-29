@@ -5,7 +5,7 @@ import br.ipt.thl.event.StageReadyEvent;
 import br.ipt.thl.fx.FxImageView;
 import br.ipt.thl.fx.FxLabel;
 import br.ipt.thl.fx.FxStackPane;
-import br.ipt.thl.os.NetworkInterfaces;
+import br.ipt.thl.os.NetworkInterfaceFinder;
 import br.ipt.thl.qrcode.QRCodeGenerator;
 import javafx.application.Platform;
 import javafx.scene.Scene;
@@ -19,12 +19,15 @@ import org.springframework.stereotype.Component;
 public class UiApplication {
 
     private final ServletWebServerApplicationContext webServerAppContext;
+    private final NetworkInterfaceFinder networkInterfaceFinder;
+    private final QRCodeGenerator qrCodeGenerator;
 
-    private static final NetworkInterfaces networkInterfaces = new NetworkInterfaces();
-    private static final QRCodeGenerator qrCodeGenerator = new QRCodeGenerator();
-
-    public UiApplication(final ServletWebServerApplicationContext webServerAppContext) {
+    public UiApplication(final ServletWebServerApplicationContext webServerAppContext,
+                         final NetworkInterfaceFinder networkInterfaceFinder,
+                         final QRCodeGenerator qrCodeGenerator) {
         this.webServerAppContext = webServerAppContext;
+        this.networkInterfaceFinder = networkInterfaceFinder;
+        this.qrCodeGenerator = qrCodeGenerator;
     }
 
     @EventListener
@@ -86,7 +89,7 @@ public class UiApplication {
     }
 
     private String getUrlConnection() {
-        var hostAddress = networkInterfaces.getMainNetworkInterface();
+        var hostAddress = networkInterfaceFinder.getMainNetworkInterface();
 
         if (Strings.isBlank(hostAddress)) {
             return "No network interface found";
