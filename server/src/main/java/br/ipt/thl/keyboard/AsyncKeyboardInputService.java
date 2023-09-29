@@ -21,6 +21,21 @@ public class AsyncKeyboardInputService {
 
     static {
 
+        maps.put("space", List.of(
+                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_SPACE),
+                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_SPACE)
+        ));
+
+        maps.put("enter", List.of(
+                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_ENTER),
+                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_ENTER)
+        ));
+
+        maps.put("backspace", List.of(
+                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_BACK_SPACE),
+                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_BACK_SPACE)
+        ));
+
 
         maps.put("q", List.of(
                 new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_Q),

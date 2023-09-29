@@ -10,6 +10,7 @@ body {
     font-size: 60px;
     background-color: #e0e0e0;
     color: #263238;
+    user-select: none;
 }
 
 #root {
@@ -34,7 +35,6 @@ body {
 }
 
 .inner {
-    user-select: none;
     width: 182px;
     height: 181px;
     border: 1px solid #cecece;
@@ -118,4 +118,48 @@ body {
 
 .shiftable .tl {
     color: #2632384d;
+}
+
+
+/* modal */
+.key-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 100;
+    width: 100vw;
+    height: 100vh;
+    background-color: #0000004d;
+    display: none;
+    cursor: pointer;
+}
+
+.show {
+    display: block;
+}
+
+.key-modal .body {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.key-modal .body .pin {
+    width: 182px;
+    height: 181px;
+    border-bottom: 1px solid #cecece;
+    border-left: 1px solid #cecece;
+    border-right: 1px solid #cecece;
+    border-radius: 0 0 22px 22px;
+    background-color: #f0f0f0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.key-modal .content {
+    border-radius: 22px 22px 22px 0;
+    background-color: #f0f0f0;
+    padding: 10px;
 }

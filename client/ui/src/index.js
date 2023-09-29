@@ -38,6 +38,28 @@ const keyReleaseAllFeedback = async () => {
     await vibrateOnKeyRelease();
 }
 
+const bindModals = () => {
+    document.querySelectorAll('[data-modal]')
+        .forEach((element) => {
+            const attachTo = element.dataset
+                .attachTo;
+            const attacher = document.querySelector(attachTo);
+            attacher.addEventListener('click', (event) => {
+                element.classList.add('show');
+
+                const body = element.querySelector('.body');
+                const rect = attacher.getBoundingClientRect();
+                body.style.top = `${rect.top - 90}px`;
+                body.style.left = `${rect.left + 5}px`;
+
+                const pin = element.querySelector('.pin');
+                pin.addEventListener('click', (event) => {
+                   element.classList.remove('show');
+                });
+            });
+        });
+}
+
 const bindKeys = () => {
 
     document.querySelectorAll('[data-feedback="audio|vibrate"]')
@@ -72,6 +94,7 @@ const bindKeys = () => {
 
 document.addEventListener('DOMContentLoaded', () => {
     bindKeys();
+    bindModals();
 });
 
 

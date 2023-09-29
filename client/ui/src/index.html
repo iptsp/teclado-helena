@@ -14,6 +14,18 @@
 <body>
 <div id="root">
     <div class="wrapper">
+
+        <div class="key-modal" data-modal="true" data-attach-to="#accents-group">
+             <div class="body">
+                 <div class="content">
+                     some content
+                 </div>
+                 <div class="pin">
+                     ~
+                 </div>
+             </div>
+        </div>
+
         <div class="key-row">
             <div class="key" data-feedback="audio|vibrate" data-key="1">
                 <div class="inner shiftable">
@@ -274,7 +286,7 @@
                     l
                 </div>
             </div>
-            <div class="key" data-feedback="audio|vibrate">
+            <div class="key" data-feedback="audio|vibrate" data-key="backspace">
                 <div class="inner centered">
                     ⌫
                 </div>
@@ -326,7 +338,7 @@
                     &uarr;
                 </div>
             </div>
-            <div class="key" data-feedback="audio|vibrate">
+            <div class="key" data-feedback="audio|vibrate" data-key="enter">
                 <div class="inner centered">
                     ⮐
                 </div>
@@ -343,12 +355,12 @@
                     Alt
                 </div>
             </div>
-            <div class="key" data-feedback="audio|vibrate">
+            <div class="key" id="accents-group" data-feedback="audio|vibrate">
                 <div class="inner centered">
                     ~
                 </div>
             </div>
-            <div class="key space" data-feedback="audio|vibrate">
+            <div class="key space" data-feedback="audio|vibrate" data-key="space">
                 <div class="inner bottom-centered">
                     ___
                 </div>
