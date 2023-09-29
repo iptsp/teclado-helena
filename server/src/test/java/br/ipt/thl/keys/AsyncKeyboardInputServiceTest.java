@@ -4,8 +4,10 @@ import br.ipt.thl.junit.AbstractIntegrationTest;
 import br.ipt.thl.os.OsDispatcher;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
+@SpringBootTest(classes = {AsyncKeyboardInputService.class})
 class AsyncKeyboardInputServiceTest extends AbstractIntegrationTest {
 
 
