@@ -2,7 +2,10 @@ import './styles/style.css';
 
 const keyReleaseAudio = new Audio('./audio/key-release.wav');
 
-const endpoint = 'http://192.168.3.108:8080/api/v1';
+const currentUrl = new URL(window.location.href);
+const currentHost = currentUrl.hostname;
+
+const endpoint = `http://${currentHost}:8080/api/v1`;
 
 const inputText = async (text) => {
     const request = {
