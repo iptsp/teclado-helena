@@ -3,7 +3,6 @@ import './styles/style.css';
 const keyReleaseAudio = new Audio('./audio/key-release.wav');
 
 const endpoint = 'http://192.168.3.108:8080/api/v1';
-let isCaps = false;
 
 const inputText = async (text) => {
     const request = {
@@ -34,46 +33,22 @@ const vibrateOnKeyRelease = async () => {
     return navigator.vibrate(100);
 }
 
-const keyReleaseFeedback = async () => {
+const keyReleaseAllFeedback = async () => {
     await playKeyReleaseAudio();
     await vibrateOnKeyRelease();
 }
 
-const toggleCaps = () => {
-    const caps = document.querySelector('[data-type="caps"]');
-
-    caps.addEventListener('mousedown', (event) => {
-        event.preventDefault();
-        event.stopPropagation();
-    });
-
-    caps.addEventListener('mouseup', async (event) => {
-
-        await keyReleaseFeedback();
-
-        document.querySelectorAll('[data-type="key"]')
-            .forEach((element) => {
-                const textForCaps = () => {
-                    if (isCaps) {
-                        return element.dataset.key
-                            .toLowerCase();
-                    }
-                    return element.dataset.key
-                        .toUpperCase();
-                };
-                const newText = textForCaps();
-                element.dataset.key = newText;
-                element.innerHTML = newText;
-
-            });
-        isCaps = !isCaps;
-    });
-}
-
-
 const bindKeys = () => {
 
-    document.querySelectorAll('[data-type="key"]')
+    document.querySelectorAll('[data-feedback="audio|vibrate"]')
+        .forEach((element) => {
+
+            element.addEventListener('mouseup', async (event) => {
+                await keyReleaseAllFeedback();
+            });
+        });
+
+    document.querySelectorAll('[data-key]')
         .forEach((element) => {
 
             element.addEventListener('mousedown', (event) => {
@@ -83,10 +58,8 @@ const bindKeys = () => {
 
             element.addEventListener('mouseup', async (event) => {
 
-                await keyReleaseFeedback();
-
                 const key = event.target.dataset
-                    .key;
+                    .key || event.target.parentElement.dataset.key;
 
                 try {
                     const text = await api.keyboard.inputText(key);
@@ -99,7 +72,6 @@ const bindKeys = () => {
 
 document.addEventListener('DOMContentLoaded', () => {
     bindKeys();
-    toggleCaps();
 });
 
 
