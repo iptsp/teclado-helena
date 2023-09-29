@@ -36,6 +36,9 @@ public class FxStackPane extends StackPane {
     public void addOnCenter(final Node node) {
         add(node, Pos.CENTER);
     }
+    public void addOnBottomCenter(final Node node) {
+        add(node, Pos.BOTTOM_CENTER);
+    }
 
     private ObservableList<Node> childrens() {
         return getChildren();

@@ -7,4 +7,12 @@ public class Strings {
     private Strings() {
 
     }
+
+    public static boolean isEmpty(final String value) {
+        return value == null || value.isEmpty();
+    }
+
+    public static boolean isBlank(final String value) {
+        return isEmpty(value) || value.isBlank();
+    }
 }

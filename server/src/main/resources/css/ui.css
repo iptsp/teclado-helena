@@ -3,3 +3,8 @@
     -fx-font-size: 1em;
     -fx-font-weight: bold;
 }
+
+.connection-label {
+    -fx-text-fill: #000;
+    -fx-text-alignment: center;
+}
