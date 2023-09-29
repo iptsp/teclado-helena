@@ -122,6 +122,16 @@ body {
 }
 
 
+/* shift behaviour */
+[data-shifter="true"].active .inner {
+    background-color: #b0bec5;
+    border-color: #78909c;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.4);
+}
+
+
+
+
 /* shiftable keys */
 .shiftable {
     height: 100%;
@@ -135,6 +145,14 @@ body {
 .shiftable .tl {
     color: #2632384d;
     font-size: 36px;
+}
+
+.shiftable.active .tl {
+    color: #263238;
+}
+
+.shiftable.active .bl {
+    color: #2632384d;
 }
 
 

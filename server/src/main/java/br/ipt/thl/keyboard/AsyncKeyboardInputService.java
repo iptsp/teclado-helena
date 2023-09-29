@@ -17,10 +17,16 @@ import java.util.stream.Stream;
 public class AsyncKeyboardInputService {
 
     private final OsDispatcher osDispatcher;
-    private static Map<String, List<KeyMap>> maps = new HashMap<>();
+    private static final Map<String, List<KeyMap>> maps = new HashMap<>();
 
     static {
 
+        maps.put("!", List.of(
+                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_SHIFT),
+                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_1),
+                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_1),
+                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_SHIFT)
+        ));
 
         maps.put("left-arrow", List.of(
                 new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_LEFT),

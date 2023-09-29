@@ -7,6 +7,8 @@ const currentHost = currentUrl.hostname;
 
 const endpoint = `http://${currentHost}:8080/api/v1`;
 
+let isShiftActive = false;
+
 const inputText = async (text) => {
     const request = {
         method: 'POST',
@@ -57,13 +59,83 @@ const bindModals = () => {
 
                 const pin = element.querySelector('.pin');
                 pin.addEventListener('click', (event) => {
-                   element.classList.remove('show');
+                    element.classList.remove('show');
                 });
             });
         });
 }
 
+const disableShift = async () => {
+    if (isShiftActive) {
+        isShiftActive = false;
+    }
+}
+
+const toogleShift = async () => {
+
+    document.querySelectorAll('[data-shiftable="true"]')
+        .forEach((element) => {
+            if (!isShiftActive) {
+                element.classList.add('active');
+            } else {
+                element.classList.remove('active');
+            }
+        });
+
+    document.querySelectorAll('[data-shifter="true"]')
+        .forEach((element) => {
+            if (!isShiftActive) {
+                element.classList.add('active');
+            } else {
+                element.classList.remove('active');
+            }
+        });
+
+    document.querySelectorAll('[data-key] .text')
+        .forEach((element) => {
+            if (isShiftActive) {
+                element.textContent = findForDatasetValueIncludingAncestors(element, 'key');
+            } else {
+                element.textContent = findForDatasetValueIncludingAncestors(element, 'keyShift');
+            }
+        });
+
+    isShiftActive = !isShiftActive;
+}
+
+const deactiveShift = async () => {
+    if (isShiftActive) {
+        await toogleShift();
+    }
+}
+
+const findForDatasetValueIncludingAncestors = (el, attr) => {
+
+    if(el.target && el.target.dataset[attr]) {
+        return el.target.dataset[attr];
+    }
+
+    if(el.parentElement && el.parentElement.dataset[attr]) {
+        return el.parentElement.dataset[attr];
+    }
+
+    if(el.parentElement.parentElement && el.parentElement.parentElement.dataset[attr]) {
+        return el.parentElement.parentElement.dataset[attr];
+    }
+
+    throw new Error(`No dataset value found for element ${el} with attr ${attr}`);
+}
+
 const bindKeys = () => {
+
+    document.querySelectorAll('[data-shifter="true"]')
+        .forEach((element) => {
+
+            element.addEventListener('mouseup', async (event) => {
+                await keyReleaseAllFeedback();
+                await toogleShift();
+            });
+        });
 
     document.querySelectorAll('[data-feedback="audio|vibrate"]')
         .forEach((element) => {
@@ -83,19 +155,21 @@ const bindKeys = () => {
 
             element.addEventListener('mouseup', async (event) => {
 
-                const { target } = event;
-                const { parentElement } = target;
-                const { parentElement: parentParentElement } = parentElement;
-
-                const key = target.dataset
-                    .key || parentElement.dataset.key
-                    || parentParentElement.dataset.key;
-
+                const {target} = event;
+                const calcText = () => {
+                    if (isShiftActive) {
+                        return findForDatasetValueIncludingAncestors(target, 'keyShift');
+                    }
+                    return findForDatasetValueIncludingAncestors(target, 'key');
+                }
 
                 try {
-                    const text = await api.keyboard.inputText(key);
+                    const text = calcText();
+                    const res = await api.keyboard.inputText(text);
                 } catch (error) {
                     console.error(error);
+                } finally {
+                    await deactiveShift();
                 }
             });
         })
