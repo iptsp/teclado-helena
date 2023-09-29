@@ -32,10 +32,12 @@ body {
     cursor: pointer;
 }
 
+/* numeric key */
 .numeric {
     font-size: 45px;
 }
 
+/* inner key */
 .inner {
     width: 182px;
     height: 181px;
@@ -52,6 +54,8 @@ body {
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.4);
 }
 
+
+/* default key */
 .default {
     height: 100%;
     display: grid;
@@ -61,6 +65,7 @@ body {
     align-items: center;
 }
 
+/* centered key */
 .centered {
     height: 100%;
     display: flex;
@@ -68,6 +73,7 @@ body {
     align-items: center;
 }
 
+/* top centered key */
 .top-centered {
     height: 100%;
     display: flex;
@@ -75,6 +81,7 @@ body {
     align-items: flex-start;
 }
 
+/* bottom centered key */
 .bottom-centered {
     height: 100%;
     display: flex;
@@ -83,6 +90,8 @@ body {
     padding-bottom: 15px;
 }
 
+
+/* space key */
 .space {
     width: calc(196px * 4);
 }
@@ -91,6 +100,8 @@ body {
     width: calc(182px * 4 + 24px);
 }
 
+
+/* vertical split key */
 .vertical-split {
     height: 100%;
     display: flex;
@@ -110,6 +121,8 @@ body {
     border: 1px solid #263238;
 }
 
+
+/* shiftable keys */
 .shiftable {
     height: 100%;
     display: grid;
