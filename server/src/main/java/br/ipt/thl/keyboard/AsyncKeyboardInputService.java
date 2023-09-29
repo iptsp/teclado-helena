@@ -21,6 +21,27 @@ public class AsyncKeyboardInputService {
 
     static {
 
+
+        maps.put("left-arrow", List.of(
+                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_LEFT),
+                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_LEFT)
+        ));
+
+        maps.put("right-arrow", List.of(
+                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_RIGHT),
+                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_RIGHT)
+        ));
+
+        maps.put("up-arrow", List.of(
+                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_UP),
+                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_UP)
+        ));
+
+        maps.put("down-arrow", List.of(
+                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_DOWN),
+                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_DOWN)
+        ));
+
         maps.put("space", List.of(
                 new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_SPACE),
                 new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_SPACE)

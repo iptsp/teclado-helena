@@ -80,8 +80,14 @@ const bindKeys = () => {
 
             element.addEventListener('mouseup', async (event) => {
 
-                const key = event.target.dataset
-                    .key || event.target.parentElement.dataset.key;
+                const { target } = event;
+                const { parentElement } = target;
+                const { parentElement: parentParentElement } = parentElement;
+
+                const key = target.dataset
+                    .key || parentElement.dataset.key
+                    || parentParentElement.dataset.key;
+
 
                 try {
                     const text = await api.keyboard.inputText(key);

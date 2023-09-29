@@ -14,16 +14,11 @@ body {
 }
 
 #root {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    width: 100vw;
+
 }
 
 .key-row {
     display: flex;
-    justify-content: center;
     align-items: center;
 }
 
@@ -127,8 +122,8 @@ body {
     top: 0;
     left: 0;
     z-index: 100;
-    width: 100vw;
-    height: 100vh;
+    width: 100%;
+    height: 100%;
     background-color: #0000004d;
     display: none;
     cursor: pointer;
@@ -155,7 +150,6 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-
 }
 
 .key-modal .content {
