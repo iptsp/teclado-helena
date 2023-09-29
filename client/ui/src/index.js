@@ -52,7 +52,7 @@ const bindModals = () => {
 
                 const body = element.querySelector('.body');
                 const rect = attacher.getBoundingClientRect();
-                body.style.top = `${rect.top - 90}px`;
+                body.style.top = `${rect.top - 70}px`;
                 body.style.left = `${rect.left + 5}px`;
 
                 const pin = element.querySelector('.pin');
