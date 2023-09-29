@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;
+import java.util.Optional;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.stream.StreamSupport;
@@ -12,7 +13,7 @@ import java.util.stream.StreamSupport;
 @Component
 public class NetworkInterfaceFinder {
 
-    public String getMainNetworkInterface() {
+    public Optional<String> getMainNetworkInterface() {
 
         return Try.of(() -> NetworkInterface.getNetworkInterfaces().asIterator())
                 .map(networkInterfaces -> {
@@ -27,8 +28,7 @@ public class NetworkInterfaceFinder {
                             .filter(NetworkInterfaceInfo::isNotVirtual)
                             .filter(NetworkInterfaceInfo::isNotLoopback)
                             .map(NetworkInterfaceInfo::hostAddress)
-                            .findFirst()
-                            .orElse("");
+                            .findFirst();
                 })
                 .orElseThrow();
     }
