@@ -14,7 +14,10 @@ body {
 }
 
 #root {
-
+    width: 1920px;
+    height: 1200px;
+    /* if overflow is hidden, check for your code, dont change this section */
+    overflow: hidden;
 }
 
 .key-row {
@@ -27,6 +30,10 @@ body {
     height: 192px;
     padding: 8px 4px;
     cursor: pointer;
+}
+
+.numeric {
+    font-size: 45px;
 }
 
 .inner {
@@ -94,6 +101,7 @@ body {
 
 .vertical-split .t {
     color: #2632384d;
+    font-size: 36px;
 }
 
 .vertical-split .divider {
@@ -113,6 +121,7 @@ body {
 
 .shiftable .tl {
     color: #2632384d;
+    font-size: 36px;
 }
 
 
