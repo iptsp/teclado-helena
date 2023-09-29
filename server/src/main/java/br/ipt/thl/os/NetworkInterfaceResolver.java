@@ -11,9 +11,9 @@ import java.util.Spliterators;
 import java.util.stream.StreamSupport;
 
 @Component
-public class NetworkInterfaceFinder {
+public class NetworkInterfaceResolver {
 
-    public Optional<String> getMainNetworkInterface() {
+    public Optional<String> mainNetworkInterface() {
 
         return Try.of(() -> NetworkInterface.getNetworkInterfaces().asIterator())
                 .map(networkInterfaces -> {
