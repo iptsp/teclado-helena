@@ -21,13 +21,13 @@ public class KeyboardInputController {
     KeyboardInputControllerResponse handleKeyboardInput(@RequestBody final KeyboardInputControllerRequest
                                                                 keyboardInputControllerRequest) {
         var text = keyboardInputControllerRequest.text();
-        eventDispatcher.keyboardInput(text);
-        return new KeyboardInputControllerResponse();
+        eventDispatcher.keyboardInputEvent(text);
+        return new KeyboardInputControllerResponse(text);
     }
 
-    record KeyboardInputControllerResponse() {
+    public record KeyboardInputControllerResponse(String text) {
     }
 
-    record KeyboardInputControllerRequest(String text) {
+    public record KeyboardInputControllerRequest(String text) {
     }
 }

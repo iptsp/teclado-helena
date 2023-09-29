@@ -1,4 +1,4 @@
-package br.ipt.thl.keyboard;
+package br.ipt.thl.keys;
 
 import br.ipt.thl.event.KeyboardInputEvent;
 import org.slf4j.Logger;
@@ -22,12 +22,8 @@ public class KeyboardInputListener {
         var text = keyboardInputEvent.source();
         asyncKeyboardInputService
                 .sendText(text)
-                .exceptionally((e) -> {
-                    LOGGER.error("Error sending keyboard input: {}", text, e);
-                    return null;
-                })
-                .thenAccept((res) -> {
-                    LOGGER.debug("Keyboard input sent: {}", text);
+                .thenAccept(result -> {
+                    LOGGER.debug("Keyboard input sent: {}", result);
                 });
     }
 

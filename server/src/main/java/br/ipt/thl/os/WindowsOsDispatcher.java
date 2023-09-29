@@ -44,37 +44,4 @@ public class WindowsOsDispatcher implements OsDispatcher {
             return null;
         });
     }
-
-    @Override
-    public void mouseMove(final int x,
-                          final  int y) {
-        runOnPlatformAsFunction(() -> {
-            robot.mouseMove(x, y);
-            return null;
-        });
-    }
-
-    @Override
-    public void mousePress(final int buttons) {
-        runOnPlatformAsFunction(() -> {
-            robot.mousePress(buttons);
-            return null;
-        });
-    }
-
-    @Override
-    public void mouseRelease(final int buttons) {
-        runOnPlatformAsFunction(() -> {
-            robot.mouseRelease(buttons);
-            return null;
-        });
-    }
-
-    @Override
-    public void mouseWheel(final int wheelAmt) {
-        runOnPlatformAsFunction(() -> {
-            robot.mouseWheel(wheelAmt);
-            return null;
-        });
-    }
 }
