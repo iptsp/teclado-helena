@@ -6,17 +6,15 @@ import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.stage.Screen;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 @Component
 public class UiApplication {
 
-    private final QRCodeContainer qrCodeContainer;
-
-    public UiApplication(final QRCodeContainer qrCodeContainer) {
-        this.qrCodeContainer = qrCodeContainer;
-    }
+    @Autowired
+    private QRCodeContainer qrCodeContainer;
 
     @EventListener
     public void onStageReady(final StageReadyEvent stageReadyEvent) {

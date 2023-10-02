@@ -14,7 +14,6 @@ import java.util.stream.StreamSupport;
 public class NetworkInterfaceResolver {
 
     public Optional<String> mainNetworkInterface() {
-
         return Try.of(() -> NetworkInterface.getNetworkInterfaces().asIterator())
                 .map(networkInterfaces -> {
                     var spliterator = Spliterators.spliteratorUnknownSize(networkInterfaces,
@@ -44,6 +43,7 @@ public class NetworkInterfaceResolver {
                     return StreamSupport.stream(spliterator, true)
                             .map(this::asInetAddressInfo)
                             .filter(InetAddressInfo::hasHostAddress)
+                            .filter(InetAddressInfo::isSiteLocalAddress)
                             .map(InetAddressInfo::hostAddress)
                             .findFirst()
                             .orElseThrow();
@@ -63,10 +63,11 @@ public class NetworkInterfaceResolver {
 
     private InetAddressInfo asInetAddressInfo(final InetAddress inetAddress) {
         var hostAddress = inetAddress.getHostAddress();
-        return new InetAddressInfo(hostAddress);
+        var isSiteLocalAddress = inetAddress.isSiteLocalAddress();
+        return new InetAddressInfo(hostAddress, isSiteLocalAddress);
     }
 
-    record InetAddressInfo(String hostAddress) {
+    record InetAddressInfo(String hostAddress, boolean isSiteLocalAddress) {
         public boolean hasHostAddress() {
             return !hostAddress.isBlank();
         }
