@@ -8,35 +8,389 @@
     <meta name="keywords" content="Teclado Helena">
     <meta name="author" content="IPT">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="manifest" href="manifest.json" />
+    <link rel="manifest" href="manifest.json"/>
+    <link href='https://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet'>
 </head>
 <body>
 <div id="root">
-    <div class="keyboard-container">
-        <div class="keyboard-input">
-            <input autofocus>
+        <div class="key-modal" data-modal="true" data-attach-to="#accents-group">
+             <div class="body">
+                 <div class="content">
+                     some content
+                 </div>
+                 <div class="pin">
+                     ~
+                 </div>
+             </div>
         </div>
-        <div class="keyboard-line">
-            <div class="keyboard-key" data-type="key" data-key="q">q</div>
-            <div class="keyboard-key" data-type="key" data-key="w">w</div>
-            <div class="keyboard-key" data-type="key" data-key="e">e</div>
-            <div class="keyboard-key" data-type="key" data-key="r">r</div>
-            <div class="keyboard-key" data-type="key" data-key="t">t</div>
+
+        <div class="key-row">
+            <div class="key" data-feedback="audio|vibrate" data-key="1" data-key-shift="!">
+                <div class="inner shiftable" data-shiftable="true">
+                    <div class="tl">
+                        !
+                    </div>
+                    <div class="tr">
+
+                    </div>
+                    <div class="bl numeric">
+                        1
+                    </div>
+                    <div class="br">
+
+                    </div>
+                </div>
+            </div>
+            <div class="key" data-feedback="audio|vibrate" data-key="2" data-key-shift="@">
+                <div class="inner shiftable" data-shiftable="true">
+                    <div class="tl">
+                        @
+                    </div>
+                    <div class="tr">
+
+                    </div>
+                    <div class="bl numeric">
+                        2
+                    </div>
+                    <div class="br">
+
+                    </div>
+                </div>
+            </div>
+            <div class="key" data-feedback="audio|vibrate" data-key="3" data-key-shift="#">
+                <div class="inner shiftable" data-shiftable="true">
+                    <div class="tl">
+                        #
+                    </div>
+                    <div class="tr">
+
+                    </div>
+                    <div class="bl numeric">
+                        3
+                    </div>
+                    <div class="br">
+
+                    </div>
+                </div>
+            </div>
+            <div class="key" data-feedback="audio|vibrate" data-key="4" data-key-shift="$">
+                <div class="inner shiftable" data-shiftable="true">
+                    <div class="tl">
+                        $
+                    </div>
+                    <div class="tr">
+
+                    </div>
+                    <div class="bl numeric">
+                        4
+                    </div>
+                    <div class="br">
+
+                    </div>
+                </div>
+            </div>
+            <div class="key" data-feedback="audio|vibrate" data-key="5" data-key-shift="%">
+                <div class="inner shiftable" data-shiftable="true">
+                    <div class="tl">
+                        %
+                    </div>
+                    <div class="tr">
+
+                    </div>
+                    <div class="bl numeric">
+                        5
+                    </div>
+                    <div class="br">
+
+                    </div>
+                </div>
+            </div>
+            <div class="key" data-feedback="audio|vibrate" data-key="6" data-key-shift="¨">
+                <div class="inner shiftable" data-shiftable="true">
+                    <div class="tl">
+                        ¨
+                    </div>
+                    <div class="tr">
+
+                    </div>
+                    <div class="bl numeric">
+                        6
+                    </div>
+                    <div class="br">
+
+                    </div>
+                </div>
+            </div>
+            <div class="key" data-feedback="audio|vibrate" data-key="7" data-key-shift="&">
+                <div class="inner shiftable" data-shiftable="true">
+                    <div class="tl">
+                        &
+                    </div>
+                    <div class="tr">
+
+                    </div>
+                    <div class="bl numeric">
+                        7
+                    </div>
+                    <div class="br">
+
+                    </div>
+                </div>
+            </div>
+            <div class="key" data-feedback="audio|vibrate" data-key="8" data-key-shift="*">
+                <div class="inner shiftable" data-shiftable="true">
+                    <div class="tl">
+                        *
+                    </div>
+                    <div class="tr">
+
+                    </div>
+                    <div class="bl numeric">
+                        8
+                    </div>
+                    <div class="br">
+
+                    </div>
+                </div>
+            </div>
+            <div class="key" data-feedback="audio|vibrate" data-key="9" data-key-shift="(">
+                <div class="inner shiftable" data-shiftable="true">
+                    <div class="tl">
+                        (
+                    </div>
+                    <div class="tr">
+
+                    </div>
+                    <div class="bl numeric">
+                        9
+                    </div>
+                    <div class="br">
+
+                    </div>
+                </div>
+            </div>
+            <div class="key" data-feedback="audio|vibrate" data-key="0" data-key-shift=")">
+                <div class="inner shiftable" data-shiftable="true">
+                    <div class="tl">
+                        )
+                    </div>
+                    <div class="tr">
+
+                    </div>
+                    <div class="bl numeric">
+                        0
+                    </div>
+                    <div class="br">
+
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="keyboard-line">
-            <div class="keyboard-key keyboard-key-capslock" data-type="caps">Caps Lock</div>
-            <div class="keyboard-key" data-type="key" data-key="a">a</div>
-            <div class="keyboard-key" data-type="key" data-key="s">s</div>
-            <div class="keyboard-key" data-type="key" data-key="d">d</div>
-            <div class="keyboard-key" data-type="key" data-key="f">f</div>
+        <div class="key-row">
+            <div class="key" data-feedback="audio|vibrate" data-key="q" data-key-shift="Q">
+                <div class="inner default text">
+                    q
+                </div>
+            </div>
+            <div class="key" data-feedback="audio|vibrate" data-key="w" data-key-shift="W">
+                <div class="inner default text">
+                    w
+                </div>
+            </div>
+            <div class="key" data-feedback="audio|vibrate" data-key="e" data-key-shift="E">
+                <div class="inner default text">
+                    e
+                </div>
+            </div>
+            <div class="key" data-feedback="audio|vibrate" data-key="r" data-key-shift="R">
+                <div class="inner default text">
+                    r
+                </div>
+            </div>
+            <div class="key" data-feedback="audio|vibrate" data-key="t" data-key-shift="T">
+                <div class="inner default text">
+                    t
+                </div>
+            </div>
+            <div class="key" data-feedback="audio|vibrate" data-key="y" data-key-shift="Y">
+                <div class="inner default text">
+                    y
+                </div>
+            </div>
+            <div class="key" data-feedback="audio|vibrate" data-key="u" data-key-shift="U">
+                <div class="inner default text">
+                    u
+                </div>
+            </div>
+            <div class="key" data-feedback="audio|vibrate" data-key="i" data-key-shift="I">
+                <div class="inner default text">
+                    i
+                </div>
+            </div>
+            <div class="key" data-feedback="audio|vibrate" data-key="o" data-key-shift="O">
+                <div class="inner default text">
+                    o
+                </div>
+            </div>
+            <div class="key" data-feedback="audio|vibrate" data-key="p" data-key-shift="P">
+                <div class="inner default text">
+                    p
+                </div>
+            </div>
         </div>
-        <div class="keyboard-line">
-            <div class="keyboard-key" data-type="key" data-key="z">z</div>
-            <div class="keyboard-key" data-type="key" data-key="x">x</div>
-            <div class="keyboard-key" data-type="key" data-key="c">c</div>
-            <div class="keyboard-key" data-type="key" data-key="v">v</div>
+        <div class="key-row">
+            <div class="key" data-feedback="audio|vibrate" data-key="a" data-key-shift="A">
+                <div class="inner default text">
+                    a
+                </div>
+            </div>
+            <div class="key" data-feedback="audio|vibrate" data-key="s" data-key-shift="S">
+                <div class="inner default text">
+                    s
+                </div>
+            </div>
+            <div class="key" data-feedback="audio|vibrate" data-key="d" data-key-shift="D">
+                <div class="inner default text">
+                    d
+                </div>
+            </div>
+            <div class="key" data-feedback="audio|vibrate" data-key="f" data-key-shift="F">
+                <div class="inner default text">
+                    f
+                </div>
+            </div>
+            <div class="key" data-feedback="audio|vibrate" data-key="g" data-key-shift="G">
+                <div class="inner default text">
+                    g
+                </div>
+            </div>
+            <div class="key" data-feedback="audio|vibrate" data-key="h" data-key-shift="H">
+                <div class="inner default text">
+                    h
+                </div>
+            </div>
+            <div class="key" data-feedback="audio|vibrate" data-key="j" data-key-shift="J">
+                <div class="inner default text">
+                    j
+                </div>
+            </div>
+            <div class="key" data-feedback="audio|vibrate" data-key="k" data-key-shift="K">
+                <div class="inner default text">
+                    k
+                </div>
+            </div>
+            <div class="key" data-feedback="audio|vibrate" data-key="l" data-key-shift="L">
+                <div class="inner default text">
+                    l
+                </div>
+            </div>
+            <div class="key" data-feedback="audio|vibrate" data-key="backspace" data-key-shift="backspace">
+                <div class="inner centered">
+                    ⌫
+                </div>
+            </div>
+        </div>
+        <div class="key-row">
+            <div class="key" data-feedback="audio|vibrate" data-shifter="true">
+                <div class="inner centered">
+                    ⇧
+                </div>
+            </div>
+            <div class="key" data-feedback="audio|vibrate" data-key="z" data-key-shift="Z">
+                <div class="inner default text">
+                    z
+                </div>
+            </div>
+            <div class="key" data-feedback="audio|vibrate" data-key="x" data-key-shift="X">
+                <div class="inner default text">
+                    x
+                </div>
+            </div>
+            <div class="key" data-feedback="audio|vibrate" data-key="c" data-key-shift="C">
+                <div class="inner default text">
+                    c
+                </div>
+            </div>
+            <div class="key" data-feedback="audio|vibrate" data-key="v" data-key-shift="V">
+                <div class="inner default text">
+                    v
+                </div>
+            </div>
+            <div class="key" data-feedback="audio|vibrate" data-key="b" data-key-shift="B">
+                <div class="inner default text">
+                    b
+                </div>
+            </div>
+            <div class="key" data-feedback="audio|vibrate" data-key="n" data-key-shift="N">
+                <div class="inner default text">
+                    n
+                </div>
+            </div>
+            <div class="key" data-feedback="audio|vibrate" data-key="m" data-key-shift="M">
+                <div class="inner default text">
+                    m
+                </div>
+            </div>
+            <div class="key" data-feedback="audio|vibrate" data-key="up-arrow" data-key-shift="up-arrow">
+                <div class="inner top-centered">
+                    &uarr;
+                </div>
+            </div>
+            <div class="key" data-feedback="audio|vibrate" data-key="enter" data-key-shift="enter">
+                <div class="inner centered">
+                    ⮐
+                </div>
+            </div>
+        </div>
+        <div class="key-row">
+            <div class="key" data-feedback="audio|vibrate">
+                <div class="inner centered">
+                    Ctrl
+                </div>
+            </div>
+            <div class="key" data-feedback="audio|vibrate">
+                <div class="inner centered">
+                    Alt
+                </div>
+            </div>
+            <div class="key" id="accents-group" data-feedback="audio|vibrate">
+                <div class="inner centered">
+                    ~
+                </div>
+            </div>
+            <div class="key space" data-feedback="audio|vibrate" data-key="space" data-key-shift="space">
+                <div class="inner bottom-centered">
+                    ___
+                </div>
+            </div>
+            <div class="key" data-feedback="audio|vibrate" data-key="left-arrow" data-key-shift="left-arrow">
+                <div class="inner vertical-split">
+                    <div class="t">
+                        home
+                    </div>
+                    <div class="divider"></div>
+                    <div class="b">
+                        &larr;
+                    </div>
+                </div>
+            </div>
+            <div class="key" data-feedback="audio|vibrate" data-key="down-arrow" data-key-shift="down-arrow">
+                <div class="inner bottom-centered">
+                    &darr;
+                </div>
+            </div>
+            <div class="key" data-feedback="audio|vibrate" data-key="right-arrow" data-key-shift="right-arrow">
+                <div class="inner vertical-split">
+                    <div class="t">
+                        end
+                    </div>
+                    <div class="divider"></div>
+                    <div class="b">
+                        &rarr;
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-</div>
 </body>
 </html>

@@ -2,8 +2,12 @@ import './styles/style.css';
 
 const keyReleaseAudio = new Audio('./audio/key-release.wav');
 
-const endpoint = 'http://192.168.3.108:8080/api/v1';
-let isCaps = false;
+const currentUrl = new URL(window.location.href);
+const currentHost = currentUrl.hostname;
+
+const endpoint = `http://${currentHost}:8080/api/v1`;
+
+let isShiftActive = false;
 
 const inputText = async (text) => {
     const request = {
@@ -34,46 +38,114 @@ const vibrateOnKeyRelease = async () => {
     return navigator.vibrate(100);
 }
 
-const keyReleaseFeedback = async () => {
+const keyReleaseAllFeedback = async () => {
     await playKeyReleaseAudio();
     await vibrateOnKeyRelease();
 }
 
-const toggleCaps = () => {
-    const caps = document.querySelector('[data-type="caps"]');
+const bindModals = () => {
+    document.querySelectorAll('[data-modal]')
+        .forEach((element) => {
+            const attachTo = element.dataset
+                .attachTo;
+            const attacher = document.querySelector(attachTo);
+            attacher.addEventListener('click', (event) => {
+                element.classList.add('show');
 
-    caps.addEventListener('mousedown', (event) => {
-        event.preventDefault();
-        event.stopPropagation();
-    });
+                const body = element.querySelector('.body');
+                const rect = attacher.getBoundingClientRect();
+                body.style.top = `${rect.top - 70}px`;
+                body.style.left = `${rect.left + 5}px`;
 
-    caps.addEventListener('mouseup', async (event) => {
-
-        await keyReleaseFeedback();
-
-        document.querySelectorAll('[data-type="key"]')
-            .forEach((element) => {
-                const textForCaps = () => {
-                    if (isCaps) {
-                        return element.dataset.key
-                            .toLowerCase();
-                    }
-                    return element.dataset.key
-                        .toUpperCase();
-                };
-                const newText = textForCaps();
-                element.dataset.key = newText;
-                element.innerHTML = newText;
-
+                const pin = element.querySelector('.pin');
+                pin.addEventListener('click', (event) => {
+                    element.classList.remove('show');
+                });
             });
-        isCaps = !isCaps;
-    });
+        });
 }
 
+const disableShift = async () => {
+    if (isShiftActive) {
+        isShiftActive = false;
+    }
+}
+
+const toogleShift = async () => {
+
+    document.querySelectorAll('[data-shiftable="true"]')
+        .forEach((element) => {
+            if (!isShiftActive) {
+                element.classList.add('active');
+            } else {
+                element.classList.remove('active');
+            }
+        });
+
+    document.querySelectorAll('[data-shifter="true"]')
+        .forEach((element) => {
+            if (!isShiftActive) {
+                element.classList.add('active');
+            } else {
+                element.classList.remove('active');
+            }
+        });
+
+    document.querySelectorAll('[data-key] .text')
+        .forEach((element) => {
+            if (isShiftActive) {
+                element.textContent = findForDatasetValueIncludingAncestors(element, 'key');
+            } else {
+                element.textContent = findForDatasetValueIncludingAncestors(element, 'keyShift');
+            }
+        });
+
+    isShiftActive = !isShiftActive;
+}
+
+const deactiveShift = async () => {
+    if (isShiftActive) {
+        await toogleShift();
+    }
+}
+
+const findForDatasetValueIncludingAncestors = (el, attr) => {
+
+    if(el.target && el.target.dataset[attr]) {
+        return el.target.dataset[attr];
+    }
+
+    if(el.parentElement && el.parentElement.dataset[attr]) {
+        return el.parentElement.dataset[attr];
+    }
+
+    if(el.parentElement.parentElement && el.parentElement.parentElement.dataset[attr]) {
+        return el.parentElement.parentElement.dataset[attr];
+    }
+
+    throw new Error(`No dataset value found for element ${el} with attr ${attr}`);
+}
 
 const bindKeys = () => {
 
-    document.querySelectorAll('[data-type="key"]')
+    document.querySelectorAll('[data-shifter="true"]')
+        .forEach((element) => {
+
+            element.addEventListener('mouseup', async (event) => {
+                await keyReleaseAllFeedback();
+                await toogleShift();
+            });
+        });
+
+    document.querySelectorAll('[data-feedback="audio|vibrate"]')
+        .forEach((element) => {
+
+            element.addEventListener('mouseup', async (event) => {
+                await keyReleaseAllFeedback();
+            });
+        });
+
+    document.querySelectorAll('[data-key]')
         .forEach((element) => {
 
             element.addEventListener('mousedown', (event) => {
@@ -83,15 +155,21 @@ const bindKeys = () => {
 
             element.addEventListener('mouseup', async (event) => {
 
-                await keyReleaseFeedback();
-
-                const key = event.target.dataset
-                    .key;
+                const {target} = event;
+                const calcText = () => {
+                    if (isShiftActive) {
+                        return findForDatasetValueIncludingAncestors(target, 'keyShift');
+                    }
+                    return findForDatasetValueIncludingAncestors(target, 'key');
+                }
 
                 try {
-                    const text = await api.keyboard.inputText(key);
+                    const text = calcText();
+                    const res = await api.keyboard.inputText(text);
                 } catch (error) {
                     console.error(error);
+                } finally {
+                    await deactiveShift();
                 }
             });
         })
@@ -99,7 +177,7 @@ const bindKeys = () => {
 
 document.addEventListener('DOMContentLoaded', () => {
     bindKeys();
-    toggleCaps();
+    bindModals();
 });
 
 
