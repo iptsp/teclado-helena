@@ -1,13 +1,17 @@
 package br.ipt.thl.controller;
 
 import br.ipt.thl.event.EventDispatcher;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
+@Validated
 public class KeyboardInputController {
 
     private final EventDispatcher eventDispatcher;
@@ -18,7 +22,7 @@ public class KeyboardInputController {
     }
 
     @PostMapping("/api/v1/systems/keyboards/inputs")
-    KeyboardInputControllerResponse handleKeyboardInput(@RequestBody final KeyboardInputControllerRequest
+    KeyboardInputControllerResponse handleKeyboardInput(@RequestBody @Valid final KeyboardInputControllerRequest
                                                                 keyboardInputControllerRequest) {
         var text = keyboardInputControllerRequest.text();
         eventDispatcher.keyboardInput(text);
@@ -28,6 +32,6 @@ public class KeyboardInputController {
     record KeyboardInputControllerResponse() {
     }
 
-    record KeyboardInputControllerRequest(String text) {
+    record KeyboardInputControllerRequest(@NotBlank String text) {
     }
 }
