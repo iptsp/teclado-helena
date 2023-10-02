@@ -17,9 +17,51 @@ import java.util.stream.Stream;
 public class AsyncKeyboardInputService {
 
     private final OsDispatcher osDispatcher;
-    private static Map<String, List<KeyMap>> maps = new HashMap<>();
+    private static final Map<String, List<KeyMap>> maps = new HashMap<>();
 
     static {
+
+        maps.put("!", List.of(
+                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_SHIFT),
+                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_1),
+                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_1),
+                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_SHIFT)
+        ));
+
+        maps.put("left-arrow", List.of(
+                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_LEFT),
+                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_LEFT)
+        ));
+
+        maps.put("right-arrow", List.of(
+                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_RIGHT),
+                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_RIGHT)
+        ));
+
+        maps.put("up-arrow", List.of(
+                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_UP),
+                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_UP)
+        ));
+
+        maps.put("down-arrow", List.of(
+                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_DOWN),
+                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_DOWN)
+        ));
+
+        maps.put("space", List.of(
+                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_SPACE),
+                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_SPACE)
+        ));
+
+        maps.put("enter", List.of(
+                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_ENTER),
+                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_ENTER)
+        ));
+
+        maps.put("backspace", List.of(
+                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_BACK_SPACE),
+                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_BACK_SPACE)
+        ));
 
 
         maps.put("q", List.of(
