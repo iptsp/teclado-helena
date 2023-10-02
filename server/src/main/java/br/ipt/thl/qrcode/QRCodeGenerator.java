@@ -4,11 +4,13 @@ import br.ipt.thl.common.func.Try;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.qrcode.QRCodeWriter;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 
+@Component
 public class QRCodeGenerator {
 
     private static final String QRCODE_IMAGE_PATH = "qrcode.png";

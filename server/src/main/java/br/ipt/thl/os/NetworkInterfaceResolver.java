@@ -1,17 +1,19 @@
 package br.ipt.thl.os;
 
 import br.ipt.thl.common.func.Try;
+import org.springframework.stereotype.Component;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;
+import java.util.Optional;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.stream.StreamSupport;
 
-public class NetworkInterfaces {
+@Component
+public class NetworkInterfaceResolver {
 
-    public String getMainNetworkInterface() {
-
+    public Optional<String> mainNetworkInterface() {
         return Try.of(() -> NetworkInterface.getNetworkInterfaces().asIterator())
                 .map(networkInterfaces -> {
                     var spliterator = Spliterators.spliteratorUnknownSize(networkInterfaces,
@@ -25,8 +27,7 @@ public class NetworkInterfaces {
                             .filter(NetworkInterfaceInfo::isNotVirtual)
                             .filter(NetworkInterfaceInfo::isNotLoopback)
                             .map(NetworkInterfaceInfo::hostAddress)
-                            .findFirst()
-                            .orElse("");
+                            .findFirst();
                 })
                 .orElseThrow();
     }
@@ -42,6 +43,7 @@ public class NetworkInterfaces {
                     return StreamSupport.stream(spliterator, true)
                             .map(this::asInetAddressInfo)
                             .filter(InetAddressInfo::hasHostAddress)
+                            .filter(InetAddressInfo::isSiteLocalAddress)
                             .map(InetAddressInfo::hostAddress)
                             .findFirst()
                             .orElseThrow();
@@ -61,10 +63,11 @@ public class NetworkInterfaces {
 
     private InetAddressInfo asInetAddressInfo(final InetAddress inetAddress) {
         var hostAddress = inetAddress.getHostAddress();
-        return new InetAddressInfo(hostAddress);
+        var isSiteLocalAddress = inetAddress.isSiteLocalAddress();
+        return new InetAddressInfo(hostAddress, isSiteLocalAddress);
     }
 
-    record InetAddressInfo(String hostAddress) {
+    record InetAddressInfo(String hostAddress, boolean isSiteLocalAddress) {
         public boolean hasHostAddress() {
             return !hostAddress.isBlank();
         }
