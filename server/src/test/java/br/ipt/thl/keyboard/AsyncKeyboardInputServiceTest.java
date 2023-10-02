@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
+import java.awt.event.KeyEvent;
+
 class AsyncKeyboardInputServiceTest extends AbstractIntegrationTest {
 
 
@@ -17,36 +19,30 @@ class AsyncKeyboardInputServiceTest extends AbstractIntegrationTest {
 
     @Test
     void checkSingleLetterInLowerCase() {
-        var result = asyncKeyboardInputService.sendText("a")
-                .join();
+        asyncKeyboardInputService.sendText("a");
         var inOrder = inOrder(osDispatcher);
         inOrder.verify(osDispatcher, times(1))
-                .keyPress(anyInt());
+                .keyPress(KeyEvent.VK_A);
         inOrder.verify(osDispatcher, times(1))
-                .keyRelease(anyInt());
-        assertEquals("a", result);
+                .keyRelease(KeyEvent.VK_A);
     }
 
     @Test
     void checkSingleLetterInUpperCase() {
-        var result = asyncKeyboardInputService.sendText("A")
-                .join();
+        asyncKeyboardInputService.sendText("A");
         var inOrder = inOrder(osDispatcher);
         inOrder.verify(osDispatcher, times(2))
                 .keyPress(anyInt());
         inOrder.verify(osDispatcher, times(2))
                 .keyRelease(anyInt());
-        assertEquals("A", result);
     }
 
     @Test
     void checkSingleLetterWithAccent() {
-        var result = asyncKeyboardInputService.sendText("á")
-                .join();
+        asyncKeyboardInputService.sendText("á");
         verify(osDispatcher, times(5))
                 .keyPress(anyInt());
         verify(osDispatcher, times(5))
                 .keyRelease(anyInt());
-        assertEquals("á", result);
     }
 }
