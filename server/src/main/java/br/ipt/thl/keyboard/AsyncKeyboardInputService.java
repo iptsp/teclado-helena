@@ -61,8 +61,7 @@ public class AsyncKeyboardInputService {
             return CompletableFuture.completedFuture(null);
         }
 
-        var compositeChar = new StringBuilder(text)
-                .append(accent);
+        var compositeChar = text + accent;
         var textToSend = Normalizer.normalize(compositeChar, Normalizer.Form.NFC)
                 .codePointAt(0);
 
