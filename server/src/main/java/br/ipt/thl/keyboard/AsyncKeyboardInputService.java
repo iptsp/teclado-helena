@@ -16,18 +16,29 @@ import java.util.concurrent.CompletableFuture;
 public class AsyncKeyboardInputService {
 
     private final OsDispatcher osDispatcher;
-    private static final Map<String, Integer> maps = new HashMap<>();
+    private static final Map<String, Integer> keyMap = new HashMap<>();
     private String accent = "";
 
     static {
-        maps.put("esc", KeyEvent.VK_ESCAPE);
-        maps.put("backspace", KeyEvent.VK_BACK_SPACE);
-        maps.put("space", KeyEvent.VK_SPACE);
-        maps.put("enter", KeyEvent.VK_ENTER);
-        maps.put("left-arrow", KeyEvent.VK_LEFT);
-        maps.put("right-arrow", KeyEvent.VK_RIGHT);
-        maps.put("up-arrow", KeyEvent.VK_UP);
-        maps.put("down-arrow", KeyEvent.VK_DOWN);
+        keyMap.put("esc", KeyEvent.VK_ESCAPE);
+        keyMap.put("backspace", KeyEvent.VK_BACK_SPACE);
+        keyMap.put("space", KeyEvent.VK_SPACE);
+        keyMap.put("enter", KeyEvent.VK_ENTER);
+        keyMap.put("left-arrow", KeyEvent.VK_LEFT);
+        keyMap.put("right-arrow", KeyEvent.VK_RIGHT);
+        keyMap.put("up-arrow", KeyEvent.VK_UP);
+        keyMap.put("down-arrow", KeyEvent.VK_DOWN);
+        keyMap.put("tab", KeyEvent.VK_TAB);
+        keyMap.put("caps-lock", KeyEvent.VK_CAPS_LOCK);
+        keyMap.put("shift", KeyEvent.VK_SHIFT);
+        keyMap.put("ctrl", KeyEvent.VK_CONTROL);
+        keyMap.put("alt", KeyEvent.VK_ALT);
+        keyMap.put("delete", KeyEvent.VK_DELETE);
+        keyMap.put("home", KeyEvent.VK_HOME);
+        keyMap.put("end", KeyEvent.VK_END);
+        keyMap.put("page-up", KeyEvent.VK_PAGE_UP);
+        keyMap.put("page-down", KeyEvent.VK_PAGE_DOWN);
+        keyMap.put("insert", KeyEvent.VK_INSERT);
     }
 
     @Autowired
@@ -38,30 +49,29 @@ public class AsyncKeyboardInputService {
     @Async(ExecutorsConfig.OS)
     public CompletableFuture<Void> sendText(final String text) {
 
-        if (text.length() > 1) {
-            var keyCode = maps.getOrDefault(text, maps.get("esc"));
+        if (keyMap.containsKey(text)) {
+            var keyCode = keyMap.getOrDefault(text, keyMap.get("esc"));
             osDispatcher.keyPress(keyCode);
             osDispatcher.keyRelease(keyCode);
             return CompletableFuture.completedFuture(null);
         }
 
-        var newText = text;
-
         if (isAccent(text)) {
             accent = text;
-            System.out.println("Accent: " + accent);
             return CompletableFuture.completedFuture(null);
-        } else {
-            String textToSend = text + accent;
-            newText = Normalizer.normalize(textToSend, Normalizer.Form.NFC);
-            accent = "";
         }
 
-        sendUnicode(newText.codePointAt(0));
+        var compositeChar = new StringBuilder(text)
+                .append(accent);
+        var textToSend = Normalizer.normalize(compositeChar, Normalizer.Form.NFC)
+                .codePointAt(0);
+
+        this.sendUnicode(textToSend);
+
+        accent = "";
 
         return CompletableFuture.completedFuture(null);
     }
-
 
     private void sendUnicode(int keyCode) {
 
@@ -91,6 +101,5 @@ public class AsyncKeyboardInputService {
         var unicode = convertToUnicode(text);
         return unicode.equals("\\u303");
     }
-
 
 }
