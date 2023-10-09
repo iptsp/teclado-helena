@@ -7,63 +7,27 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.awt.event.KeyEvent;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.text.Normalizer;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Stream;
 
 @Component
 public class AsyncKeyboardInputService {
 
     private final OsDispatcher osDispatcher;
-    private static final Map<String, List<KeyMap>> maps = new HashMap<>();
+    private static final Map<String, Integer> maps = new HashMap<>();
     private String accent = "";
 
     static {
-
-        maps.put("left-arrow", List.of(
-                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_LEFT),
-                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_LEFT)
-        ));
-
-        maps.put("right-arrow", List.of(
-                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_RIGHT),
-                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_RIGHT)
-        ));
-
-        maps.put("up-arrow", List.of(
-                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_UP),
-                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_UP)
-        ));
-
-        maps.put("down-arrow", List.of(
-                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_DOWN),
-                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_DOWN)
-        ));
-
-        maps.put("space", List.of(
-                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_SPACE),
-                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_SPACE)
-        ));
-
-        maps.put("enter", List.of(
-                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_ENTER),
-                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_ENTER)
-        ));
-
-        maps.put("backspace", List.of(
-                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_BACK_SPACE),
-                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_BACK_SPACE)
-        ));
-
-        maps.put("esc", List.of(
-                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_ESCAPE),
-                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_ESCAPE)
-        ));
+        maps.put("esc", KeyEvent.VK_ESCAPE);
+        maps.put("backspace", KeyEvent.VK_BACK_SPACE);
+        maps.put("space", KeyEvent.VK_SPACE);
+        maps.put("enter", KeyEvent.VK_ENTER);
+        maps.put("left-arrow", KeyEvent.VK_LEFT);
+        maps.put("right-arrow", KeyEvent.VK_RIGHT);
+        maps.put("up-arrow", KeyEvent.VK_UP);
+        maps.put("down-arrow", KeyEvent.VK_DOWN);
     }
 
     @Autowired
@@ -75,23 +39,11 @@ public class AsyncKeyboardInputService {
     public CompletableFuture<Void> sendText(final String text) {
 
         if (text.length() > 1) {
-            var keyMaps = Stream.of(text.toCharArray())
-                    .map(String::valueOf)
-                    .map(key -> maps.getOrDefault(key, maps.get("esc")))
-                    .flatMap(List::stream)
-                    .toList();
-
-            for (var keyMap : keyMaps) {
-                var keyCode = keyMap.keyCode();
-                switch (keyMap.keyMapEvent()) {
-                    case PRESS -> osDispatcher.keyPress(keyCode);
-                    case RELEASE -> osDispatcher.keyRelease(keyCode);
-                }
-            }
-
+            var keyCode = maps.getOrDefault(text, maps.get("esc"));
+            osDispatcher.keyPress(keyCode);
+            osDispatcher.keyRelease(keyCode);
             return CompletableFuture.completedFuture(null);
         }
-
 
         var newText = text;
 
@@ -113,7 +65,6 @@ public class AsyncKeyboardInputService {
 
     private void sendUnicode(int keyCode) {
 
-
         osDispatcher.keyPress(KeyEvent.VK_ALT);
 
         for (int i = 3; i >= 0; --i) {
@@ -124,24 +75,6 @@ public class AsyncKeyboardInputService {
         }
 
         osDispatcher.keyRelease(KeyEvent.VK_ALT);
-    }
-
-    public void showCodePoints(String str, Normalizer.Form forma) {
-        String s = Normalizer.normalize(str, forma);
-        System.out.printf("Code points da string '%s' em %s\n", s, forma);
-        s.codePoints().forEach(cp -> {
-            System.out.printf(" - U+%04X %s\n", cp, Character.getName(cp));
-            System.out.printf(" - U+%04X %s\n", cp, Character.getName(cp));
-        });
-    }
-
-    public int calcCodePoints(String str) {
-        String s = Normalizer.normalize(str, Normalizer.Form.NFD);
-        var result = 0;
-        for(Integer cp : s.codePoints().toArray()) {
-            result += cp;
-        }
-        return result;
     }
 
     public static String convertToUnicode(String input) {
@@ -159,13 +92,5 @@ public class AsyncKeyboardInputService {
         return unicode.equals("\\u303");
     }
 
-    enum KeyMapEvent {
-        PRESS,
-        RELEASE
-    }
-
-    record KeyMap(KeyMapEvent keyMapEvent, int keyCode) {
-
-    }
 
 }
