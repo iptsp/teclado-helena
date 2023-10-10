@@ -8,6 +8,7 @@ const currentHost = currentUrl.hostname;
 const endpoint = `http://${currentHost}:8080/api/v1`;
 
 let isShiftActive = false;
+let isCtrlActive = false;
 
 const inputText = async (text) => {
     const request = {
@@ -71,6 +72,12 @@ const disableShift = async () => {
     }
 }
 
+const disableCtrl = async () => {
+    if (isCtrlActive) {
+        isCtrlActive = false;
+    }
+}
+
 const toogleShift = async () => {
 
     document.querySelectorAll('[data-shiftable="true"]')
@@ -103,9 +110,31 @@ const toogleShift = async () => {
     isShiftActive = !isShiftActive;
 }
 
+const toogleCtrl = async () => {
+
+    document.querySelectorAll('[data-ctrl="true"]')
+        .forEach((element) => {
+            if (!isCtrlActive) {
+                console.log('active');
+                element.classList.add('active');
+            } else {
+                console.log('deactive');
+                element.classList.remove('active');
+            }
+        });
+
+    isCtrlActive = !isCtrlActive;
+}
+
 const deactiveShift = async () => {
     if (isShiftActive) {
         await toogleShift();
+    }
+}
+
+const deactiveCtrl = async () => {
+    if (isCtrlActive) {
+        await toogleCtrl();
     }
 }
 
@@ -136,6 +165,14 @@ const bindKeys = () => {
                 await toogleShift();
             });
         });
+
+    document.querySelectorAll('[data-ctrl="true"]')
+            .forEach((element) => {
+                element.addEventListener('mouseup', async (event) => {
+                    await keyReleaseAllFeedback();
+                    await toogleCtrl();
+                });
+            });
 
     document.querySelectorAll('[data-feedback="audio|vibrate"]')
         .forEach((element) => {

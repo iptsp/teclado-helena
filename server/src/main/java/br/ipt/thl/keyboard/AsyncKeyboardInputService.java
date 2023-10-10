@@ -49,15 +49,15 @@ public class AsyncKeyboardInputService {
     @Async(ExecutorsConfig.OS)
     public CompletableFuture<Void> sendText(final String text) {
 
+        if (isAccentOrFunctionKey(text)) {
+            accent = text;
+            return CompletableFuture.completedFuture(null);
+        }
+
         if (keyMap.containsKey(text)) {
             var keyCode = keyMap.getOrDefault(text, keyMap.get("esc"));
             osDispatcher.keyPress(keyCode);
             osDispatcher.keyRelease(keyCode);
-            return CompletableFuture.completedFuture(null);
-        }
-
-        if (isAccent(text)) {
-            accent = text;
             return CompletableFuture.completedFuture(null);
         }
 
@@ -96,7 +96,12 @@ public class AsyncKeyboardInputService {
         return sb.toString();
     }
 
-    private boolean isAccent(final String text) {
+    private boolean isAccentOrFunctionKey(final String text) {
+
+        if ("ctrl".equals(text) || "alt".equals(text)) {
+            return true;
+        }
+
         var unicode = convertToUnicode(text);
         return unicode.equals("\\u303");
     }
