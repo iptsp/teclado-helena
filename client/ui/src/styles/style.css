@@ -129,14 +129,6 @@ body {
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.4);
 }
 
-/* ctrl behaviour */
-[data-ctrl="true"].active .inner {
-    background-color: #b0bec5;
-    border-color: #78909c;
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.4);
-}
-
-
 /* shiftable keys */
 .shiftable {
     height: 100%;
