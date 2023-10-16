@@ -1,39 +1,18 @@
-/*
- * Copyright © 2021-present Lenovo. All rights reserved.
- * Confidential and Restricted
- * Partnership with Instituto de Pesquisas Tecnológicas de São Paulo - IPT
- *
- */
-
 package br.ipt.thl.fx;
 
-import br.ipt.thl.common.Files;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
-import java.nio.file.Path;
+import java.io.ByteArrayInputStream;
 
 public class FxImageView extends ImageView {
 
-    public FxImageView(final Path path) {
-        this(path, -1, -1);
-    }
 
-    public FxImageView(final Path path,
-                       final double width,
-                       final double height) {
-        this(Files.uriAbsoluteAsString(path), width, height);
-    }
-
-    public FxImageView(final String url) {
-        this(url, -1, -1);
-    }
-
-    public FxImageView(final String url,
+    public FxImageView(final byte[] image,
                        final double width,
                        final double height) {
         super();
-        doBehaviour(url);
+        doBehaviour(new Image(new ByteArrayInputStream(image)));
         doStyle(width, height);
     }
 
@@ -47,18 +26,10 @@ public class FxImageView extends ImageView {
         }
     }
 
-    private void doBehaviour(final String url) {
+    private void doBehaviour(final Image image) {
         setFocusTraversable(false);
-        setImage(new Image(url));
+        setImage(image);
         setCache(false);
-    }
-
-    public void hide() {
-        setVisible(false);
-    }
-
-    public void show() {
-        setVisible(true);
     }
 
 }

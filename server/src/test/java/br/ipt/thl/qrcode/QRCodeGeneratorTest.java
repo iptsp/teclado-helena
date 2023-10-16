@@ -13,7 +13,7 @@ class QRCodeGeneratorTest extends AbstractIntegrationTest {
 
     @Test
     void generateImage() {
-        var result = qrCodeGenerator.generateImage(100, 100, "test");
+        var result = qrCodeGenerator.createAsPng(100, 100, "test");
         assertTrue(result.isSuccess());
     }
 }

@@ -19,15 +19,15 @@ public class KeyboardInputListener {
 
     @EventListener
     public void keyboardInputEvent(final KeyboardInputEvent keyboardInputEvent) {
-        var inputEvent = keyboardInputEvent.source();
+        var keyboardInputEventInfo = keyboardInputEvent.source();
         asyncKeyboardInputService
-                .sendText(inputEvent.text(), inputEvent.event())
+                .sendText(keyboardInputEventInfo.text(), keyboardInputEventInfo.event())
                 .exceptionally((e) -> {
-                    LOGGER.error("Error sending keyboard input: {}, {}", inputEvent.text(), inputEvent.event(), e);
+                    LOGGER.error("Error sending keyboard input: {}, {}", keyboardInputEventInfo.text(), keyboardInputEventInfo.event(), e);
                     return null;
                 })
                 .thenAccept((res) -> {
-                    LOGGER.debug("Keyboard input sent: {}, {}", inputEvent.text(), inputEvent.event());
+                    LOGGER.debug("Keyboard input sent: {}, {}", keyboardInputEventInfo.text(), keyboardInputEventInfo.event());
                 });
     }
 

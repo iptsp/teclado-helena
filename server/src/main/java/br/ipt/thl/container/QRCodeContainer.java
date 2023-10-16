@@ -5,51 +5,56 @@ import br.ipt.thl.fx.FxLabel;
 import br.ipt.thl.fx.FxStackPane;
 import br.ipt.thl.os.NetworkInterfaceResolver;
 import br.ipt.thl.qrcode.QRCodeGenerator;
-import org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
-public class QRCodeContainer {
+public class QRCodeContainer extends FxStackPane {
 
-    private final ServletWebServerApplicationContext webServerAppContext;
+    private final Integer serverPort;
     private final NetworkInterfaceResolver networkInterfaceResolver;
     private final QRCodeGenerator qrCodeGenerator;
 
-    public QRCodeContainer(final ServletWebServerApplicationContext webServerAppContext,
+    @Autowired
+    public QRCodeContainer(@Value("${server.port}") final Integer serverPort,
                            final NetworkInterfaceResolver networkInterfaceResolver,
                            final QRCodeGenerator qrCodeGenerator) {
-        this.webServerAppContext = webServerAppContext;
+
+        this.serverPort = serverPort;
         this.networkInterfaceResolver = networkInterfaceResolver;
         this.qrCodeGenerator = qrCodeGenerator;
+        doAssemble();
+        doStyle();
     }
 
-    private String getUrlConnection() {
-        var serverPort = "9000"; //webServerAppContext.getWebServer().getPort();
+    private void doStyle() {
+        addStyleClass("qr-code-container");
+    }
+
+    private void doAssemble() {
+        addOnCenter(qrCode());
+        addOnBottomCenter(label());
+    }
+
+    private String urlToConnect() {
         return networkInterfaceResolver.mainNetworkInterface()
-                .map(address -> String.format("http://%s:%s/%n", address, serverPort))
+                .map(address -> String.format("http://%s:%s", address, serverPort))
                 .orElse("No network interface found");
     }
 
     private FxLabel label() {
-        var urlConnection = getUrlConnection();
-        var label = new FxLabel(urlConnection);
-        label.getStyleClass()
-                .add("connection-label");
-        return label;
+        var urlConnection = urlToConnect();
+        var fxLabel = new FxLabel(urlConnection);
+        fxLabel.addStyleClass("connection-label");
+        return fxLabel;
     }
 
     private FxImageView qrCode() {
-        var urlConnection = getUrlConnection();
-        var qrCode = qrCodeGenerator.generateImage(300, 300, urlConnection)
+        var urlConnection = urlToConnect();
+        var qrCode = qrCodeGenerator.createAsPng(300, 300, urlConnection)
                 .orElseThrow();
-        return new FxImageView(qrCode);
-    }
-
-    public FxStackPane rootContainer() {
-        var fxStackPane = new FxStackPane();
-        fxStackPane.addOnCenter(qrCode());
-        fxStackPane.addOnBottomCenter(label());
-        return fxStackPane;
+        return new FxImageView(qrCode, 300, 300);
     }
 
 }

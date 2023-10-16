@@ -7,16 +7,14 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.awt.event.KeyEvent;
-import java.text.Normalizer;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Function;
 
 @Component
 public class AsyncKeyboardInputService {
 
-    private final String PRESSED = "pressed";
-    private final String RELEASED = "released";
     private final OsDispatcher osDispatcher;
     private static final Map<String, Integer> keyMap = new HashMap<>();
 
@@ -59,33 +57,17 @@ public class AsyncKeyboardInputService {
     }
 
     @Async(ExecutorsConfig.OS)
-    public CompletableFuture<Void> sendText(final String text, final String event) {
-
-        if (keyMap.containsKey(text)) {
-
-            var keyCode = keyMap.getOrDefault(text, keyMap.get("esc"));
-
-            switch (event) {
-                case PRESSED:
-                    osDispatcher.keyPress(keyCode);
-                    break;
-                case RELEASED:
-                    osDispatcher.keyRelease(keyCode);
-                    break;
-                default:
-                    return CompletableFuture.completedFuture(null);
-            }
-
-            return CompletableFuture.completedFuture(null);
+    public CompletableFuture<Void> sendText(final String text, final KeyboardEventType event) {
+        int keyCode = keyMap.computeIfAbsent(text, toKeyCode(text));
+        switch (event) {
+            case PRESSED -> osDispatcher.keyPress(keyCode);
+            case RELEASED -> osDispatcher.keyRelease(keyCode);
         }
-
-        if (RELEASED.equals(event)) {
-            var keyCode = KeyEvent.getExtendedKeyCodeForChar(text.codePointAt(0));
-            osDispatcher.keyPress(keyCode);
-            osDispatcher.keyRelease(keyCode);
-        }
-
         return CompletableFuture.completedFuture(null);
+    }
+
+    private Function<String, Integer> toKeyCode(final String text) {
+        return k -> KeyEvent.getExtendedKeyCodeForChar(text.codePointAt(0));
     }
 
 }

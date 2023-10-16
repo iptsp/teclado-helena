@@ -1,6 +1,6 @@
 package br.ipt.thl.keyboard;
 
-import br.ipt.thl.junit.AbstractIntegrationTest;
+import br.ipt.thl.junit.FxAbstractIntegrationTest;
 import br.ipt.thl.os.OsDispatcher;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,10 +8,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.awt.event.KeyEvent;
 
-class AsyncKeyboardInputServiceTest extends AbstractIntegrationTest {
+class AsyncKeyboardInputServiceTest extends FxAbstractIntegrationTest {
 
-    private static final String PRESSED = "pressed";
-    private static final String RELEASED = "released";
 
     @Autowired
     private AsyncKeyboardInputService asyncKeyboardInputService;
@@ -21,8 +19,8 @@ class AsyncKeyboardInputServiceTest extends AbstractIntegrationTest {
 
     @Test
     void checkSingleLetterInLowerCase() {
-        asyncKeyboardInputService.sendText("a", PRESSED);
-        asyncKeyboardInputService.sendText("a", RELEASED);
+        asyncKeyboardInputService.sendText("a", KeyboardEventType.PRESSED);
+        asyncKeyboardInputService.sendText("a", KeyboardEventType.RELEASED);
         var inOrder = inOrder(osDispatcher);
         inOrder.verify(osDispatcher, times(1))
                 .keyPress(KeyEvent.VK_A);
@@ -32,10 +30,10 @@ class AsyncKeyboardInputServiceTest extends AbstractIntegrationTest {
 
     @Test
     void checkSingleLetterInUpperCase() {
-        asyncKeyboardInputService.sendText("shift", PRESSED);
-        asyncKeyboardInputService.sendText("a", PRESSED);
-        asyncKeyboardInputService.sendText("a", RELEASED);
-        asyncKeyboardInputService.sendText("shift", RELEASED);
+        asyncKeyboardInputService.sendText("shift", KeyboardEventType.PRESSED);
+        asyncKeyboardInputService.sendText("a", KeyboardEventType.PRESSED);
+        asyncKeyboardInputService.sendText("a", KeyboardEventType.RELEASED);
+        asyncKeyboardInputService.sendText("shift", KeyboardEventType.RELEASED);
         var inOrder = inOrder(osDispatcher);
         inOrder.verify(osDispatcher, times(2))
                 .keyPress(anyInt());
@@ -45,10 +43,10 @@ class AsyncKeyboardInputServiceTest extends AbstractIntegrationTest {
 
     @Test
     void checkSingleLetterWithAccent() {
-        asyncKeyboardInputService.sendText("´", PRESSED);
-        asyncKeyboardInputService.sendText("´", RELEASED);
-        asyncKeyboardInputService.sendText("a", PRESSED);
-        asyncKeyboardInputService.sendText("a", RELEASED);
+        asyncKeyboardInputService.sendText("´", KeyboardEventType.PRESSED);
+        asyncKeyboardInputService.sendText("´", KeyboardEventType.RELEASED);
+        asyncKeyboardInputService.sendText("a", KeyboardEventType.PRESSED);
+        asyncKeyboardInputService.sendText("a", KeyboardEventType.RELEASED);
         verify(osDispatcher, times(2))
                 .keyPress(anyInt());
         verify(osDispatcher, times(2))

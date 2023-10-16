@@ -5,5 +5,3 @@ target
 dist
 node_modules
 server/src/main/resources/public/*
-qrcode.png
-client/package-lock.json

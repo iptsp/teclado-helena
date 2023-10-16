@@ -8,3 +8,10 @@
     -fx-text-fill: #000;
     -fx-text-alignment: center;
 }
+
+.qr-code-container {
+    -fx-background-color: #fff;
+    -fx-border-color: #7dc67e;
+    -fx-border-width: 2px;
+    -fx-border-radius: 5px;
+}

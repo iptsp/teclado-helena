@@ -7,17 +7,13 @@ const currentHost = currentUrl.hostname;
 
 const endpoint = `http://${currentHost}:8080/api/v1`;
 
+let isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints;
+let touchDownEvent = isTouchDevice ? 'touchstart' : 'mousedown';
+let touchReleaseEvent = isTouchDevice ? 'touchend' : 'mouseup';
+
 const Event = {
-    Pressed: 'pressed',
-    Released: 'released'
-}
-
-let pressedEvent = 'mousedown';
-let releasedEvent = 'mouseup';
-
-if ('ontouchstart' in window) {
-    pressedEvent = 'touchstart';
-    releasedEvent = 'touchend';
+    PRESSED: "PRESSED",
+    RELEASED: "RELEASED"
 }
 
 const inputText = async (text, event) => {
@@ -54,56 +50,34 @@ const keyReleaseAllFeedback = async () => {
     await vibrateOnKeyRelease();
 }
 
-const bindModals = () => {
-    document.querySelectorAll('[data-modal]')
-        .forEach((element) => {
-            const attachTo = element.dataset
-                .attachTo;
-            const attacher = document.querySelector(attachTo);
-            attacher.addEventListener('click', (event) => {
-                element.classList.add('show');
-
-                const body = element.querySelector('.body');
-                const rect = attacher.getBoundingClientRect();
-                body.style.top = `${rect.top - 70}px`;
-                body.style.left = `${rect.left + 5}px`;
-
-                const pin = element.querySelector('.pin');
-                pin.addEventListener('click', (event) => {
-                    element.classList.remove('show');
-                });
-            });
-        });
-}
-
 const findForDatasetValueIncludingAncestors = (el, attr) => {
 
-    if(el.target && el.target.dataset[attr]) {
+    if (el.target && el.target.dataset[attr]) {
         return el.target.dataset[attr];
     }
 
-    if(el.parentElement && el.parentElement.dataset[attr]) {
+    if (el.parentElement && el.parentElement.dataset[attr]) {
         return el.parentElement.dataset[attr];
     }
 
-    if(el.parentElement.parentElement && el.parentElement.parentElement.dataset[attr]) {
+    if (el.parentElement.parentElement && el.parentElement.parentElement.dataset[attr]) {
         return el.parentElement.parentElement.dataset[attr];
     }
 
     throw new Error(`No dataset value found for element ${el} with attr ${attr}`);
 }
 
-const getKeyAndSendRequest = async (caller, event) => {
-    const {target} = caller;
+const getKeyAndSendRequest = async (ev, eventType) => {
+    const {target} = ev;
 
-     try {
-         const text = findForDatasetValueIncludingAncestors(target, 'key');
-         const res = await api.keyboard.inputText(text, event);
-     } catch (error) {
-         console.error(error);
-     } finally {
-         await keyReleaseAllFeedback();
-     }
+    try {
+        const text = findForDatasetValueIncludingAncestors(target, 'key');
+        await api.keyboard.inputText(text, eventType);
+    } catch (error) {
+        console.error(error);
+    } finally {
+        await keyReleaseAllFeedback();
+    }
 }
 
 const bindKeys = () => {
@@ -111,7 +85,7 @@ const bindKeys = () => {
     document.querySelectorAll('[data-feedback="audio|vibrate"]')
         .forEach((element) => {
 
-            element.addEventListener(releasedEvent, async (event) => {
+            element.addEventListener(touchReleaseEvent, async (_) => {
                 await keyReleaseAllFeedback();
             });
         });
@@ -119,21 +93,18 @@ const bindKeys = () => {
     document.querySelectorAll('[data-key]')
         .forEach((element) => {
 
-            element.addEventListener(pressedEvent, async (caller) => {
-                event.preventDefault();
-                event.stopPropagation();
-                getKeyAndSendRequest(caller, Event.Pressed);
+            element.addEventListener(touchDownEvent, async (ev) => {
+                await getKeyAndSendRequest(ev, Event.PRESSED);
             });
 
-            element.addEventListener(releasedEvent, async (caller) => {
-                getKeyAndSendRequest(caller, Event.Released);
+            element.addEventListener(touchReleaseEvent, async (ev) => {
+                await getKeyAndSendRequest(ev, Event.RELEASED);
             });
         })
 }
 
 document.addEventListener('DOMContentLoaded', () => {
     bindKeys();
-    bindModals();
 });
 
 
