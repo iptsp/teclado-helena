@@ -8,12 +8,19 @@ const currentHost = currentUrl.hostname;
 const endpoint = `http://${currentHost}:8080/api/v1`;
 
 let isShiftActive = false;
-let isCtrlActive = false;
 
-const inputText = async (text) => {
+let pressedEvent = 'mousedown';
+let releasedEvent = 'mouseup';
+
+if ('ontouchstart' in window) {
+    pressedEvent = 'touchstart';
+    releasedEvent = 'touchend';
+}
+
+const inputText = async (text, event) => {
     const request = {
         method: 'POST',
-        body: JSON.stringify({text}),
+        body: JSON.stringify({text, event}),
         headers: {
             'Content-Type': 'application/json'
         }
@@ -72,12 +79,6 @@ const disableShift = async () => {
     }
 }
 
-const disableCtrl = async () => {
-    if (isCtrlActive) {
-        isCtrlActive = false;
-    }
-}
-
 const toogleShift = async () => {
 
     document.querySelectorAll('[data-shiftable="true"]')
@@ -110,31 +111,9 @@ const toogleShift = async () => {
     isShiftActive = !isShiftActive;
 }
 
-const toogleCtrl = async () => {
-
-    document.querySelectorAll('[data-ctrl="true"]')
-        .forEach((element) => {
-            if (!isCtrlActive) {
-                console.log('active');
-                element.classList.add('active');
-            } else {
-                console.log('deactive');
-                element.classList.remove('active');
-            }
-        });
-
-    isCtrlActive = !isCtrlActive;
-}
-
 const deactiveShift = async () => {
     if (isShiftActive) {
         await toogleShift();
-    }
-}
-
-const deactiveCtrl = async () => {
-    if (isCtrlActive) {
-        await toogleCtrl();
     }
 }
 
@@ -160,24 +139,16 @@ const bindKeys = () => {
     document.querySelectorAll('[data-shifter="true"]')
         .forEach((element) => {
 
-            element.addEventListener('mouseup', async (event) => {
+            element.addEventListener(releasedEvent, async (event) => {
                 await keyReleaseAllFeedback();
                 await toogleShift();
             });
         });
 
-    document.querySelectorAll('[data-ctrl="true"]')
-            .forEach((element) => {
-                element.addEventListener('mouseup', async (event) => {
-                    await keyReleaseAllFeedback();
-                    await toogleCtrl();
-                });
-            });
-
     document.querySelectorAll('[data-feedback="audio|vibrate"]')
         .forEach((element) => {
 
-            element.addEventListener('mouseup', async (event) => {
+            element.addEventListener(releasedEvent, async (event) => {
                 await keyReleaseAllFeedback();
             });
         });
@@ -185,12 +156,31 @@ const bindKeys = () => {
     document.querySelectorAll('[data-key]')
         .forEach((element) => {
 
-            element.addEventListener('mousedown', (event) => {
+            element.addEventListener(pressedEvent, async (event) => {
                 event.preventDefault();
                 event.stopPropagation();
+
+                const {target} = event;
+
+                const calcText = () => {
+                    if (isShiftActive) {
+                        return findForDatasetValueIncludingAncestors(target, 'keyShift');
+                    }
+                    return findForDatasetValueIncludingAncestors(target, 'key');
+                }
+
+                try {
+                    const text = calcText();
+                    const event = 'pressed';
+                    const res = await api.keyboard.inputText(text, event);
+                } catch (error) {
+                    console.error(error);
+                } finally {
+                    await deactiveShift();
+                }
             });
 
-            element.addEventListener('mouseup', async (event) => {
+            element.addEventListener(releasedEvent, async (event) => {
 
                 const {target} = event;
                 const calcText = () => {
@@ -202,7 +192,8 @@ const bindKeys = () => {
 
                 try {
                     const text = calcText();
-                    const res = await api.keyboard.inputText(text);
+                    const event = 'released';
+                    const res = await api.keyboard.inputText(text, event);
                 } catch (error) {
                     console.error(error);
                 } finally {

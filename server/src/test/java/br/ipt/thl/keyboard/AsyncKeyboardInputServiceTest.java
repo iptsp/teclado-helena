@@ -19,7 +19,7 @@ class AsyncKeyboardInputServiceTest extends AbstractIntegrationTest {
 
     @Test
     void checkSingleLetterInLowerCase() {
-        asyncKeyboardInputService.sendText("a");
+        asyncKeyboardInputService.sendText("a", "released");
         var inOrder = inOrder(osDispatcher);
         inOrder.verify(osDispatcher, times(1))
                 .keyPress(KeyEvent.VK_A);
@@ -29,7 +29,7 @@ class AsyncKeyboardInputServiceTest extends AbstractIntegrationTest {
 
     @Test
     void checkSingleLetterInUpperCase() {
-        asyncKeyboardInputService.sendText("A");
+        asyncKeyboardInputService.sendText("A", "released");
         var inOrder = inOrder(osDispatcher);
         inOrder.verify(osDispatcher, times(2))
                 .keyPress(anyInt());
@@ -39,7 +39,7 @@ class AsyncKeyboardInputServiceTest extends AbstractIntegrationTest {
 
     @Test
     void checkSingleLetterWithAccent() {
-        asyncKeyboardInputService.sendText("á");
+        asyncKeyboardInputService.sendText("á", "released");
         verify(osDispatcher, times(5))
                 .keyPress(anyInt());
         verify(osDispatcher, times(5))

@@ -7,15 +7,17 @@
 body {
     font-family: 'Montserrat', sans-serif;
     font-weight: bold;
-    font-size: 60px;
+    font-size: 20px;
     background-color: #e0e0e0;
     color: #263238;
     user-select: none;
 }
 
 #root {
-    width: 1920px;
-    height: 1200px;
+    /*width: 1920px;
+    height: 1200px;*/
+    width: 700px;
+    height: 500px;
     /* if overflow is hidden, check for your code, dont change this section */
     overflow: hidden;
 }
@@ -26,21 +28,21 @@ body {
 }
 
 .key {
-    width: 196px;
-    height: 240px;
+    width: 80px;
+    height: 100px;
     padding: 8px 4px;
     cursor: pointer;
 }
 
 /* numeric key */
 .numeric {
-    font-size: 45px;
+    font-size: 20px;
 }
 
 /* inner key */
 .inner {
-    width: 182px;
-    height: 181px;
+    width: 90px;
+    height: 90px;
     border: 1px solid #cecece;
     box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.2);
     border-radius: 22px;
@@ -149,7 +151,7 @@ body {
 
 .shiftable .tl {
     color: #2632384d;
-    font-size: 36px;
+    font-size: 20px;
 }
 
 .shiftable.active .tl {
@@ -185,8 +187,8 @@ body {
 }
 
 .key-modal .body .pin {
-    width: 182px;
-    height: 210px;
+    width: 90px;
+    height: 100px;
     border-bottom: 1px solid #cecece;
     border-left: 1px solid #cecece;
     border-right: 1px solid #cecece;

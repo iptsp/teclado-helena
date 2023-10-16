@@ -17,7 +17,6 @@ public class AsyncKeyboardInputService {
 
     private final OsDispatcher osDispatcher;
     private static final Map<String, Integer> keyMap = new HashMap<>();
-    private String accent = "";
 
     static {
         keyMap.put("esc", KeyEvent.VK_ESCAPE);
@@ -39,6 +38,16 @@ public class AsyncKeyboardInputService {
         keyMap.put("page-up", KeyEvent.VK_PAGE_UP);
         keyMap.put("page-down", KeyEvent.VK_PAGE_DOWN);
         keyMap.put("insert", KeyEvent.VK_INSERT);
+        keyMap.put("tilde", KeyEvent.VK_DEAD_TILDE);
+        keyMap.put("grave", KeyEvent.VK_DEAD_GRAVE);
+        keyMap.put("acute", KeyEvent.VK_DEAD_ACUTE);
+        keyMap.put("circumflex", KeyEvent.VK_DEAD_CIRCUMFLEX);
+        keyMap.put("diaeresis", KeyEvent.VK_DEAD_DIAERESIS);
+        keyMap.put("cedilla", KeyEvent.VK_DEAD_CEDILLA);
+        keyMap.put("plus", KeyEvent.VK_PLUS);
+        keyMap.put("minus", KeyEvent.VK_MINUS);
+        keyMap.put("multiply", KeyEvent.VK_MULTIPLY);
+        keyMap.put("divide", KeyEvent.VK_DIVIDE);
     }
 
     @Autowired
@@ -47,63 +56,36 @@ public class AsyncKeyboardInputService {
     }
 
     @Async(ExecutorsConfig.OS)
-    public CompletableFuture<Void> sendText(final String text) {
+    public CompletableFuture<Void> sendText(final String text, final String event) {
 
-        if (isAccentOrFunctionKey(text)) {
-            accent = text;
-            return CompletableFuture.completedFuture(null);
-        }
+        System.out.println("text: " + text);
+        System.out.println("event: " + event + "\n");
 
         if (keyMap.containsKey(text)) {
+
             var keyCode = keyMap.getOrDefault(text, keyMap.get("esc"));
-            osDispatcher.keyPress(keyCode);
-            osDispatcher.keyRelease(keyCode);
+
+            switch (event) {
+                case "pressed":
+                    osDispatcher.keyPress(keyCode);
+                    break;
+                case "released":
+                    osDispatcher.keyRelease(keyCode);
+                    break;
+                default:
+                    return CompletableFuture.completedFuture(null);
+            }
+
             return CompletableFuture.completedFuture(null);
         }
 
-        var compositeChar = text + accent;
-        var textToSend = Normalizer.normalize(compositeChar, Normalizer.Form.NFC)
-                .codePointAt(0);
-
-        this.sendUnicode(textToSend);
-
-        accent = "";
+        if ("released".equals(event)) {
+            var keyCode = KeyEvent.getExtendedKeyCodeForChar(text.codePointAt(0));
+            osDispatcher.keyPress(keyCode);
+            osDispatcher.keyRelease(keyCode);
+        }
 
         return CompletableFuture.completedFuture(null);
-    }
-
-    private void sendUnicode(int keyCode) {
-
-        osDispatcher.keyPress(KeyEvent.VK_ALT);
-
-        for (int i = 3; i >= 0; --i) {
-            var numpadSeq = keyCode / (int) (Math.pow(10, i)) % 10 + KeyEvent.VK_NUMPAD0;
-
-            osDispatcher.keyPress(numpadSeq);
-            osDispatcher.keyRelease(numpadSeq);
-        }
-
-        osDispatcher.keyRelease(KeyEvent.VK_ALT);
-    }
-
-    public static String convertToUnicode(String input) {
-        StringBuilder sb = new StringBuilder();
-
-        for (char c : input.toCharArray()) {
-            sb.append("\\u").append(Integer.toHexString((int) c));
-        }
-
-        return sb.toString();
-    }
-
-    private boolean isAccentOrFunctionKey(final String text) {
-
-        if ("ctrl".equals(text) || "alt".equals(text)) {
-            return true;
-        }
-
-        var unicode = convertToUnicode(text);
-        return unicode.equals("\\u303");
     }
 
 }

@@ -18,8 +18,9 @@ public class DefaultEventDispatcher implements EventDispatcher {
     }
 
     @Override
-    public void keyboardInput(final String text) {
-        this.publish(new KeyboardInputEvent(text));
+    public void keyboardInput(final String text,
+                              final String event) {
+        this.publish(new KeyboardInputEvent(text, event));
     }
 
     @Override
