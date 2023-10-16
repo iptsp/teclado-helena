@@ -24,8 +24,7 @@ public class QRCodeContainer {
     }
 
     private String getUrlConnection() {
-        var serverPort = webServerAppContext.getWebServer()
-                .getPort();
+        var serverPort = "9000"; //webServerAppContext.getWebServer().getPort();
         return networkInterfaceResolver.mainNetworkInterface()
                 .map(address -> String.format("http://%s:%s/%n", address, serverPort))
                 .orElse("No network interface found");

@@ -25,13 +25,17 @@ public class KeyboardInputController {
     KeyboardInputControllerResponse handleKeyboardInput(@RequestBody @Valid final KeyboardInputControllerRequest
                                                                 keyboardInputControllerRequest) {
         var text = keyboardInputControllerRequest.text();
-        eventDispatcher.keyboardInput(text);
+        var event = keyboardInputControllerRequest.event();
+
+        eventDispatcher.keyboardInput(text, event);
+
         return new KeyboardInputControllerResponse();
     }
 
     record KeyboardInputControllerResponse() {
     }
 
-    record KeyboardInputControllerRequest(@NotBlank String text) {
+    record KeyboardInputControllerRequest(@NotBlank String text,
+                                          @NotBlank String event) {
     }
 }

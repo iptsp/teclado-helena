@@ -2,7 +2,8 @@ package br.ipt.thl.event;
 
 public interface EventDispatcher {
 
-    void keyboardInput(final String text);
+    void keyboardInput(final String text,
+                       final String event);
 
     void mouseRightButtonClick();
 

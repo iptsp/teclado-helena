@@ -7,232 +7,50 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.awt.event.KeyEvent;
+import java.text.Normalizer;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Stream;
 
 @Component
 public class AsyncKeyboardInputService {
 
+    private final String PRESSED = "pressed";
+    private final String RELEASED = "released";
     private final OsDispatcher osDispatcher;
-    private static final Map<String, List<KeyMap>> maps = new HashMap<>();
+    private static final Map<String, Integer> keyMap = new HashMap<>();
 
     static {
-
-        maps.put("!", List.of(
-                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_SHIFT),
-                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_1),
-                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_1),
-                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_SHIFT)
-        ));
-
-        maps.put("left-arrow", List.of(
-                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_LEFT),
-                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_LEFT)
-        ));
-
-        maps.put("right-arrow", List.of(
-                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_RIGHT),
-                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_RIGHT)
-        ));
-
-        maps.put("up-arrow", List.of(
-                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_UP),
-                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_UP)
-        ));
-
-        maps.put("down-arrow", List.of(
-                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_DOWN),
-                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_DOWN)
-        ));
-
-        maps.put("space", List.of(
-                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_SPACE),
-                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_SPACE)
-        ));
-
-        maps.put("enter", List.of(
-                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_ENTER),
-                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_ENTER)
-        ));
-
-        maps.put("backspace", List.of(
-                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_BACK_SPACE),
-                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_BACK_SPACE)
-        ));
-
-
-        maps.put("q", List.of(
-                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_Q),
-                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_Q)
-        ));
-
-        maps.put("Q", List.of(
-                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_SHIFT),
-                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_Q),
-                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_Q),
-                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_SHIFT)
-        ));
-
-        maps.put("w", List.of(
-                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_W),
-                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_W)
-        ));
-
-        maps.put("W", List.of(
-                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_SHIFT),
-                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_W),
-                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_W),
-                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_SHIFT)
-        ));
-
-        maps.put("e", List.of(
-                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_E),
-                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_E)
-        ));
-
-        maps.put("E", List.of(
-                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_SHIFT),
-                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_E),
-                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_E),
-                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_SHIFT)
-        ));
-
-        maps.put("r", List.of(
-                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_R),
-                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_R)
-        ));
-
-        maps.put("R", List.of(
-                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_SHIFT),
-                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_R),
-                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_R),
-                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_SHIFT)
-        ));
-
-        maps.put("t", List.of(
-                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_T),
-                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_T)
-        ));
-
-        maps.put("T", List.of(
-                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_SHIFT),
-                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_T),
-                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_T),
-                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_SHIFT)
-        ));
-
-        maps.put("a", List.of(
-                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_A),
-                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_A)
-        ));
-
-        maps.put("A", List.of(
-                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_SHIFT),
-                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_A),
-                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_A),
-                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_SHIFT)
-        ));
-
-        maps.put("s", List.of(
-                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_S),
-                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_S)
-        ));
-
-        maps.put("S", List.of(
-                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_SHIFT),
-                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_S),
-                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_S),
-                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_SHIFT)
-        ));
-
-        maps.put("d", List.of(
-                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_D),
-                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_D)
-        ));
-
-        maps.put("D", List.of(
-                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_SHIFT),
-                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_D),
-                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_D),
-                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_SHIFT)
-        ));
-
-        maps.put("f", List.of(
-                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_F),
-                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_F)
-        ));
-
-        maps.put("F", List.of(
-                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_SHIFT),
-                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_F),
-                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_F),
-                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_SHIFT)
-        ));
-
-        maps.put("z", List.of(
-                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_Z),
-                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_Z)
-        ));
-
-        maps.put("Z", List.of(
-                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_SHIFT),
-                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_Z),
-                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_Z),
-                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_SHIFT)
-        ));
-
-        maps.put("x", List.of(
-                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_X),
-                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_X)
-        ));
-
-        maps.put("X", List.of(
-                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_SHIFT),
-                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_X),
-                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_X),
-                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_SHIFT)
-        ));
-
-        maps.put("c", List.of(
-                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_C),
-                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_C)
-        ));
-
-        maps.put("C", List.of(
-                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_SHIFT),
-                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_C),
-                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_C),
-                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_SHIFT)
-        ));
-
-        maps.put("v", List.of(
-                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_V),
-                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_V)
-        ));
-
-        maps.put("V", List.of(
-                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_SHIFT),
-                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_V),
-                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_V),
-                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_SHIFT)
-        ));
-
-        // Alt + 0225
-        maps.put("á", List.of(
-                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_ALT),
-                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_NUMPAD0),
-                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_NUMPAD0),
-                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_NUMPAD2),
-                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_NUMPAD2),
-                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_NUMPAD2),
-                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_NUMPAD2),
-                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_NUMPAD5),
-                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_NUMPAD5),
-                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_ALT)
-        ));
+        keyMap.put("esc", KeyEvent.VK_ESCAPE);
+        keyMap.put("backspace", KeyEvent.VK_BACK_SPACE);
+        keyMap.put("space", KeyEvent.VK_SPACE);
+        keyMap.put("enter", KeyEvent.VK_ENTER);
+        keyMap.put("left-arrow", KeyEvent.VK_LEFT);
+        keyMap.put("right-arrow", KeyEvent.VK_RIGHT);
+        keyMap.put("up-arrow", KeyEvent.VK_UP);
+        keyMap.put("down-arrow", KeyEvent.VK_DOWN);
+        keyMap.put("tab", KeyEvent.VK_TAB);
+        keyMap.put("caps-lock", KeyEvent.VK_CAPS_LOCK);
+        keyMap.put("shift", KeyEvent.VK_SHIFT);
+        keyMap.put("ctrl", KeyEvent.VK_CONTROL);
+        keyMap.put("alt", KeyEvent.VK_ALT);
+        keyMap.put("delete", KeyEvent.VK_DELETE);
+        keyMap.put("home", KeyEvent.VK_HOME);
+        keyMap.put("end", KeyEvent.VK_END);
+        keyMap.put("page-up", KeyEvent.VK_PAGE_UP);
+        keyMap.put("page-down", KeyEvent.VK_PAGE_DOWN);
+        keyMap.put("insert", KeyEvent.VK_INSERT);
+        keyMap.put("tilde", KeyEvent.VK_DEAD_TILDE);
+        keyMap.put("grave", KeyEvent.VK_DEAD_GRAVE);
+        keyMap.put("acute", KeyEvent.VK_DEAD_ACUTE);
+        keyMap.put("circumflex", KeyEvent.VK_DEAD_CIRCUMFLEX);
+        keyMap.put("diaeresis", KeyEvent.VK_DEAD_DIAERESIS);
+        keyMap.put("cedilla", KeyEvent.VK_DEAD_CEDILLA);
+        keyMap.put("plus", KeyEvent.VK_PLUS);
+        keyMap.put("minus", KeyEvent.VK_MINUS);
+        keyMap.put("multiply", KeyEvent.VK_MULTIPLY);
+        keyMap.put("divide", KeyEvent.VK_DIVIDE);
+        keyMap.put("asterisk", KeyEvent.VK_ASTERISK);
     }
 
     @Autowired
@@ -241,31 +59,33 @@ public class AsyncKeyboardInputService {
     }
 
     @Async(ExecutorsConfig.OS)
-    public CompletableFuture<Void> sendText(final String text) {
-        var keyMaps = Stream.of(text.toCharArray())
-                .map(String::valueOf)
-                .map(key -> maps.getOrDefault(key, maps.get("x")))
-                .flatMap(List::stream)
-                .toList();
+    public CompletableFuture<Void> sendText(final String text, final String event) {
 
-        for (var keyMap : keyMaps) {
-            var keyCode = keyMap.keyCode();
-            switch (keyMap.keyMapEvent()) {
-                case PRESS -> osDispatcher.keyPress(keyCode);
-                case RELEASE -> osDispatcher.keyRelease(keyCode);
+        if (keyMap.containsKey(text)) {
+
+            var keyCode = keyMap.getOrDefault(text, keyMap.get("esc"));
+
+            switch (event) {
+                case PRESSED:
+                    osDispatcher.keyPress(keyCode);
+                    break;
+                case RELEASED:
+                    osDispatcher.keyRelease(keyCode);
+                    break;
+                default:
+                    return CompletableFuture.completedFuture(null);
             }
+
+            return CompletableFuture.completedFuture(null);
         }
+
+        if (RELEASED.equals(event)) {
+            var keyCode = KeyEvent.getExtendedKeyCodeForChar(text.codePointAt(0));
+            osDispatcher.keyPress(keyCode);
+            osDispatcher.keyRelease(keyCode);
+        }
+
         return CompletableFuture.completedFuture(null);
-    }
-
-
-    enum KeyMapEvent {
-        PRESS,
-        RELEASE
-    }
-
-    record KeyMap(KeyMapEvent keyMapEvent, int keyCode) {
-
     }
 
 }
