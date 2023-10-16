@@ -10,6 +10,8 @@ import java.awt.event.KeyEvent;
 
 class AsyncKeyboardInputServiceTest extends AbstractIntegrationTest {
 
+    private static final String PRESSED = "pressed";
+    private static final String RELEASED = "released";
 
     @Autowired
     private AsyncKeyboardInputService asyncKeyboardInputService;
@@ -19,7 +21,8 @@ class AsyncKeyboardInputServiceTest extends AbstractIntegrationTest {
 
     @Test
     void checkSingleLetterInLowerCase() {
-        asyncKeyboardInputService.sendText("a", "released");
+        asyncKeyboardInputService.sendText("a", PRESSED);
+        asyncKeyboardInputService.sendText("a", RELEASED);
         var inOrder = inOrder(osDispatcher);
         inOrder.verify(osDispatcher, times(1))
                 .keyPress(KeyEvent.VK_A);
@@ -29,7 +32,10 @@ class AsyncKeyboardInputServiceTest extends AbstractIntegrationTest {
 
     @Test
     void checkSingleLetterInUpperCase() {
-        asyncKeyboardInputService.sendText("A", "released");
+        asyncKeyboardInputService.sendText("shift", PRESSED);
+        asyncKeyboardInputService.sendText("a", PRESSED);
+        asyncKeyboardInputService.sendText("a", RELEASED);
+        asyncKeyboardInputService.sendText("shift", RELEASED);
         var inOrder = inOrder(osDispatcher);
         inOrder.verify(osDispatcher, times(2))
                 .keyPress(anyInt());
@@ -39,10 +45,13 @@ class AsyncKeyboardInputServiceTest extends AbstractIntegrationTest {
 
     @Test
     void checkSingleLetterWithAccent() {
-        asyncKeyboardInputService.sendText("á", "released");
-        verify(osDispatcher, times(5))
+        asyncKeyboardInputService.sendText("´", PRESSED);
+        asyncKeyboardInputService.sendText("´", RELEASED);
+        asyncKeyboardInputService.sendText("a", PRESSED);
+        asyncKeyboardInputService.sendText("a", RELEASED);
+        verify(osDispatcher, times(2))
                 .keyPress(anyInt());
-        verify(osDispatcher, times(5))
+        verify(osDispatcher, times(2))
                 .keyRelease(anyInt());
     }
 }
