@@ -15,6 +15,8 @@ import java.util.concurrent.CompletableFuture;
 @Component
 public class AsyncKeyboardInputService {
 
+    private final String PRESSED = "pressed";
+    private final String RELEASED = "released";
     private final OsDispatcher osDispatcher;
     private static final Map<String, Integer> keyMap = new HashMap<>();
 
@@ -48,6 +50,7 @@ public class AsyncKeyboardInputService {
         keyMap.put("minus", KeyEvent.VK_MINUS);
         keyMap.put("multiply", KeyEvent.VK_MULTIPLY);
         keyMap.put("divide", KeyEvent.VK_DIVIDE);
+        keyMap.put("asterisk", KeyEvent.VK_ASTERISK);
     }
 
     @Autowired
@@ -58,18 +61,15 @@ public class AsyncKeyboardInputService {
     @Async(ExecutorsConfig.OS)
     public CompletableFuture<Void> sendText(final String text, final String event) {
 
-        System.out.println("text: " + text);
-        System.out.println("event: " + event + "\n");
-
         if (keyMap.containsKey(text)) {
 
             var keyCode = keyMap.getOrDefault(text, keyMap.get("esc"));
 
             switch (event) {
-                case "pressed":
+                case PRESSED:
                     osDispatcher.keyPress(keyCode);
                     break;
-                case "released":
+                case RELEASED:
                     osDispatcher.keyRelease(keyCode);
                     break;
                 default:
@@ -79,7 +79,7 @@ public class AsyncKeyboardInputService {
             return CompletableFuture.completedFuture(null);
         }
 
-        if ("released".equals(event)) {
+        if (RELEASED.equals(event)) {
             var keyCode = KeyEvent.getExtendedKeyCodeForChar(text.codePointAt(0));
             osDispatcher.keyPress(keyCode);
             osDispatcher.keyRelease(keyCode);

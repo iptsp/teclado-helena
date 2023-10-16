@@ -7,7 +7,10 @@ const currentHost = currentUrl.hostname;
 
 const endpoint = `http://${currentHost}:8080/api/v1`;
 
-let isShiftActive = false;
+const Event = {
+    Pressed: 'pressed',
+    Released: 'released'
+}
 
 let pressedEvent = 'mousedown';
 let releasedEvent = 'mouseup';
@@ -73,50 +76,6 @@ const bindModals = () => {
         });
 }
 
-const disableShift = async () => {
-    if (isShiftActive) {
-        isShiftActive = false;
-    }
-}
-
-const toogleShift = async () => {
-
-    document.querySelectorAll('[data-shiftable="true"]')
-        .forEach((element) => {
-            if (!isShiftActive) {
-                element.classList.add('active');
-            } else {
-                element.classList.remove('active');
-            }
-        });
-
-    document.querySelectorAll('[data-shifter="true"]')
-        .forEach((element) => {
-            if (!isShiftActive) {
-                element.classList.add('active');
-            } else {
-                element.classList.remove('active');
-            }
-        });
-
-    document.querySelectorAll('[data-key] .text')
-        .forEach((element) => {
-            if (isShiftActive) {
-                element.textContent = findForDatasetValueIncludingAncestors(element, 'key');
-            } else {
-                element.textContent = findForDatasetValueIncludingAncestors(element, 'keyShift');
-            }
-        });
-
-    isShiftActive = !isShiftActive;
-}
-
-const deactiveShift = async () => {
-    if (isShiftActive) {
-        await toogleShift();
-    }
-}
-
 const findForDatasetValueIncludingAncestors = (el, attr) => {
 
     if(el.target && el.target.dataset[attr]) {
@@ -134,16 +93,20 @@ const findForDatasetValueIncludingAncestors = (el, attr) => {
     throw new Error(`No dataset value found for element ${el} with attr ${attr}`);
 }
 
+const getKeyAndSendRequest = async (caller, event) => {
+    const {target} = caller;
+
+     try {
+         const text = findForDatasetValueIncludingAncestors(target, 'key');
+         const res = await api.keyboard.inputText(text, event);
+     } catch (error) {
+         console.error(error);
+     } finally {
+         await keyReleaseAllFeedback();
+     }
+}
+
 const bindKeys = () => {
-
-    document.querySelectorAll('[data-shifter="true"]')
-        .forEach((element) => {
-
-            element.addEventListener(releasedEvent, async (event) => {
-                await keyReleaseAllFeedback();
-                await toogleShift();
-            });
-        });
 
     document.querySelectorAll('[data-feedback="audio|vibrate"]')
         .forEach((element) => {
@@ -156,49 +119,14 @@ const bindKeys = () => {
     document.querySelectorAll('[data-key]')
         .forEach((element) => {
 
-            element.addEventListener(pressedEvent, async (event) => {
+            element.addEventListener(pressedEvent, async (caller) => {
                 event.preventDefault();
                 event.stopPropagation();
-
-                const {target} = event;
-
-                const calcText = () => {
-                    if (isShiftActive) {
-                        return findForDatasetValueIncludingAncestors(target, 'keyShift');
-                    }
-                    return findForDatasetValueIncludingAncestors(target, 'key');
-                }
-
-                try {
-                    const text = calcText();
-                    const event = 'pressed';
-                    const res = await api.keyboard.inputText(text, event);
-                } catch (error) {
-                    console.error(error);
-                } finally {
-                    await deactiveShift();
-                }
+                getKeyAndSendRequest(caller, Event.Pressed);
             });
 
-            element.addEventListener(releasedEvent, async (event) => {
-
-                const {target} = event;
-                const calcText = () => {
-                    if (isShiftActive) {
-                        return findForDatasetValueIncludingAncestors(target, 'keyShift');
-                    }
-                    return findForDatasetValueIncludingAncestors(target, 'key');
-                }
-
-                try {
-                    const text = calcText();
-                    const event = 'released';
-                    const res = await api.keyboard.inputText(text, event);
-                } catch (error) {
-                    console.error(error);
-                } finally {
-                    await deactiveShift();
-                }
+            element.addEventListener(releasedEvent, async (caller) => {
+                getKeyAndSendRequest(caller, Event.Released);
             });
         })
 }
