@@ -11,7 +11,7 @@ body {
     background-color: #e0e0e0;
     color: #263238;
     user-select: none;
-    touch-action: pan-x pan-y; /* to prevent zoom gestures and double tap to zoom on iOS devices */
+    touch-action: none; /* to prevent zoom gestures and double tap to zoom on iOS devices */
 }
 
 #root {
