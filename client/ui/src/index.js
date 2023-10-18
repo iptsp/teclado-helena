@@ -35,13 +35,10 @@ const api = {
 }
 
 const playKeyReleaseAudio = async () => {
-    const promise = keyReleaseAudio.play();
-    if (promise !== undefined) {
-        promise.then(_ => {
-            // play sound
-        }).catch(error => {
-            console.error(error);
-        });
+    try {
+        await keyReleaseAudio.play();
+    } catch (error) {
+        console.error(error);
     }
 }
 
