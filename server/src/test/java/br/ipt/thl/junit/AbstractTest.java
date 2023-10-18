@@ -10,6 +10,7 @@ import org.mockito.verification.VerificationMode;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -20,6 +21,7 @@ import java.security.SecureRandom;
 import java.util.*;
 
 @ActiveProfiles(value = "test")
+@TestPropertySource("classpath:application-dev.properties")
 public abstract class AbstractTest {
 
     private static final String EMPTY = "";
