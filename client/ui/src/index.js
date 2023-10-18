@@ -35,7 +35,11 @@ const api = {
 }
 
 const playKeyReleaseAudio = async () => {
-    await keyReleaseAudio.play();
+    try {
+        await keyReleaseAudio.play();
+    } catch (error) {
+        console.error(error);
+    }
 }
 
 const vibrateOnKeyRelease = async () => {
