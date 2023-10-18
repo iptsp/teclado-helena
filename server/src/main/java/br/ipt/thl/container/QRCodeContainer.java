@@ -12,16 +12,16 @@ import org.springframework.stereotype.Component;
 @Component
 public class QRCodeContainer extends FxStackPane {
 
-    private final Integer uiPort;
+    private final Integer serverPort;
     private final NetworkInterfaceResolver networkInterfaceResolver;
     private final QRCodeGenerator qrCodeGenerator;
 
     @Autowired
-    public QRCodeContainer(@Value("${ui.port}") final Integer uiPort,
+    public QRCodeContainer(@Value("${server.port}") final Integer serverPort,
                            final NetworkInterfaceResolver networkInterfaceResolver,
                            final QRCodeGenerator qrCodeGenerator) {
 
-        this.uiPort = uiPort;
+        this.serverPort = serverPort;
         this.networkInterfaceResolver = networkInterfaceResolver;
         this.qrCodeGenerator = qrCodeGenerator;
         doAssemble();
@@ -39,7 +39,7 @@ public class QRCodeContainer extends FxStackPane {
 
     private String urlToConnect() {
         return networkInterfaceResolver.mainNetworkInterface()
-                .map(address -> String.format("http://%s:%s/", address, uiPort))
+                .map(address -> String.format("http://%s:%s", address, serverPort))
                 .orElse("No network interface found");
     }
 
