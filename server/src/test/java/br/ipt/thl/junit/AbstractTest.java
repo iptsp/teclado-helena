@@ -21,7 +21,6 @@ import java.security.SecureRandom;
 import java.util.*;
 
 @ActiveProfiles(value = "test")
-@TestPropertySource("classpath:application-dev.properties")
 public abstract class AbstractTest {
 
     private static final String EMPTY = "";
