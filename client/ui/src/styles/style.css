@@ -15,7 +15,7 @@ body {
 
 #root {
     width: 1920px;
-    height: 1200px;
+    height: 1080px;
     /* if overflow is hidden, check for your code, dont change this section */
     overflow: hidden;
 }
@@ -26,8 +26,8 @@ body {
 }
 
 .key {
-    width: 196px;
-    height: 240px;
+    width: 192px;
+    height: 180px;
     padding: 8px 4px;
     cursor: pointer;
 }
@@ -39,8 +39,8 @@ body {
 
 /* inner key */
 .inner {
-    width: 182px;
-    height: 181px;
+    width: 184px;
+    height: 163px;
     border: 1px solid #cecece;
     box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.2);
     border-radius: 22px;
@@ -93,13 +93,26 @@ body {
 
 /* space key */
 .space {
-    width: calc(196px * 4);
+    width: calc(192px * 5 + 3 * 4px);
 }
 
 .space > .inner {
-    width: calc(182px * 4 + 24px);
+    width: calc(188px * 5 + 12px);
 }
 
+/* backspace key */
+.backspace {
+    width: calc(192px * 2 );
+}
+
+.backspace > .inner {
+    width: calc(188px * 2 );
+}
+
+.delete {
+    font-size: 35px;
+    font-weight: bold;
+}
 
 /* vertical split key */
 .vertical-split {
