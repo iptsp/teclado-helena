@@ -1,7 +1,5 @@
 import './styles/style.css';
 
-const keyReleaseAudio = new Audio('./audio/key-release.wav');
-
 const currentUrl = new URL(window.location.href);
 const currentHost = currentUrl.hostname;
 
@@ -10,6 +8,15 @@ const endpoint = `http://${currentHost}:8080/api/v1`;
 let isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints;
 let touchDownEvent = isTouchDevice ? 'touchstart' : 'mousedown';
 let touchReleaseEvent = isTouchDevice ? 'touchend' : 'mouseup';
+
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+let audioBuffer = null;
+
+const loadKeyReleaseAudio = () => {
+    audioBuffer = fetch("./audio/key-release.mp3")
+      .then(response => response.arrayBuffer())
+      .then(buffer => audioCtx.decodeAudioData(buffer));
+}
 
 const Event = {
     PRESSED: "PRESSED",
@@ -35,11 +42,12 @@ const api = {
 }
 
 const playKeyReleaseAudio = async () => {
-    try {
-        await keyReleaseAudio.play();
-    } catch (error) {
-        console.error(error);
-    }
+    audioBuffer.then(buffer => {
+        var releaseAudio = audioCtx.createBufferSource();
+        releaseAudio.buffer = buffer;
+        releaseAudio.connect(audioCtx.destination);
+        releaseAudio.start(0);
+    });
 }
 
 const vibrateOnKeyRelease = async () => {
@@ -79,8 +87,6 @@ const getKeyAndSendRequest = async (ev, eventType) => {
         await api.keyboard.inputText(text, eventType);
     } catch (error) {
         console.error(error);
-    } finally {
-        await keyReleaseAllFeedback();
     }
 }
 
@@ -108,6 +114,7 @@ const bindKeys = () => {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    loadKeyReleaseAudio();
     bindKeys();
 });
 
