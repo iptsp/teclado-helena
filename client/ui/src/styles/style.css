@@ -134,6 +134,14 @@ body {
     border: 1px solid #263238;
 }
 
+.vertical-split.active .t {
+    color: #263238;
+}
+
+.vertical-split.active .b {
+    color: #2632384d;
+}
+
 
 /* shift behaviour */
 [data-shifter="true"].active .inner {

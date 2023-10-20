@@ -8,6 +8,11 @@ const currentHost = currentUrl.hostname;
 const endpoint = `http://${currentHost}:8080/api/v1`;
 
 let isShiftActive = false;
+let isLongPressed = false;
+
+const timeLimitLongPress = 500;
+
+var pressTimer;
 
 const inputText = async (text) => {
     const request = {
@@ -109,6 +114,49 @@ const deactiveShift = async () => {
     }
 }
 
+const toogleLongPressClick = async () => {
+    document.querySelectorAll('[data-long-pressable="true"]')
+        .forEach((element) => {
+            if (!isLongPressed) {
+                element.classList.add('active');
+            } else {
+                element.classList.remove('active');
+            }
+        });
+
+    isLongPressed = !isLongPressed;
+}
+
+const deactivateLongPress = async () =>{
+    if(isLongPressed){
+        await toogleLongPressClick();
+    }
+}
+
+
+const simplePress = async (event) =>{
+    const {target} = event;
+    const calcText = () => {
+        if (isLongPressed){
+            return findForDatasetValueIncludingAncestors(target,'longPress')
+        }
+        if (isShiftActive) {
+            return findForDatasetValueIncludingAncestors(target, 'keyShift');
+        }
+        return findForDatasetValueIncludingAncestors(target, 'key');
+    }
+
+    try {
+        const text = calcText();
+        const res = await api.keyboard.inputText(text);
+    } catch (error) {
+        console.error(error);
+    } finally {
+        await deactiveShift();
+        await deactivateLongPress();
+    }
+}
+
 const findForDatasetValueIncludingAncestors = (el, attr) => {
 
     if(el.target && el.target.dataset[attr]) {
@@ -137,6 +185,21 @@ const bindKeys = () => {
             });
         });
 
+    document.querySelectorAll('[data-long-pressable="true"]')
+        .forEach((element) =>{
+
+            element.addEventListener('mousedown', async(event)=>{
+                pressTimer = setTimeout(async ()=>{
+                    await toogleLongPressClick();
+                }, timeLimitLongPress)
+            });
+
+            element.addEventListener('mouseup', async(event) => {
+                clearTimeout(pressTimer)
+                await simplePress(event);
+            })
+        });
+
     document.querySelectorAll('[data-feedback="audio|vibrate"]')
         .forEach((element) => {
 
@@ -154,23 +217,7 @@ const bindKeys = () => {
             });
 
             element.addEventListener('mouseup', async (event) => {
-
-                const {target} = event;
-                const calcText = () => {
-                    if (isShiftActive) {
-                        return findForDatasetValueIncludingAncestors(target, 'keyShift');
-                    }
-                    return findForDatasetValueIncludingAncestors(target, 'key');
-                }
-
-                try {
-                    const text = calcText();
-                    const res = await api.keyboard.inputText(text);
-                } catch (error) {
-                    console.error(error);
-                } finally {
-                    await deactiveShift();
-                }
+                await simplePress(event);
             });
         })
 }
