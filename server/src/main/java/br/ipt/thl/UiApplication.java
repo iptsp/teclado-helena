@@ -13,14 +13,18 @@ import org.springframework.stereotype.Component;
 @Component
 public class UiApplication {
 
+    private final QRCodeContainer qrCodeContainer;
+
     @Autowired
-    private QRCodeContainer qrCodeContainer;
+    public UiApplication(final QRCodeContainer qrCodeContainer) {
+        this.qrCodeContainer = qrCodeContainer;
+    }
 
     @EventListener
     public void onStageReady(final StageReadyEvent stageReadyEvent) {
 
-        var screenWidth = 300d;
-        var screenHeight = 380d;
+        var screenWidth = 350d;
+        var screenHeight = 350d;
         var primaryScreenBounds = Screen.getPrimary()
                 .getBounds();
         var x = primaryScreenBounds.getWidth() / 2 - screenWidth / 2;
@@ -41,7 +45,7 @@ public class UiApplication {
         });
 
         var scene = new Scene(
-                qrCodeContainer.rootContainer(),
+                qrCodeContainer,
                 stage.getWidth(),
                 stage.getHeight()
         );

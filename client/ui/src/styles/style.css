@@ -11,6 +11,7 @@ body {
     background-color: #e0e0e0;
     color: #263238;
     user-select: none;
+    touch-action: none; /* to prevent zoom gestures and double tap to zoom on iOS devices */
 }
 
 #root {
@@ -149,9 +150,6 @@ body {
     border-color: #78909c;
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.4);
 }
-
-
-
 
 /* shiftable keys */
 .shiftable {

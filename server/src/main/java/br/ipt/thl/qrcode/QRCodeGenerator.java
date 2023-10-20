@@ -6,28 +6,24 @@ import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.qrcode.QRCodeWriter;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
-import java.nio.file.FileSystems;
-import java.nio.file.Path;
-
 @Component
 public class QRCodeGenerator {
 
-    private static final String QRCODE_IMAGE_PATH = "qrcode.png";
+    private final QRCodeWriter qrCodeWriter;
 
-    public Try<Path> generateImage(int height, int width, String text) {
+    public QRCodeGenerator() {
+        this.qrCodeWriter = new QRCodeWriter();
+    }
 
-        var qrCodeWriter = new QRCodeWriter();
-        var path = FileSystems.getDefault().getPath(QRCODE_IMAGE_PATH);
-        var bitMatrix = Try.of(() -> qrCodeWriter.encode(text, BarcodeFormat.QR_CODE, width, height))
-                .orElseThrow();
-
-        try {
-            MatrixToImageWriter.writeToPath(bitMatrix, "PNG", path);
-        } catch (IOException e) {
-            return Try.failure(e);
-        }
-
-        return Try.success(path);
+    public Try<byte[]> createAsPng(int height,
+                                   int width,
+                                   final String text) {
+        return Try.of(() -> qrCodeWriter.encode(text, BarcodeFormat.QR_CODE, width, height))
+                .map(bitMatrix -> {
+                    try (var byteArrOutputStream = new java.io.ByteArrayOutputStream()) {
+                        MatrixToImageWriter.writeToStream(bitMatrix, "png", byteArrOutputStream);
+                        return byteArrOutputStream.toByteArray();
+                    }
+                });
     }
 }

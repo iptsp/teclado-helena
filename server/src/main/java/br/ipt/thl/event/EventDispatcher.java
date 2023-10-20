@@ -1,8 +1,11 @@
 package br.ipt.thl.event;
 
+import br.ipt.thl.keyboard.KeyboardEventType;
+
 public interface EventDispatcher {
 
-    void keyboardInput(final String text);
+    void keyboardInput(final String text,
+                       final KeyboardEventType event);
 
     void mouseRightButtonClick();
 

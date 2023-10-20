@@ -1,16 +1,22 @@
 package br.ipt.thl.event;
 
+import br.ipt.thl.keyboard.KeyboardEventType;
 import org.springframework.context.ApplicationEvent;
 
 public class KeyboardInputEvent extends ApplicationEvent
-        implements SystemApplicationEvent<String> {
+        implements SystemApplicationEvent<KeyboardInputEvent.KeyboardInputEventInfo> {
 
-    public KeyboardInputEvent(final String text) {
-        super(text);
+    public KeyboardInputEvent(final String text,
+                              final KeyboardEventType event) {
+        super(new KeyboardInputEventInfo(text, event));
     }
 
     @Override
-    public String source() {
-        return (String) super.getSource();
+    public KeyboardInputEvent.KeyboardInputEventInfo source() {
+        return (KeyboardInputEventInfo) getSource();
+    }
+
+    public record KeyboardInputEventInfo(String text, KeyboardEventType event) {
+
     }
 }

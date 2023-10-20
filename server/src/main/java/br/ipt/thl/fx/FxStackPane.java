@@ -36,6 +36,7 @@ public class FxStackPane extends StackPane {
     public void addOnCenter(final Node node) {
         add(node, Pos.CENTER);
     }
+
     public void addOnBottomCenter(final Node node) {
         add(node, Pos.BOTTOM_CENTER);
     }
@@ -44,5 +45,14 @@ public class FxStackPane extends StackPane {
         return getChildren();
     }
 
+    public void addStyleClass(final String styleClass) {
+        if (!containsStyleClass(styleClass)) {
+            getStyleClass().add(styleClass);
+        }
+    }
 
+    public boolean containsStyleClass(final String styleClass) {
+        return getStyleClass().contains(styleClass);
+    }
+    
 }

@@ -2,6 +2,7 @@ package br.ipt.thl.event;
 
 
 import br.ipt.thl.ioc.IocContainer;
+import br.ipt.thl.keyboard.KeyboardEventType;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -18,8 +19,9 @@ public class DefaultEventDispatcher implements EventDispatcher {
     }
 
     @Override
-    public void keyboardInput(final String text) {
-        this.publish(new KeyboardInputEvent(text));
+    public void keyboardInput(final String text,
+                              final KeyboardEventType event) {
+        this.publish(new KeyboardInputEvent(text, event));
     }
 
     @Override
