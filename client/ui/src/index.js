@@ -12,10 +12,14 @@ let touchReleaseEvent = isTouchDevice ? 'touchend' : 'mouseup';
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 let audioBuffer = null;
 
-const loadKeyReleaseAudio = () => {
-    audioBuffer = fetch("./audio/key-release.mp3")
-      .then(response => response.arrayBuffer())
-      .then(buffer => audioCtx.decodeAudioData(buffer));
+const loadKeyReleaseAudio = async () => {
+    try {
+        const response = await fetch("./audio/key-release.mp3");
+        const buffer = await response.arrayBuffer();
+        audioBuffer = await audioCtx.decodeAudioData(buffer);
+    } catch (error) {
+        console.error(error);
+    }
 }
 
 const Event = {
@@ -42,12 +46,14 @@ const api = {
 }
 
 const playKeyReleaseAudio = async () => {
-    audioBuffer.then(buffer => {
-        var releaseAudio = audioCtx.createBufferSource();
-        releaseAudio.buffer = buffer;
+    try {
+        const releaseAudio = await audioCtx.createBufferSource();
+        releaseAudio.buffer = audioBuffer;
         releaseAudio.connect(audioCtx.destination);
         releaseAudio.start(0);
-    });
+    } catch (error) {
+        console.error(error);
+    }
 }
 
 const vibrateOnKeyRelease = async () => {
