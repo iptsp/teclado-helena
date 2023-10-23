@@ -25,7 +25,7 @@ public class KeyboardInputListener {
         var text = keyboardInputEventInfo.text();
         var event = keyboardInputEventInfo.event();
 
-        if (text.equals("shift")) {
+        if ("shift".equals(text)) {
             isShiftPressed = event == KeyboardEventType.PRESSED;
         }
 
