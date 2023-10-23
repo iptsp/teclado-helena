@@ -7,7 +7,7 @@
     <meta name="description" content="Teclado Helena">
     <meta name="keywords" content="Teclado Helena">
     <meta name="author" content="IPT">
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="manifest" href="manifest.json"/>
     <link href='https://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet'>
 </head>
@@ -175,6 +175,130 @@
             </div>
         </div>
         <div class="key-row">
+            <div class="key" data-feedback="audio|vibrate" data-key="quote">
+                <div class="inner shiftable" data-shiftable="true">
+                    <div class="tl">
+                        "
+                    </div>
+                    <div class="tr">
+
+                    </div>
+                    <div class="bl">
+                        '
+                    </div>
+                    <div class="br">
+
+                    </div>
+                </div>
+            </div>
+            <div class="key" data-feedback="audio|vibrate" data-key="slash">
+                <div class="inner shiftable" data-shiftable="true">
+                    <div class="tl">
+                        ?
+                    </div>
+                    <div class="tr">
+
+                    </div>
+                    <div class="bl">
+                        /
+                    </div>
+                    <div class="br">
+
+                    </div>
+                </div>
+            </div>
+            <div class="key" data-feedback="audio|vibrate" data-key="semicolon">
+                <div class="inner shiftable" data-shiftable="true">
+                    <div class="tl">
+                        :
+                    </div>
+                    <div class="tr">
+
+                    </div>
+                    <div class="bl">
+                        ;
+                    </div>
+                    <div class="br">
+
+                    </div>
+                </div>
+            </div>
+            <div class="key" data-feedback="audio|vibrate" data-key="colon">
+                <div class="inner shiftable" data-shiftable="true">
+                    <div class="tl">
+                        <
+                    </div>
+                    <div class="tr">
+
+                    </div>
+                    <div class="bl">
+                        ,
+                    </div>
+                    <div class="br">
+
+                    </div>
+                </div>
+            </div>
+            <div class="key" data-feedback="audio|vibrate" data-key="period">
+                <div class="inner shiftable" data-shiftable="true">
+                    <div class="tl">
+                        >
+                    </div>
+                    <div class="tr">
+
+                    </div>
+                    <div class="bl">
+                        .
+                    </div>
+                    <div class="br">
+
+                    </div>
+                </div>
+            </div>
+            <div class="key" data-feedback="audio|vibrate" data-key="tilde">
+                <div class="inner shiftable" data-shiftable="true">
+                    <div class="tl">
+                        ^
+                    </div>
+                    <div class="tr">
+
+                    </div>
+                    <div class="bl">
+                        ~
+                    </div>
+                    <div class="br">
+
+                    </div>
+                </div>
+            </div>
+            <div class="key" data-feedback="audio|vibrate" data-key="acute">
+                <div class="inner shiftable" data-shiftable="true">
+                    <div class="tl">
+                        `
+                    </div>
+                    <div class="tr">
+
+                    </div>
+                    <div class="bl numeric">
+                        ´
+                    </div>
+                    <div class="br">
+
+                    </div>
+                </div>
+            </div>
+            <div class="key" data-feedback="audio|vibrate" data-key="delete">
+                <div class="inner centered delete">
+                    delete
+                </div>
+            </div>
+            <div class="backspace key" data-feedback="audio|vibrate" data-key="backspace">
+                <div class="inner centered">
+                    ⌫
+                </div>
+            </div>
+        </div>
+        <div class="key-row">
             <div class="key" data-feedback="audio|vibrate" data-key="q">
                 <div class="inner default text">
                     q
@@ -272,9 +396,9 @@
                     l
                 </div>
             </div>
-            <div class="key" data-feedback="audio|vibrate" data-key="backspace">
-                <div class="inner centered">
-                    ⌫
+            <div class="key" data-feedback="audio|vibrate" data-key="cedilla">
+                <div class="inner default text">
+                    ç
                 </div>
             </div>
         </div>
@@ -341,22 +465,16 @@
                     Alt
                 </div>
             </div>
-            <div class="key" data-key="tilde" data-feedback="audio|vibrate">
-                <div class="inner centered">
-                    ~
-                </div>
-            </div>
             <div class="key space" data-feedback="audio|vibrate" data-key="space">
                 <div class="inner bottom-centered">
                     ___
                 </div>
             </div>
-            <div class="key" data-feedback="audio|vibrate" data-key="left-arrow">
-                <div class="inner vertical-split">
+            <div class="key" data-feedback="audio|vibrate" data-key="left-arrow" data-long-press="home">
+                <div class="inner vertical-split" data-long-pressable="true">
                     <div class="t">
                         home
                     </div>
-                    <div class="divider"></div>
                     <div class="b">
                         &larr;
                     </div>
@@ -367,12 +485,11 @@
                     &darr;
                 </div>
             </div>
-            <div class="key" data-feedback="audio|vibrate" data-key="right-arrow">
-                <div class="inner vertical-split">
+            <div class="key" data-feedback="audio|vibrate" data-key="right-arrow" data-long-press="end">
+                <div class="inner vertical-split" data-long-pressable="true">
                     <div class="t">
                         end
                     </div>
-                    <div class="divider"></div>
                     <div class="b">
                         &rarr;
                     </div>

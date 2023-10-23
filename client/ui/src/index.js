@@ -12,6 +12,12 @@ let touchReleaseEvent = isTouchDevice ? 'touchend' : 'mouseup';
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 let audioBuffer = null;
 
+let isLongPressed = false;
+
+const timeLimitLongPress = 500;
+
+var pressTimer;
+
 const loadKeyReleaseAudio = async () => {
     try {
         const response = await fetch("./audio/key-release.mp3");
@@ -68,6 +74,25 @@ const keyReleaseAllFeedback = async () => {
     await vibrateOnKeyRelease();
 }
 
+const toogleLongPressClick = async () => {
+    document.querySelectorAll('[data-long-pressable="true"]')
+        .forEach((element) => {
+            if (!isLongPressed) {
+                element.classList.add('active');
+            } else {
+                element.classList.remove('active');
+            }
+        });
+
+    isLongPressed = !isLongPressed;
+}
+
+const deactivateLongPress = async () =>{
+    if(isLongPressed){
+        await toogleLongPressClick();
+    }
+}
+
 const findForDatasetValueIncludingAncestors = (el, attr) => {
 
     if (el.target && el.target.dataset[attr]) {
@@ -86,17 +111,42 @@ const findForDatasetValueIncludingAncestors = (el, attr) => {
 }
 
 const getKeyAndSendRequest = async (ev, eventType) => {
+
+    const calcText = () => {
+        if (isLongPressed){
+            return findForDatasetValueIncludingAncestors(target,'longPress')
+        }
+        return findForDatasetValueIncludingAncestors(target, 'key');
+    }
+
     const {target} = ev;
 
     try {
-        const text = findForDatasetValueIncludingAncestors(target, 'key');
+        const text = calcText();
         await api.keyboard.inputText(text, eventType);
     } catch (error) {
         console.error(error);
+    } finally {
+        await deactivateLongPress();
     }
 }
 
 const bindKeys = () => {
+
+    document.querySelectorAll('[data-long-pressable="true"]')
+        .forEach((element) =>{
+
+            element.addEventListener(touchDownEvent, async(event)=>{
+                pressTimer = setTimeout(async () => {
+                    await toogleLongPressClick();
+                }, timeLimitLongPress)
+            });
+
+            element.addEventListener(touchReleaseEvent, async(event) => {
+                clearTimeout(pressTimer)
+                await getKeyAndSendRequest(event, Event.RELEASED);
+            })
+        });
 
     document.querySelectorAll('[data-feedback="audio|vibrate"]')
         .forEach((element) => {
