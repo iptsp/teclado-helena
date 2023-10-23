@@ -11,7 +11,6 @@ let isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints;
 let touchDownEvent = isTouchDevice ? 'touchstart' : 'mousedown';
 let touchReleaseEvent = isTouchDevice ? 'touchend' : 'mouseup';
 
-let isShiftActive = false;
 let isLongPressed = false;
 
 const timeLimitLongPress = 500;
@@ -61,72 +60,6 @@ const keyReleaseAllFeedback = async () => {
     await vibrateOnKeyRelease();
 }
 
-const bindModals = () => {
-    document.querySelectorAll('[data-modal]')
-        .forEach((element) => {
-            const attachTo = element.dataset
-                .attachTo;
-            const attacher = document.querySelector(attachTo);
-            attacher.addEventListener('click', (event) => {
-                element.classList.add('show');
-
-                const body = element.querySelector('.body');
-                const rect = attacher.getBoundingClientRect();
-                body.style.top = `${rect.top - 70}px`;
-                body.style.left = `${rect.left + 5}px`;
-
-                const pin = element.querySelector('.pin');
-                pin.addEventListener('click', (event) => {
-                    element.classList.remove('show');
-                });
-            });
-        });
-}
-
-const disableShift = async () => {
-    if (isShiftActive) {
-        isShiftActive = false;
-    }
-}
-
-const toogleShift = async () => {
-
-    document.querySelectorAll('[data-shiftable="true"]')
-        .forEach((element) => {
-            if (!isShiftActive) {
-                element.classList.add('active');
-            } else {
-                element.classList.remove('active');
-            }
-        });
-
-    document.querySelectorAll('[data-shifter="true"]')
-        .forEach((element) => {
-            if (!isShiftActive) {
-                element.classList.add('active');
-            } else {
-                element.classList.remove('active');
-            }
-        });
-
-    document.querySelectorAll('[data-key] .text')
-        .forEach((element) => {
-            if (isShiftActive) {
-                element.textContent = findForDatasetValueIncludingAncestors(element, 'key');
-            } else {
-                element.textContent = findForDatasetValueIncludingAncestors(element, 'keyShift');
-            }
-        });
-
-    isShiftActive = !isShiftActive;
-}
-
-const deactiveShift = async () => {
-    if (isShiftActive) {
-        await toogleShift();
-    }
-}
-
 const findForDatasetValueIncludingAncestors = (el, attr) => {
 
     if (el.target && el.target.dataset[attr]) {
@@ -144,42 +77,60 @@ const findForDatasetValueIncludingAncestors = (el, attr) => {
     throw new Error(`No dataset value found for element ${el} with attr ${attr}`);
 }
 
+const toogleLongPressClick = async () => {
+    document.querySelectorAll('[data-long-pressable="true"]')
+        .forEach((element) => {
+            if (!isLongPressed) {
+                element.classList.add('active');
+            } else {
+                element.classList.remove('active');
+            }
+        });
+
+    isLongPressed = !isLongPressed;
+}
+
+const deactivateLongPress = async () =>{
+    if(isLongPressed){
+        await toogleLongPressClick();
+    }
+}
+
 const getKeyAndSendRequest = async (ev, eventType) => {
     const {target} = ev;
 
+    const calcText = () => {
+        if(isLongPressed) {
+            return findForDatasetValueIncludingAncestors(target, 'longPress');
+        }
+        return findForDatasetValueIncludingAncestors(target, 'key');
+    }
+
     try {
-        const text = findForDatasetValueIncludingAncestors(target, 'key');
+        const text = calcText();
         await api.keyboard.inputText(text, eventType);
     } catch (error) {
         console.error(error);
     } finally {
         await keyReleaseAllFeedback();
+        await deactivateLongPress();
     }
 }
 
 const bindKeys = () => {
 
-    document.querySelectorAll('[data-shifter="true"]')
-        .forEach((element) => {
-
-            element.addEventListener('mouseup', async (event) => {
-                await keyReleaseAllFeedback();
-                await toogleShift();
-            });
-        });
-
     document.querySelectorAll('[data-long-pressable="true"]')
         .forEach((element) =>{
 
-            element.addEventListener('mousedown', async(event)=>{
+            element.addEventListener(touchDownEvent, async(ev)=>{
                 pressTimer = setTimeout(async ()=>{
                     await toogleLongPressClick();
                 }, timeLimitLongPress)
             });
 
-            element.addEventListener('mouseup', async(event) => {
+            element.addEventListener(touchReleaseEvent, async(ev) => {
                 clearTimeout(pressTimer)
-                await simplePress(event);
+                await getKeyAndSendRequest(ev, Event.RELEASED);
             })
         });
 
