@@ -16,8 +16,6 @@ let isLongPressed = false;
 
 const timeLimitLongPress = 500;
 
-var pressTimer;
-
 const loadKeyReleaseAudio = async () => {
     try {
         const response = await fetch("./audio/key-release.mp3");
@@ -74,8 +72,8 @@ const keyReleaseAllFeedback = async () => {
     await vibrateOnKeyRelease();
 }
 
-const toogleLongPressClick = async () => {
-    document.querySelectorAll('[data-long-pressable="true"]')
+const toogleLongPressClick = async (element) => {
+    element.parentElement.querySelectorAll('[data-long-pressable="true"]')
         .forEach((element) => {
             if (!isLongPressed) {
                 element.classList.add('active');
@@ -87,9 +85,9 @@ const toogleLongPressClick = async () => {
     isLongPressed = !isLongPressed;
 }
 
-const deactivateLongPress = async () =>{
+const deactivateLongPress = async (element) =>{
     if(isLongPressed){
-        await toogleLongPressClick();
+        await toogleLongPressClick(element);
     }
 }
 
@@ -127,7 +125,7 @@ const getKeyAndSendRequest = async (ev, eventType) => {
     } catch (error) {
         console.error(error);
     } finally {
-        await deactivateLongPress();
+        await deactivateLongPress(target.parentElement);
     }
 }
 
@@ -136,15 +134,20 @@ const bindKeys = () => {
     document.querySelectorAll('[data-long-pressable="true"]')
         .forEach((element) =>{
 
+            var pressTimer;
+
             element.addEventListener(touchDownEvent, async(event)=>{
                 pressTimer = setTimeout(async () => {
-                    await toogleLongPressClick();
-                }, timeLimitLongPress)
+                    isLongPressed = true;
+                    await getKeyAndSendRequest(event, Event.PRESSED);
+                    await toogleLongPressClick(element);
+                }, timeLimitLongPress);
             });
 
             element.addEventListener(touchReleaseEvent, async(event) => {
                 clearTimeout(pressTimer);
                 await getKeyAndSendRequest(event, Event.RELEASED);
+                isLongPressed = false;
             })
         });
 
@@ -164,9 +167,10 @@ const bindKeys = () => {
             });
 
             element.addEventListener(touchReleaseEvent, async (ev) => {
+                await deactivateLongPress(element);
                 await getKeyAndSendRequest(ev, Event.RELEASED);
             });
-        })
+        });
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
