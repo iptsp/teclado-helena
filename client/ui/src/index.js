@@ -72,7 +72,7 @@ const keyReleaseAllFeedback = async () => {
     await vibrateOnKeyRelease();
 }
 
-const toogleLongPressClick = async (element) => {
+const toggleLongPressClick = async (element) => {
     element.parentElement.querySelectorAll('[data-long-pressable="true"]')
         .forEach((element) => {
             if (!isLongPressed) {
@@ -87,7 +87,7 @@ const toogleLongPressClick = async (element) => {
 
 const deactivateLongPress = async (element) =>{
     if(isLongPressed){
-        await toogleLongPressClick(element);
+        await toggleLongPressClick(element);
     }
 }
 
@@ -140,7 +140,7 @@ const bindKeys = () => {
                 pressTimer = setTimeout(async () => {
                     isLongPressed = true;
                     await getKeyAndSendRequest(event, Event.PRESSED);
-                    await toogleLongPressClick(element);
+                    await toggleLongPressClick(element);
                 }, timeLimitLongPress);
             });
 
