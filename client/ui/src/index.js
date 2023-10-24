@@ -143,7 +143,7 @@ const bindKeys = () => {
             });
 
             element.addEventListener(touchReleaseEvent, async(event) => {
-                clearTimeout(pressTimer)
+                clearTimeout(pressTimer);
                 await getKeyAndSendRequest(event, Event.RELEASED);
             })
         });
@@ -169,8 +169,8 @@ const bindKeys = () => {
         })
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    loadKeyReleaseAudio();
+document.addEventListener('DOMContentLoaded', async () => {
+    await loadKeyReleaseAudio();
     bindKeys();
 });
 
