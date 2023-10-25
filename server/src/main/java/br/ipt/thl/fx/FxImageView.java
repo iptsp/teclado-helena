@@ -16,6 +16,11 @@ public class FxImageView extends ImageView {
         doStyle(width, height);
     }
 
+    public FxImageView(Image image, int width, int height) {
+        doBehaviour(image);
+        doStyle(width, height);
+    }
+
     private void doStyle(final double width,
                          final double height) {
         if (width != -1) {
