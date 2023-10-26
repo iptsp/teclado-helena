@@ -8,6 +8,14 @@ import java.io.ByteArrayInputStream;
 public class FxImageView extends ImageView {
 
 
+    public FxImageView(final String url,
+                       final double width,
+                       final double height) {
+        super();
+        doBehaviour(new Image(url));
+        doStyle(width, height);
+    }
+
     public FxImageView(final byte[] image,
                        final double width,
                        final double height) {

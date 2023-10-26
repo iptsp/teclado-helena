@@ -1,9 +1,10 @@
 package br.ipt.thl;
 
-import br.ipt.thl.fx.FxLabel;
+import br.ipt.thl.fx.FxImageView;
 import br.ipt.thl.fx.FxStackPane;
 import javafx.application.Preloader;
 import javafx.scene.Scene;
+import javafx.scene.layout.Background;
 import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -23,8 +24,8 @@ public class UiApplicationSplashScreen extends Preloader {
 
     @Override
     public void start(final Stage stage) {
-        var screenWidth = 100d;
-        var screenHeight = 100d;
+        var screenWidth = 500d;
+        var screenHeight = 285d;
 
         var primaryScreenBounds = Screen.getPrimary()
                 .getBounds();
@@ -37,21 +38,22 @@ public class UiApplicationSplashScreen extends Preloader {
         this.stage.setWidth(screenWidth);
         this.stage.setResizable(false);
         this.stage.setMaximized(false);
-        this.stage.initStyle(StageStyle.UNDECORATED);
+        this.stage.initStyle(StageStyle.TRANSPARENT);
         this.stage.setX(x);
         this.stage.setY(y);
 
         var fxStackPane = new FxStackPane();
-        var fxLabel = new FxLabel("Splash Screen");
-        fxStackPane.addOnCenter(fxLabel);
+        var fxImageView = new FxImageView("images/splash-screen.png", 500, 285);
+        fxStackPane.addOnCenter(fxImageView);
+        fxStackPane.setBackground(Background.EMPTY);
 
         var scene = new Scene(
                 fxStackPane,
                 this.stage.getWidth(),
                 this.stage.getHeight()
         );
-        scene.getStylesheets()
-                .add("css/ui.css");
+        var styleSheets = scene.getStylesheets();
+        styleSheets.add("css/ui.css");
         scene.setFill(Color.TRANSPARENT);
 
         this.stage.setScene(scene);
