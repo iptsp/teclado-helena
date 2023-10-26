@@ -1,10 +1,9 @@
 package br.ipt.thl;
 
-import br.ipt.thl.fx.FxStackPane;
 import br.ipt.thl.fx.FxImageView;
+import br.ipt.thl.fx.FxStackPane;
 import javafx.application.Preloader;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
 import javafx.scene.layout.Background;
 import javafx.scene.paint.Color;
 import javafx.stage.Screen;
@@ -44,10 +43,8 @@ public class UiApplicationSplashScreen extends Preloader {
         this.stage.setY(y);
 
         var fxStackPane = new FxStackPane();
-        Image image = new Image("/public/images/splash-screen.png");
-        FxImageView imageView = new FxImageView(image, 500, 285);
-
-        fxStackPane.addOnCenter(imageView);
+        var fxImageView = new FxImageView("images/splash-screen.png", 500, 285);
+        fxStackPane.addOnCenter(fxImageView);
         fxStackPane.setBackground(Background.EMPTY);
 
         var scene = new Scene(
@@ -55,8 +52,8 @@ public class UiApplicationSplashScreen extends Preloader {
                 this.stage.getWidth(),
                 this.stage.getHeight()
         );
-        scene.getStylesheets()
-                .add("css/ui.css");
+        var styleSheets = scene.getStylesheets();
+        styleSheets.add("css/ui.css");
         scene.setFill(Color.TRANSPARENT);
 
         this.stage.setScene(scene);
