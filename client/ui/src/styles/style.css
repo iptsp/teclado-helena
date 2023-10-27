@@ -4,7 +4,14 @@
     box-sizing: border-box;
 }
 
+html {
+    width: 100%;
+    height: 100%;
+}
+
 body {
+    width: 100%;
+    height: 100%;
     font-family: 'Montserrat', sans-serif;
     font-weight: bold;
     font-size: 60px;
@@ -17,22 +24,30 @@ body {
 }
 
 #root {
-    width: 1920px;
-    height: 1080px;
+    max-width: 100%;
+    max-height: 100%;
     /* if overflow is hidden, check for your code, dont change this section */
     overflow: hidden;
+    aspect-ratio: 16/9;
+    margin: 0 auto;
 }
 
 .key-row {
     display: flex;
     align-items: center;
+    height: 16.66%;
 }
 
 .key {
-    width: 192px;
-    height: 180px;
-    padding: 8px 4px;
+    width: 10%;
+    height: 100%;
+    padding: 0.31% 0.21%;
     cursor: pointer;
+    font-size: 3vw;
+}
+
+.key.modifier {
+font-size: 1.5vw;
 }
 
 /* numeric key */
@@ -42,11 +57,11 @@ body {
 
 /* inner key */
 .inner {
-    width: 184px;
-    height: 163px;
-    border: 1px solid #cecece;
-    box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.2);
-    border-radius: 22px;
+    width: 100%;
+    height: 100%;
+    border: .1vw solid #cecece;
+    box-shadow: 0 .1vw .3vw 0 rgba(0, 0, 0, 0.2);
+    border-radius: 1.2vw;
     background-color: #f0f0f0;
     margin: auto;
 }
@@ -57,6 +72,9 @@ body {
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.4);
 }
 
+.inner img {
+    width: 2vw;
+}
 
 /* default key */
 .default {
@@ -90,30 +108,22 @@ body {
     display: flex;
     justify-content: center;
     align-items: flex-end;
-    padding-bottom: 15px;
+    padding-bottom: 1vw;
 }
 
 
 /* space key */
 .space {
-    width: calc(192px * 5 + 3 * 4px);
-}
-
-.space > .inner {
-    width: calc(188px * 5 + 12px);
+    width: 50%;
 }
 
 /* backspace key */
 .backspace {
-    width: calc(192px * 2 );
-}
-
-.backspace > .inner {
-    width: calc(188px * 2 );
+    width: 20%;
 }
 
 .delete {
-    font-size: 35px;
+    font-size: 1.5vw;
     font-weight: bold;
 }
 
@@ -128,7 +138,7 @@ body {
 
 .vertical-split .t {
     color: #2632384d;
-    font-size: 36px;
+    font-size: 1.7vw;
 }
 
 .vertical-split .divider {
@@ -145,6 +155,15 @@ body {
     color: #2632384d;
 }
 
+.vertical-split .b.left-arrow {
+    transform: rotate(90deg);
+    display: block;
+}
+
+.vertical-split .b.right-arrow {
+    transform: rotate(-90deg);
+    display: block;
+}
 
 /* shift behaviour */
 [data-shifter="true"].active .inner {
@@ -168,7 +187,11 @@ body {
 
 .shiftable .tl {
     color: #2632384d;
-    font-size: 36px;
+    font-size: 1.8vw;
+}
+
+.shiftable .bl {
+    font-size: 2vw;
 }
 
 .shiftable.active .tl {
