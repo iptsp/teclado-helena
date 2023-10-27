@@ -51,7 +51,7 @@ Node 18.x Docs  (https://nodejs.org/dist/latest-v18.x/docs/api/)
 
 # Generate MSIX Resources Pri
 
-Assets images will be generated based on ```server/jpackage/launcher.ico``` file. 
+Assets images will be generated based on ```server/jpackage/launcher.png``` file. 
 Change it to change the icon assets.
 
 
