@@ -272,10 +272,10 @@ const bindMouse = () => {
                 lastPosition = y;
 
                 if (direction === "up") {
-                    await mouseScrollUp(5);
+                    await mouseScrollUp(1);
                 }
                 if (direction === "down") {
-                    await mouseScrollDown(5);
+                    await mouseScrollDown(1);
                 }
 
             });
