@@ -285,7 +285,7 @@ const toggleMouse = () => {
     if (isMouseEnabled) {
         mouse.style.display = 'none';
     } else {
-        mouse.style.display = 'block';
+        mouse.style.display = 'flex';
     }
 
     isMouseEnabled = !isMouseEnabled;
@@ -369,7 +369,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     await loadKeyReleaseAudio();
     bindMouse();
     bindKeys();
-    toggleMouse();
 });
 
 
