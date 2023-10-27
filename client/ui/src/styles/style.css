@@ -21,6 +21,96 @@ body {
     overflow: hidden;
 }
 
+
+/* mouse container */
+.mouse-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 100;
+    width: 1920px;
+    height: 1200px;
+    background-color: #0000004d;
+    cursor: pointer;
+    display: none;
+}
+
+.mouse-container .body {
+    border-radius: 22px;
+    background-color: #f0f0f0;
+    margin: 50px;
+    height: 1100px;
+    display: grid;
+    grid-template-columns: auto 10%;
+    grid-template-rows: 150px auto 200px;
+    grid-template-areas: 'toolbar toolbar'
+                         'content scroll'
+                         'footer footer';
+}
+
+
+.mouse-container .toolbar {
+    grid-area: toolbar;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 2px solid black;
+}
+
+.mouse-container .toolbar .close {
+    margin-right: 40px;
+}
+
+.mouse-container .footer {
+    grid-area: footer;
+    padding: 10px;
+    border-top: 2px solid black;
+    display: flex;
+    flex-direction: row;
+}
+
+.mouse-container .footer .left-click {
+    width: 50%;
+    border-right: 1px solid black;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.mouse-container .footer .right-click {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.mouse-container .content {
+    grid-area: content;
+    padding: 10px;
+}
+
+.mouse-container .scroll {
+    grid-area: scroll;
+    padding: 10px;
+    border-left: 2px solid black;
+    overflow: hidden;
+}
+
+.mouse-container .scroll div {
+    margin: 0 30px;
+    height: 100px;
+    border-bottom: 5px solid black;
+}
+
+.mouse-container .content {
+    border-radius: 22px;
+    background-color: #f0f0f0;
+    padding: 10px;
+}
+
 .key-row {
     display: flex;
     align-items: center;
@@ -94,11 +184,11 @@ body {
 
 /* space key */
 .space {
-    width: calc(196px * 4);
+    width: calc(196px * 3);
 }
 
 .space > .inner {
-    width: calc(182px * 4 + 24px);
+    width: calc(182px * 3 + 24px);
 }
 
 

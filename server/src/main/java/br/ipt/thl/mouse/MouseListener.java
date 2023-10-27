@@ -59,7 +59,7 @@ public class MouseListener {
                     return null;
                 })
                 .thenAccept(res -> {
-                    LOGGER.debug("Mouse move sent");
+                    LOGGER.debug("Mouse move sent to x: {} and y: {}", x, y);
                 });
     }
 
