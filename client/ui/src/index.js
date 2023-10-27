@@ -1,7 +1,5 @@
 import './styles/style.css';
 
-const keyReleaseAudio = new Audio('./audio/key-release.wav');
-
 const currentUrl = new URL(window.location.href);
 const currentHost = currentUrl.hostname;
 
@@ -12,6 +10,25 @@ const touchDownEvent = isTouchDevice ? 'touchstart' : 'mousedown';
 const touchReleaseEvent = isTouchDevice ? 'touchend' : 'mouseup';
 const touchMoveEvent = isTouchDevice ? 'touchmove' : 'mousemove';
 let isMouseEnabled = false;
+
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+let audioBuffer = null;
+
+let isLongPressed = false;
+
+const timeLimitLongPress = 500;
+
+var pressTimer;
+
+const loadKeyReleaseAudio = async () => {
+    try {
+        const response = await fetch("./audio/key-release.mp3");
+        const buffer = await response.arrayBuffer();
+        audioBuffer = await audioCtx.decodeAudioData(buffer);
+    } catch (error) {
+        console.error(error);
+    }
+}
 
 const Event = {
     PRESSED: "PRESSED",
@@ -106,7 +123,10 @@ const api = {
 
 const playKeyReleaseAudio = async () => {
     try {
-        await keyReleaseAudio.play();
+        const releaseAudio = await audioCtx.createBufferSource();
+        releaseAudio.buffer = audioBuffer;
+        releaseAudio.connect(audioCtx.destination);
+        releaseAudio.start(0);
     } catch (error) {
         console.error(error);
     }
@@ -122,6 +142,25 @@ const vibrateOnKeyRelease = async () => {
 const keyReleaseAllFeedback = async () => {
     await playKeyReleaseAudio();
     await vibrateOnKeyRelease();
+}
+
+const toogleLongPressClick = async () => {
+    document.querySelectorAll('[data-long-pressable="true"]')
+        .forEach((element) => {
+            if (!isLongPressed) {
+                element.classList.add('active');
+            } else {
+                element.classList.remove('active');
+            }
+        });
+
+    isLongPressed = !isLongPressed;
+}
+
+const deactivateLongPress = async () =>{
+    if(isLongPressed){
+        await toogleLongPressClick();
+    }
 }
 
 const findForDatasetValueIncludingAncestors = (el, attr) => {
@@ -142,19 +181,42 @@ const findForDatasetValueIncludingAncestors = (el, attr) => {
 }
 
 const getKeyAndSendRequest = async (ev, eventType) => {
+
+    const calcText = () => {
+        if (isLongPressed){
+            return findForDatasetValueIncludingAncestors(target,'longPress')
+        }
+        return findForDatasetValueIncludingAncestors(target, 'key');
+    }
+
     const {target} = ev;
 
     try {
-        const text = findForDatasetValueIncludingAncestors(target, 'key');
+        const text = calcText();
         await api.keyboard.inputText(text, eventType);
     } catch (error) {
         console.error(error);
     } finally {
-        await keyReleaseAllFeedback();
+        await deactivateLongPress();
     }
 }
 
 const bindKeys = () => {
+
+    document.querySelectorAll('[data-long-pressable="true"]')
+        .forEach((element) =>{
+
+            element.addEventListener(touchDownEvent, async(event)=>{
+                pressTimer = setTimeout(async () => {
+                    await toogleLongPressClick();
+                }, timeLimitLongPress)
+            });
+
+            element.addEventListener(touchReleaseEvent, async(event) => {
+                clearTimeout(pressTimer);
+                await getKeyAndSendRequest(event, Event.RELEASED);
+            })
+        });
 
     document.querySelectorAll('[data-feedback="audio|vibrate"]')
         .forEach((element) => {
@@ -303,7 +365,8 @@ const bindMouse = () => {
         });
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+    await loadKeyReleaseAudio();
     bindMouse();
     bindKeys();
     toggleMouse();

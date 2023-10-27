@@ -1,6 +1,7 @@
 package br.ipt.thl.os;
 
 import br.ipt.thl.common.Platforms;
+import org.slf4j.Logger;
 import org.springframework.stereotype.Component;
 
 import java.awt.*;
@@ -8,6 +9,8 @@ import java.util.concurrent.Callable;
 
 @Component
 public class WindowsOsDispatcher implements OsDispatcher {
+
+    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(WindowsOsDispatcher.class);
 
     private final Robot robot;
 
@@ -32,7 +35,11 @@ public class WindowsOsDispatcher implements OsDispatcher {
     @Override
     public void keyPress(final int keyCode) {
         runOnPlatformAsFunction(() -> {
-            robot.keyPress(keyCode);
+            try {
+                robot.keyPress(keyCode);
+            } catch (IllegalArgumentException e) {
+                LOGGER.error("Invalid key code: {}", keyCode);
+            }
             return null;
         });
     }
@@ -40,7 +47,11 @@ public class WindowsOsDispatcher implements OsDispatcher {
     @Override
     public void keyRelease(final int keyCode) {
         runOnPlatformAsFunction(() -> {
-            robot.keyRelease(keyCode);
+            try {
+                robot.keyRelease(keyCode);
+            } catch (IllegalArgumentException e) {
+                LOGGER.error("Invalid key code: {}", keyCode);
+            }
             return null;
         });
     }
