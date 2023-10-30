@@ -38,7 +38,7 @@ public class WindowsOsDispatcher implements OsDispatcher {
             try {
                 robot.keyPress(keyCode);
             } catch (IllegalArgumentException e) {
-                LOGGER.error("Invalid key code: {}", keyCode);
+                LOGGER.error("Invalid key code: {}", keyCode, e);
             }
             return null;
         });
@@ -50,7 +50,7 @@ public class WindowsOsDispatcher implements OsDispatcher {
             try {
                 robot.keyRelease(keyCode);
             } catch (IllegalArgumentException e) {
-                LOGGER.error("Invalid key code: {}", keyCode);
+                LOGGER.error("Invalid key code: {}", keyCode, e);
             }
             return null;
         });
