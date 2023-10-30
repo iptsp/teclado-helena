@@ -7,6 +7,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.awt.event.KeyEvent;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,357 +17,149 @@ import java.util.concurrent.CompletableFuture;
 
 public class AsyncKeyboardInputService {
     private final OsDispatcher osDispatcher;
-    private static final Map<String, Map<KeyShiftState, List<KeyMap>>> keyMap = new HashMap<>();
+    private static final Map<String, Map<KeyShiftState, Map<KeyboardEventType, List<KeyMap>>>> keyMap = new HashMap<>();
     private boolean isShiftPressed = false;
 
     static {
 
-        keyMap.put("esc", Map.of(
-                KeyShiftState.UNSHIFTED, List.of(
-                        new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_ESCAPE),
-                        new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_ESCAPE)
-                ),
-                KeyShiftState.SHIFTED, List.of(
-                        new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_ESCAPE),
-                        new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_ESCAPE)
-                )
-        ));
+        keyMap.put("esc", createDefaultKeyMap(KeyEvent.VK_ESCAPE));
 
-        keyMap.put("backspace", Map.of(
-                KeyShiftState.UNSHIFTED, List.of(
-                        new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_BACK_SPACE),
-                        new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_BACK_SPACE)
-                ),
-                KeyShiftState.SHIFTED, List.of(
-                        new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_BACK_SPACE),
-                        new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_BACK_SPACE)
-                )
-        ));
+        keyMap.put("backspace", createDefaultKeyMap(KeyEvent.VK_BACK_SPACE));
 
-        keyMap.put("space", Map.of(
-                KeyShiftState.UNSHIFTED, List.of(
-                        new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_SPACE),
-                        new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_SPACE)
-                ),
-                KeyShiftState.SHIFTED, List.of(
-                        new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_SPACE),
-                        new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_SPACE)
-                )
-        ));
+        keyMap.put("space", createDefaultKeyMap(KeyEvent.VK_SPACE));
 
-        keyMap.put("enter", Map.of(
-                KeyShiftState.UNSHIFTED, List.of(
-                        new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_ENTER),
-                        new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_ENTER)
-                ),
-                KeyShiftState.SHIFTED, List.of(
-                        new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_ENTER),
-                        new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_ENTER)
-                )
-        ));
+        keyMap.put("enter", createDefaultKeyMap(KeyEvent.VK_ENTER));
 
-        keyMap.put("tab", Map.of(
-                KeyShiftState.UNSHIFTED, List.of(
-                        new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_TAB),
-                        new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_TAB)
-                ),
-                KeyShiftState.SHIFTED, List.of(
-                        new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_TAB),
-                        new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_TAB)
-                )
-        ));
+        keyMap.put("tab", createDefaultKeyMap(KeyEvent.VK_TAB));
 
-        keyMap.put("caps-lock", Map.of(
-                KeyShiftState.UNSHIFTED, List.of(
-                        new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_CAPS_LOCK),
-                        new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_CAPS_LOCK)
-                ),
-                KeyShiftState.SHIFTED, List.of(
-                        new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_CAPS_LOCK),
-                        new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_CAPS_LOCK)
-                )
-        ));
+        keyMap.put("caps-lock", createDefaultKeyMap(KeyEvent.VK_CAPS_LOCK));
 
-        keyMap.put("left-arrow", Map.of(
-                KeyShiftState.UNSHIFTED, List.of(
-                        new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_LEFT),
-                        new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_LEFT)
-                ),
-                KeyShiftState.SHIFTED, List.of(
-                        new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_LEFT),
-                        new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_LEFT)
-                )
-        ));
+        keyMap.put("left-arrow", createDefaultKeyMap(KeyEvent.VK_LEFT));
 
-        keyMap.put("right-arrow", Map.of(
-                KeyShiftState.UNSHIFTED, List.of(
-                        new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_RIGHT),
-                        new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_RIGHT)
-                ),
-                KeyShiftState.SHIFTED, List.of(
-                        new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_RIGHT),
-                        new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_RIGHT)
-                )
-        ));
+        keyMap.put("right-arrow", createDefaultKeyMap(KeyEvent.VK_RIGHT));
 
-        keyMap.put("up-arrow", Map.of(
-                KeyShiftState.UNSHIFTED, List.of(
-                        new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_UP),
-                        new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_UP)
-                ),
-                KeyShiftState.SHIFTED, List.of(
-                        new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_UP),
-                        new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_UP)
-                )
-        ));
+        keyMap.put("up-arrow", createDefaultKeyMap(KeyEvent.VK_UP));
 
-        keyMap.put("down-arrow", Map.of(
-                KeyShiftState.UNSHIFTED, List.of(
-                        new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_DOWN),
-                        new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_DOWN)
-                ),
-                KeyShiftState.SHIFTED, List.of(
-                        new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_DOWN),
-                        new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_DOWN)
-                )
-        ));
+        keyMap.put("down-arrow", createDefaultKeyMap(KeyEvent.VK_DOWN));
 
-        keyMap.put("shift", Map.of(
-                KeyShiftState.UNSHIFTED, List.of(
-                        new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_SHIFT),
-                        new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_SHIFT)
-                ),
-                KeyShiftState.SHIFTED, List.of(
-                        new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_SHIFT),
-                        new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_SHIFT)
-                )
-        ));
+        keyMap.put("shift", createDefaultKeyMap(KeyEvent.VK_SHIFT));
 
-        keyMap.put("ctrl", Map.of(
-                KeyShiftState.UNSHIFTED, List.of(
-                        new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_CONTROL),
-                        new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_CONTROL)
-                ),
-                KeyShiftState.SHIFTED, List.of(
-                        new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_CONTROL),
-                        new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_CONTROL)
-                )
-        ));
+        keyMap.put("ctrl", createDefaultKeyMap(KeyEvent.VK_CONTROL));
 
-        keyMap.put("alt", Map.of(
-                KeyShiftState.UNSHIFTED, List.of(
-                        new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_ALT),
-                        new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_ALT)
-                ),
-                KeyShiftState.SHIFTED, List.of(
-                        new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_ALT),
-                        new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_ALT)
-                )
-        ));
+        keyMap.put("alt", createDefaultKeyMap(KeyEvent.VK_ALT));
 
-        keyMap.put("delete", Map.of(
-                KeyShiftState.UNSHIFTED, List.of(
-                        new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_DELETE),
-                        new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_DELETE)
-                ),
-                KeyShiftState.SHIFTED, List.of(
-                        new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_DELETE),
-                        new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_DELETE)
-                )
-        ));
+        keyMap.put("delete", createDefaultKeyMap(KeyEvent.VK_DELETE));
 
-        keyMap.put("home", Map.of(
-                KeyShiftState.UNSHIFTED, List.of(
-                        new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_HOME),
-                        new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_HOME)
-                ),
-                KeyShiftState.SHIFTED, List.of(
-                        new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_HOME),
-                        new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_HOME)
-                )
-        ));
+        keyMap.put("home", createDefaultKeyMap(KeyEvent.VK_HOME));
 
-        keyMap.put("end", Map.of(
-                KeyShiftState.UNSHIFTED, List.of(
-                        new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_END),
-                        new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_END)
-                ),
-                KeyShiftState.SHIFTED, List.of(
-                        new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_END),
-                        new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_END)
-                )
-        ));
+        keyMap.put("end", createDefaultKeyMap(KeyEvent.VK_END));
 
-        keyMap.put("page-up", Map.of(
-                KeyShiftState.UNSHIFTED, List.of(
-                        new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_PAGE_UP),
-                        new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_PAGE_UP)
-                ),
-                KeyShiftState.SHIFTED, List.of(
-                        new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_PAGE_UP),
-                        new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_PAGE_UP)
-                )
-        ));
+        keyMap.put("page-up", createDefaultKeyMap(KeyEvent.VK_PAGE_UP));
 
-        keyMap.put("page-down", Map.of(
-                KeyShiftState.UNSHIFTED, List.of(
-                        new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_PAGE_DOWN),
-                        new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_PAGE_DOWN)
-                ),
-                KeyShiftState.SHIFTED, List.of(
-                        new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_PAGE_DOWN),
-                        new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_PAGE_DOWN)
-                )
-        ));
+        keyMap.put("page-down", createDefaultKeyMap(KeyEvent.VK_PAGE_DOWN));
 
-        keyMap.put("insert", Map.of(
-                KeyShiftState.UNSHIFTED, List.of(
-                        new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_INSERT),
-                        new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_INSERT)
-                ),
-                KeyShiftState.SHIFTED, List.of(
-                        new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_INSERT),
-                        new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_INSERT)
-                )
-        ));
+        keyMap.put("insert", createDefaultKeyMap(KeyEvent.VK_INSERT));
 
-        keyMap.put("period", Map.of(
-                KeyShiftState.UNSHIFTED, List.of(
-                        new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_PERIOD),
-                        new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_PERIOD)
-                ),
-                KeyShiftState.SHIFTED, List.of(
-                        new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_PERIOD),
-                        new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_PERIOD)
-                )
-        ));
+        keyMap.put("period", createDefaultKeyMap(KeyEvent.VK_PERIOD));
 
-        keyMap.put("grave", Map.of(
-                KeyShiftState.UNSHIFTED, List.of(
-                        new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_DEAD_GRAVE),
-                        new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_DEAD_GRAVE)
-                ),
-                KeyShiftState.SHIFTED, List.of(
-                        new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_DEAD_GRAVE),
-                        new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_DEAD_GRAVE)
-                )
-        ));
+        keyMap.put("grave", createDefaultKeyMap(KeyEvent.VK_DEAD_GRAVE));
 
-        keyMap.put("quote", Map.of(
-                KeyShiftState.UNSHIFTED, List.of(
-                        new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_QUOTE),
-                        new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_QUOTE)
-                ),
-                KeyShiftState.SHIFTED, List.of(
-                        new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_QUOTE),
-                        new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_QUOTE)
-                )
-        ));
+        keyMap.put("quote", createDefaultKeyMap(KeyEvent.VK_QUOTE));
 
-        keyMap.put("semicolon", Map.of(
-                KeyShiftState.UNSHIFTED, List.of(
-                        new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_SEMICOLON),
-                        new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_SEMICOLON)
-                ),
-                KeyShiftState.SHIFTED, List.of(
-                        new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_SEMICOLON),
-                        new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_SEMICOLON)
-                )
-        ));
+        keyMap.put("semicolon", createDefaultKeyMap(KeyEvent.VK_SEMICOLON));
 
-        keyMap.put("tilde", Map.of(
-                KeyShiftState.UNSHIFTED, List.of(
-                        new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_DEAD_TILDE),
-                        new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_DEAD_TILDE)
-                ),
-                KeyShiftState.SHIFTED, List.of(
-                        new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_DEAD_TILDE),
-                        new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_DEAD_TILDE)
-                )
-        ));
+        keyMap.put("tilde", createDefaultKeyMap(KeyEvent.VK_DEAD_TILDE));
 
-        keyMap.put("acute", Map.of(
-                KeyShiftState.UNSHIFTED, List.of(
-                        new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_DEAD_ACUTE),
-                        new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_DEAD_ACUTE)
-                ),
-                KeyShiftState.SHIFTED, List.of(
-                        new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_DEAD_ACUTE),
-                        new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_DEAD_ACUTE)
-                )
-        ));
+        keyMap.put("acute", createDefaultKeyMap(KeyEvent.VK_DEAD_ACUTE));
 
-        keyMap.put("backslash", Map.of(
-                KeyShiftState.UNSHIFTED, List.of(
-                        new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_BACK_SLASH),
-                        new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_BACK_SLASH)
-                ),
-                KeyShiftState.SHIFTED, List.of(
-                        new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_BACK_SLASH),
-                        new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_BACK_SLASH)
-                )
-        ));
+        keyMap.put("backslash", createDefaultKeyMap(KeyEvent.VK_BACK_SLASH));
 
         keyMap.put("slash", Map.of(
-                KeyShiftState.UNSHIFTED, List.of(
-                        new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_ALT),
-                        new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_NUMPAD4),
-                        new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_NUMPAD4),
-                        new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_NUMPAD7),
-                        new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_NUMPAD7),
-                        new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_ALT)
-                ),
-                KeyShiftState.SHIFTED, List.of(
-                        new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_ALT),
-                        new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_NUMPAD6),
-                        new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_NUMPAD6),
-                        new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_NUMPAD3),
-                        new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_NUMPAD3),
-                        new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_ALT)
-                )
+                KeyShiftState.UNSHIFTED, Map.of(
+                        KeyboardEventType.PRESSED, List.of(
+                                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_ALT),
+                                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_NUMPAD4),
+                                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_NUMPAD4),
+                                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_NUMPAD7),
+                                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_NUMPAD7),
+                                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_ALT)),
+                        KeyboardEventType.RELEASED, Collections.emptyList()),
+                KeyShiftState.SHIFTED, Map.of(
+                        KeyboardEventType.PRESSED, List.of(
+                                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_SHIFT),
+                                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_ALT),
+                                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_NUMPAD6),
+                                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_NUMPAD6),
+                                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_NUMPAD3),
+                                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_NUMPAD3),
+                                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_ALT),
+                                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_SHIFT)),
+                        KeyboardEventType.RELEASED, Collections.emptyList())
         ));
 
         keyMap.put("colon", Map.of(
-                KeyShiftState.UNSHIFTED, List.of(
-                        new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_ALT),
-                        new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_NUMPAD4),
-                        new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_NUMPAD4),
-                        new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_NUMPAD4),
-                        new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_NUMPAD4),
-                        new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_ALT)
-                ),
-                KeyShiftState.SHIFTED, List.of(
-                        new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_ALT),
-                        new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_NUMPAD6),
-                        new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_NUMPAD6),
-                        new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_NUMPAD0),
-                        new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_NUMPAD0),
-                        new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_ALT)
-                )
+                KeyShiftState.UNSHIFTED, Map.of(
+                        KeyboardEventType.PRESSED, List.of(
+                                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_ALT),
+                                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_NUMPAD4),
+                                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_NUMPAD4),
+                                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_NUMPAD4),
+                                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_NUMPAD4),
+                                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_ALT)),
+                        KeyboardEventType.RELEASED, Collections.emptyList()),
+                KeyShiftState.SHIFTED, Map.of(
+                        KeyboardEventType.PRESSED, List.of(
+                                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_SHIFT),
+                                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_ALT),
+                                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_NUMPAD6),
+                                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_NUMPAD6),
+                                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_NUMPAD0),
+                                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_NUMPAD0),
+                                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_ALT),
+                                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_SHIFT)),
+                        KeyboardEventType.RELEASED, Collections.emptyList())
         ));
 
         keyMap.put("cedilla", Map.of(
-                KeyShiftState.UNSHIFTED, List.of(
-                        new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_ALT),
-                        new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_NUMPAD1),
-                        new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_NUMPAD1),
-                        new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_NUMPAD3),
-                        new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_NUMPAD3),
-                        new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_NUMPAD5),
-                        new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_NUMPAD5),
-                        new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_ALT)
-                ),
-                KeyShiftState.SHIFTED, List.of(
-                        new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_ALT),
-                        new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_NUMPAD1),
-                        new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_NUMPAD1),
-                        new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_NUMPAD2),
-                        new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_NUMPAD2),
-                        new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_NUMPAD8),
-                        new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_NUMPAD8),
-                        new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_ALT)
-                )
+                KeyShiftState.UNSHIFTED, Map.of(
+                        KeyboardEventType.PRESSED, List.of(
+                                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_ALT),
+                                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_NUMPAD1),
+                                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_NUMPAD1),
+                                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_NUMPAD3),
+                                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_NUMPAD3),
+                                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_NUMPAD5),
+                                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_NUMPAD5),
+                                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_ALT)),
+                        KeyboardEventType.RELEASED, Collections.emptyList()),
+                KeyShiftState.SHIFTED, Map.of(
+                        KeyboardEventType.PRESSED, List.of(
+                                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_SHIFT),
+                                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_ALT),
+                                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_NUMPAD1),
+                                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_NUMPAD1),
+                                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_NUMPAD2),
+                                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_NUMPAD2),
+                                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_NUMPAD8),
+                                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_NUMPAD8),
+                                new KeyMap(KeyMapEvent.RELEASE, KeyEvent.VK_ALT),
+                                new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_SHIFT)),
+                        KeyboardEventType.RELEASED, Collections.emptyList())
         ));
+    }
+
+    private static Map<KeyShiftState, Map<KeyboardEventType, List<KeyMap>>> createDefaultKeyMap(int keyCode) {
+        return Map.of(
+                KeyShiftState.UNSHIFTED, createDefaultEventMap(keyCode),
+                KeyShiftState.SHIFTED, createDefaultEventMap(keyCode)
+        );
+    }
+
+    private static Map<KeyboardEventType, List<KeyMap>> createDefaultEventMap(int keyCode) {
+        return Map.of(
+                KeyboardEventType.PRESSED, List.of(new KeyMap(KeyMapEvent.PRESS, keyCode)),
+                KeyboardEventType.RELEASED, List.of(new KeyMap(KeyMapEvent.RELEASE, keyCode))
+        );
     }
 
     @Autowired
@@ -382,10 +175,9 @@ public class AsyncKeyboardInputService {
         }
 
         var keyState = isShiftPressed ? KeyShiftState.SHIFTED : KeyShiftState.UNSHIFTED;
-        var keyEvent = event == KeyboardEventType.PRESSED ? KeyMapEvent.PRESS : KeyMapEvent.RELEASE;
-        var keyCodes = keyMap.getOrDefault(text, toKeyMap(text, keyState, keyEvent));
+        var keyCodes = keyMap.getOrDefault(text, toKeyMap(text));
 
-        keyCodes.get(keyState).forEach(keyMap -> {
+        keyCodes.get(keyState).get(event).forEach(keyMap -> {
             switch (keyMap.keyMapEvent) {
                 case PRESS -> osDispatcher.keyPress(keyMap.keyCode);
                 case RELEASE -> osDispatcher.keyRelease(keyMap.keyCode);
@@ -395,16 +187,9 @@ public class AsyncKeyboardInputService {
         return CompletableFuture.completedFuture(null);
     }
 
-    private Map<KeyShiftState, List<KeyMap>> toKeyMap(final String text,
-                                                       final KeyShiftState keyShiftState,
-                                                       final KeyMapEvent keyMapEvent) {
+    private Map<KeyShiftState, Map<KeyboardEventType, List<KeyMap>>> toKeyMap(final String text) {
         var keyCode = KeyEvent.getExtendedKeyCodeForChar(text.charAt(0));
-        return Map.of(keyShiftState, List.of(
-                new KeyMap(keyMapEvent, keyCode)
-        ));
-    }
-
-    record KeyState(KeyShiftState keyShiftState, KeyMapEvent keyMapEvent) {
+        return createDefaultKeyMap(keyCode);
     }
 
     record KeyMap(KeyMapEvent keyMapEvent, int keyCode) {
