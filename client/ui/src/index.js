@@ -5,22 +5,20 @@ const currentHost = currentUrl.hostname;
 
 const endpoint = `http://${currentHost}:8080/api/v1`;
 
-let isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints;
-let touchDownEvent = isTouchDevice ? 'touchstart' : 'mousedown';
-let touchReleaseEvent = isTouchDevice ? 'touchend' : 'mouseup';
+let hasPointerEvents = (('PointerEvent' in window) || (window.navigator && 'msPointerEnabled' in window.navigator));
+let isTouch = (('ontouchstart' in window) || (navigator.MaxTouchPoints > 0) || (navigator.msMaxTouchPoints > 0));
+
+let pointerDownEvent = hasPointerEvents ? 'pointerdown' : isTouch ? 'touchstart' : 'mousedown';
+let pointerUpEvent = hasPointerEvents ? 'pointerup' : isTouch ? 'touchend' : 'mouseup';
 
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 let audioBuffer = null;
 
-let isLongPressed = false;
-
 const timeLimitLongPress = 500;
 
-var pressTimer;
-
-const loadKeyReleaseAudio = async () => {
+const loadKeyPressAudio = async () => {
     try {
-        const response = await fetch("./audio/key-release.mp3");
+        const response = await fetch("./audio/key-press.mp3");
         const buffer = await response.arrayBuffer();
         audioBuffer = await audioCtx.decodeAudioData(buffer);
     } catch (error) {
@@ -51,126 +49,120 @@ const api = {
     }
 }
 
-const playKeyReleaseAudio = async () => {
+const playKeyPressAudio = async () => {
     try {
-        const releaseAudio = await audioCtx.createBufferSource();
-        releaseAudio.buffer = audioBuffer;
-        releaseAudio.connect(audioCtx.destination);
-        releaseAudio.start(0);
+        const keyPressAudio = await audioCtx.createBufferSource();
+        keyPressAudio.buffer = audioBuffer;
+        keyPressAudio.connect(audioCtx.destination);
+        keyPressAudio.start(0);
     } catch (error) {
         console.error(error);
     }
 }
 
-const vibrateOnKeyRelease = async () => {
+const vibrateOnKeyPress = async () => {
     if (!navigator.vibrate) {
         return;
     }
     return navigator.vibrate(100);
 }
 
-const keyReleaseAllFeedback = async () => {
-    await playKeyReleaseAudio();
-    await vibrateOnKeyRelease();
+const keyPressAllFeedback = async () => {
+    await playKeyPressAudio();
+    await vibrateOnKeyPress();
 }
 
-const toogleLongPressClick = async () => {
-    document.querySelectorAll('[data-long-pressable="true"]')
-        .forEach((element) => {
-            if (!isLongPressed) {
-                element.classList.add('active');
-            } else {
-                element.classList.remove('active');
-            }
-        });
-
-    isLongPressed = !isLongPressed;
-}
-
-const deactivateLongPress = async () =>{
-    if(isLongPressed){
-        await toogleLongPressClick();
+const setStylePressed = async (element, isPressed) => {
+    if (isPressed) {
+        element.classList.add('active');
+    } else {
+        element.classList.remove('active');
     }
-}
+};
 
-const findForDatasetValueIncludingAncestors = (el, attr) => {
-
-    if (el.target && el.target.dataset[attr]) {
-        return el.target.dataset[attr];
-    }
-
-    if (el.parentElement && el.parentElement.dataset[attr]) {
-        return el.parentElement.dataset[attr];
-    }
-
-    if (el.parentElement.parentElement && el.parentElement.parentElement.dataset[attr]) {
-        return el.parentElement.parentElement.dataset[attr];
-    }
-
-    throw new Error(`No dataset value found for element ${el} with attr ${attr}`);
-}
-
-const getKeyAndSendRequest = async (ev, eventType) => {
-
-    const calcText = () => {
-        if (isLongPressed){
-            return findForDatasetValueIncludingAncestors(target,'longPress')
+const setStyleShifted = async (element, isShifted) => {
+    if (element.hasAttribute('data-shiftable')) {
+        if (isShifted) {
+            element.firstElementChild.classList.add('shifted');
+        } else {
+            element.firstElementChild.classList.remove('shifted');
         }
-        return findForDatasetValueIncludingAncestors(target, 'key');
     }
+};
 
-    const {target} = ev;
+const setStyleLongPressed = async (element, isLongPressed) => {
+    if (element.hasAttribute('data-long-press')) {
+        if (isLongPressed) {
+            element.firstElementChild.classList.add('active');
+        } else {
+            element.firstElementChild.classList.remove('active');
+        }
+    }
+};
 
+const getKeyAndSendRequest = async (element, isLongPress, eventType) => {
+    const text = element.dataset[isLongPress ? 'longPress' : 'key'];
     try {
-        const text = calcText();
         await api.keyboard.inputText(text, eventType);
     } catch (error) {
         console.error(error);
-    } finally {
-        await deactivateLongPress();
     }
 }
 
 const bindKeys = () => {
+    document.querySelectorAll('button.key')
+        .forEach((element) => {
+            let pressTimer;
 
-    document.querySelectorAll('[data-long-pressable="true"]')
-        .forEach((element) =>{
+            element.addEventListener(pointerDownEvent, async (event) => {
+                element.setPointerCapture(event.pointerId);
+                setStylePressed(element, true);
+                getKeyAndSendRequest(element, false, Event.PRESSED);
 
-            element.addEventListener(touchDownEvent, async(event)=>{
-                pressTimer = setTimeout(async () => {
-                    await toogleLongPressClick();
-                }, timeLimitLongPress)
+                if (element.hasAttribute('data-long-press')) {
+                    pressTimer = setTimeout(async () => {
+                        setStyleLongPressed(element, true);
+                        getKeyAndSendRequest(element, true, Event.PRESSED);
+                    }, timeLimitLongPress);
+                }
+
+                if (element.hasAttribute('data-feedback')) {
+                    keyPressAllFeedback();
+                }
             });
 
-            element.addEventListener(touchReleaseEvent, async(event) => {
-                clearTimeout(pressTimer);
-                await getKeyAndSendRequest(event, Event.RELEASED);
-            })
+            element.addEventListener(pointerUpEvent, async (event) => {
+                setStylePressed(element, false);
+                getKeyAndSendRequest(element, false, Event.RELEASED);
+
+                if (element.getAttribute('data-long-press')) {
+                    setStyleLongPressed(element, false);
+                    clearTimeout(pressTimer);
+                }
+            });
         });
 
-    document.querySelectorAll('[data-feedback="audio|vibrate"]')
+    document.querySelectorAll('[data-key="shift"]')
         .forEach((element) => {
+            element.addEventListener(pointerDownEvent, async (event) => {
+                document.querySelectorAll('[data-shiftable]')
+                    .forEach((element) => setStyleShifted(element, true));
+            });
 
-            element.addEventListener(touchReleaseEvent, async (_) => {
-                await keyReleaseAllFeedback();
+            element.addEventListener(pointerUpEvent, async (event) => {
+                document.querySelectorAll('[data-shiftable]')
+                    .forEach((element) => setStyleShifted(element, false));
             });
         });
 
-    document.querySelectorAll('[data-key]')
-        .forEach((element) => {
-
-            element.addEventListener(touchDownEvent, async (ev) => {
-                await getKeyAndSendRequest(ev, Event.PRESSED);
-            });
-
-            element.addEventListener(touchReleaseEvent, async (ev) => {
-                await getKeyAndSendRequest(ev, Event.RELEASED);
-            });
-        })
+    // Suppress double-tap magnifying glass on Safari
+    document.querySelector('#root').addEventListener('touchend', (event) => {
+        event.preventDefault();
+    });
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
-    await loadKeyReleaseAudio();
+    await loadKeyPressAudio();
     bindKeys();
 });
 

@@ -12,8 +12,6 @@ public class KeyboardInputListener {
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(KeyboardInputListener.class);
     private final AsyncKeyboardInputService asyncKeyboardInputService;
 
-    private static boolean isShiftPressed = false;
-
     @Autowired
     public KeyboardInputListener(final AsyncKeyboardInputService asyncKeyboardInputService) {
         this.asyncKeyboardInputService = asyncKeyboardInputService;
@@ -25,10 +23,6 @@ public class KeyboardInputListener {
         var text = keyboardInputEventInfo.text();
         var event = keyboardInputEventInfo.event();
 
-        if ("shift".equals(text)) {
-            isShiftPressed = event == KeyboardEventType.PRESSED;
-        }
-
         asyncKeyboardInputService
                 .sendText(text, event)
                 .exceptionally((e) -> {
@@ -38,10 +32,6 @@ public class KeyboardInputListener {
                 .thenAccept((res) -> {
                     LOGGER.debug("Keyboard input sent: {}, {}", text, event);
                 });
-    }
-
-    public static boolean isShiftPressed() {
-        return isShiftPressed;
     }
 
 }
