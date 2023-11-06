@@ -12,6 +12,8 @@ let pointerDownEvent = hasPointerEvents ? 'pointerdown' : isTouch ? 'touchstart'
 let pointerUpEvent = hasPointerEvents ? 'pointerup' : isTouch ? 'touchend' : 'mouseup';
 let pointerMoveEvent = hasPointerEvents ? 'pointermove' : isTouch ? 'touchmove' : 'mousemove';
 
+let isMouseEnabled = false;
+
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 let audioBuffer = null;
 
@@ -274,16 +276,16 @@ const toggleMouse = () => {
 
     const mouse = document.getElementById('mouse');
     if (isMouseEnabled) {
-        mouse.style.display = 'none';
-    } else {
         mouse.style.display = 'flex';
+    } else {
+        mouse.style.display = 'none';
     }
 
     isMouseEnabled = !isMouseEnabled;
 }
 
 const calcXY = (ev) => {
-    if (isTouchDevice) {
+    if (isTouch && ev.touches !== undefined) {
         return {
             x: ev.touches[0].clientX,
             y: ev.touches[0].clientY
@@ -299,9 +301,34 @@ const bindMouse = () => {
 
     document.querySelectorAll('[data-mouse="scroll-x-y"]')
         .forEach((el) => {
+            let lastPositionX = 0;
+            let lastPositionY = 0;
+
+            el.addEventListener(pointerDownEvent, async (ev) => {
+                const {x, y} = calcXY(ev);
+                lastPositionX = x;
+                lastPositionY = y;
+            })
+
             el.addEventListener(pointerMoveEvent, async (ev) => {
                 const {x, y} = calcXY(ev);
-                await mouseMove(x, y);
+                const wichYDirection = (newPositionY) => {
+                    return newPositionY - lastPositionY;
+                }
+
+                const wichXDirection = (newPositionX) => {
+                    return newPositionX - lastPositionX;
+                }
+
+                const xDirection = wichXDirection(x);
+                const yDirection = wichYDirection(y);
+
+                lastPositionX = x;
+                lastPositionY = y;
+
+                if (xDirection != 0 && yDirection != 0) {
+                    await mouseMove(xDirection, yDirection);
+                }
             })
         });
 
@@ -336,21 +363,21 @@ const bindMouse = () => {
 
     document.querySelectorAll('[data-mouse="toggle"]')
         .forEach((el) => {
-            el.addEventListener(touchReleaseEvent, async (ev) => {
+            el.addEventListener(pointerUpEvent, async (ev) => {
                 toggleMouse();
             });
         });
 
     document.querySelectorAll('[data-mouse="left-click"]')
         .forEach((el) => {
-            el.addEventListener(touchReleaseEvent, async (ev) => {
+            el.addEventListener(pointerUpEvent, async (ev) => {
                 await mouseLeftClick();
             });
         });
 
     document.querySelectorAll('[data-mouse="right-click"]')
         .forEach((el) => {
-            el.addEventListener(touchReleaseEvent, async (ev) => {
+            el.addEventListener(pointerUpEvent, async (ev) => {
                 await mouseRightClick();
             });
         });
@@ -360,6 +387,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     await loadKeyPressAudio();
     bindMouse();
     bindKeys();
+    toggleMouse()
 });
 
 

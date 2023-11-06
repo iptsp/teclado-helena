@@ -19,6 +19,7 @@ body {
     background-color: #e0e0e0;
     color: #263238;
     touch-action: none; /* to prevent zoom gestures and double tap to zoom on iOS devices */
+    user-select: none;
 
     -webkit-user-select: none;
     -webkit-tap-highlight-color: transparent;
@@ -74,59 +75,65 @@ body {
     justify-content: flex-end;
     align-items: center;
     padding: 10px;
-    border-bottom: 2px solid black;
 }
 
 .mouse-container .toolbar .close {
-    margin-right: 40px;
+    margin-right: 10px;
+    padding: 8px 20px 10px 20px;
+    border-radius: 100px;
 }
 
 .mouse-container .footer {
     grid-area: footer;
-    padding: 10px;
-    border-top: 2px solid black;
+    border-top: 5px solid #f0f0f0;
     display: flex;
     flex-direction: row;
+    border-radius: 0 0 20px 20px;
+    color: #444;
+    overflow: hidden;
+    text-transform: uppercase;
+    font-size: 1.5vw;
 }
 
 .mouse-container .footer .left-click {
-    width: 50%;
-    border-right: 1px solid black;
+    width: 60%;
+    border-right: 2.5px solid #f0f0f0;
     display: flex;
     flex-direction: column;
     justify-content: center;
+    padding: 2vh;
     align-items: center;
+    background: #ddd;
 }
 
 .mouse-container .footer .right-click {
-    width: 50%;
+    width: 40%;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-}
-
-.mouse-container .content {
-    grid-area: content;
-    padding: 10px;
+    background: #ddd;
+    border-left: 2.5px solid #f0f0f0;
 }
 
 .mouse-container .scroll {
     grid-area: scroll;
     padding: 10px;
-    border-left: 2px solid black;
     overflow: hidden;
+    background: linear-gradient(0deg, #ddd, transparent, #ddd);
+    border-left: 10px solid #f0f0f0;
 }
 
 .mouse-container .scroll div {
-    margin: 0 30px;
-    height: 10%;
-    border-bottom: 5px solid black;
+    margin: auto;
+    height: 5.5vh;
+    width: 50%;
+    border-bottom: 5px solid #ccc;
 }
 
 .mouse-container .content {
-    border-radius: 22px;
-    background-color: #f0f0f0;
+    grid-area: content;
+    background: #ddd;
     padding: 10px;
 }
 
@@ -136,6 +143,10 @@ body {
 
 #root .column-span-5 {
     grid-column: span 5;
+}
+
+#root .column-span-4 {
+    grid-column: span 4;
 }
 
 button.key {
@@ -268,18 +279,22 @@ button.active.key > span {
     grid-column-start: 1;
     color: #2632384d;
     font-size: min(3.2vh, 1.8vw);
+    transition: all 150ms ease-in-out;
 }
 
 .key .shiftable .bl {
     grid-row-start: 2;
     grid-column-start: 1;
     font-size: min(3.55vh, 2vw);
+    transition: all 150ms ease-in-out;
 }
 
 .key .shiftable.shifted .tl {
+    font-size: min(3.55vh, 2vw);
     color: #263238;
 }
 
 .key .shiftable.shifted .bl {
+    font-size: min(3.2vh, 1.8vw);
     color: #2632384d;
 }
