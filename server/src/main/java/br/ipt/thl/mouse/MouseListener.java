@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
+import java.awt.MouseInfo;
+
 @Component
 public class MouseListener {
 
@@ -52,14 +54,18 @@ public class MouseListener {
         var x = mouseMoveEventInfo.x();
         var y = mouseMoveEventInfo.y();
 
+        var pointerLocation = MouseInfo.getPointerInfo().getLocation();
+        var initialPositionX = (int) pointerLocation.getX();
+        var initialPositionY = (int) pointerLocation.getY();
+
         asyncMouseInputService
-                .move(x, y)
+                .move(initialPositionX + x, initialPositionY + y)
                 .exceptionally((e) -> {
                     LOGGER.error("Error send mouse move", e);
                     return null;
                 })
                 .thenAccept(res -> {
-                    LOGGER.debug("Mouse move sent");
+                    LOGGER.debug("Mouse move sent to x: {} and y: {}", x, y);
                 });
     }
 
