@@ -134,6 +134,6 @@ $user_home = [Environment]::GetFolderPath("UserProfile")
 Export-PfxCertificate -Cert "Cert:\CurrentUser\My\$thumbprint" -FilePath "$user_home\THL.pfx" -Password $password
 ```
 
-Copy the generated PFX file from `$user_home\THL.pfx` to `assets\jpackage\certificate` in the project folder.
+Copy the generated PFX file from `$user_home\THL.pfx` to `server\jpackage\certificate` in the project folder.
 
 Add `C:\Program Files (x86)\Windows Kits\10\bin\<win build>\x64` to the PATH environment variable to use `signtool.exe`
