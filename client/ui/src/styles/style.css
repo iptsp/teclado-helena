@@ -26,15 +26,18 @@ body {
 }
 
 #root {
-    display: grid;
-    grid-template-columns: repeat(10, minmax(0, 1fr));
-    grid-template-rows: repeat(6, minmax(0, 1fr));
+    display: flex;
     max-width: 100%;
     max-height: 100%;
     /* if overflow is hidden, check for your code, dont change this section */
     overflow: hidden;
     aspect-ratio: 16/9;
     margin: 0 auto;
+
+    flex-wrap: wrap;
+    align-content: space-between;
+    justify-content: space-between;
+    align-items: center;
 }
 
 
@@ -138,23 +141,23 @@ body {
 }
 
 #root .column-span-2 {
-    grid-column: span 2;
+    width: 20%;
 }
 
 #root .column-span-5 {
-    grid-column: span 5;
+    width: 50%;
 }
 
 #root .column-span-4 {
-    grid-column: span 4;
+    width: 40%;
 }
 
 button.key {
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
-    width: 100%;
-    height: 100%;
+    width: 10%;
+    height: 16.666%;
     border: none;
     cursor: pointer;
     font-size: min(5.33vh, 3vw);
@@ -167,6 +170,12 @@ button.key {
     -webkit-touch-callout: none;
     touch-action: manipulation;
     background-color: #e0e0e0;
+    outline: none;
+}
+
+button.key:nth-child(-n+12) {
+    width: 9.0909%
+
 }
 
 button.key > span {
@@ -224,7 +233,8 @@ button.active.key > span {
     padding-bottom: min(1.77vh, 1vw);
 }
 
-.key .delete {
+.key .delete,
+.key .esc {
     font-size: min(2.66vh, 1.5vw);
     font-weight: bold;
 }
