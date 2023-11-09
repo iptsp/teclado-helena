@@ -17,7 +17,7 @@ npm run start
 ```
 
 ### Running the server
-Import the project as maven project in your favorite IDE.
+Import this repository as a Maven project in your preferred IDE.
 
 Run ```br.ipt.th.Entrypoint``` class as java application with vm
 options: ```-Dthl.version=dev -Dspring.profiles.active=dev -Djavafx.preloader=br.ipt.thl.UiApplicationSplashScreen -Xms512m -Xmx1g```
@@ -84,7 +84,7 @@ Add `C:\Program Files (x86)\Windows Kits\10\bin\<win build>\x64` to the PATH env
 </details>
 
 <details open>
-<summary><b>Option 2: From File Explorer</b></summary>
+<summary><b>Option 2: From the GUI</b></summary>
 
 1. Double click the file `server\jpackage\certificate\THL.pfx` to open the Certificate Import Wizard.
 2. Select "Local Machine" as the store location, click Next.
@@ -119,6 +119,38 @@ To Debug generated Pri Dump to XML with following command
 ```
 MakePri.exe dump /if Resources.pri /of Resources.Debug.xml /dt Detailed
 ```
+
+### Installing a self-signed certificate from an MSIX package
+
+To install MSIX packages that have been signed with a self-signed certificate, it is necessary to trust this signature by installing the certificate in the ```Cert:\LocalMachine\TrustedPeople``` certificate store.
+
+> [!WARNING]
+> Installing a self-signed certificate in Windows will cause the system to trust all packages signed with that certificate, which may include potentially malicious ones.
+> 
+> It is strongly recommended to uninstall the certificate after testing to ensure the security of your system.
+
+<details open>
+<summary><b>Option 1: From the CLI</b></summary>
+
+1. Run the following command from an elevated PowerShell prompt. Replace ```THL-1.0.msix``` with the path to the MSIX file.
+
+   ```Get-AuthenticodeSignature 'THL-1.0.msix' | Select-Object -ExpandProperty SignerCertificate | Export-Certificate -FilePath ($TempFile = New-TemporaryFile).FullName; Import-Certificate -FilePath $TempFile.FullName -CertStoreLocation 'Cert:\LocalMachine\TrustedPeople'; Remove-Item -Path $TempFile.FullName```
+</details>
+
+<details open>
+<summary><b>Option 2: From the GUI</b></summary>
+
+1. Open the context menu of the .msix file and open the Properties window.
+2. In the Digital Signatures tab, select the THL certificate and click Details.
+3. In the Digital Signature Details window, click Show Certificate.
+4. In the Certificate window, click Install Certificate.
+5. In the Certificate Import Wizard, select "Local Machine" as the store location, click Next.
+6. Select "Place all certificates in the following store" and click Browse...
+7. Select the "Trusted People" repository and click OK.
+8. Click Next.
+9. Click Finish.
+
+</details>
 
 ***
 
