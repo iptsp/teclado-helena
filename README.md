@@ -1,6 +1,6 @@
 # THL Project - Teclado Helena
 
-## Dependencies
+## Prerequisites
 To run and build this project, the following dependencies must be installed in your machine:
 * Java 21 JDK (https://adoptium.net/temurin/releases/?package=jdk&version=21)
 * Maven 3.x (https://maven.apache.org/download.cgi)
@@ -30,6 +30,9 @@ As a general rule, all MSIX packages must be signed with a valid code signing ce
 For development purposes, a self-signed certificate is included in this repository.
 If there is a need to generate another self-signed certificate, refer to [Generating a self-signed code signing certificate](#Generating-a-self-signed-code-signing-certificate).
 
+> [!WARNING]
+> The included self-signed certificate is for development purposes only. It should not be used in production.
+
 1. Ensure that the `signtool.exe` and `makeappx.exe` tools are in the PATH.
 These are installed with the Windows SDK and can be found at `C:\Program Files (x86)\Windows Kits\10\bin\<win build>\x64`.
 
@@ -43,10 +46,10 @@ If using the included self-signed certificate, this value does not need to be ch
 
 5. As an administrator, run ```mvn clean install```. Running without administrative privileges will cause the signing tool to be unable to find the certificate.
 
-If the MSIX package has been signed with a self-signed certificate, the certificate must also be installed in the target machine.
-Refer to [Installing a self-signed certificate from an MSIX package](#Installing-a-self-signed-certificate-from-an-MSIX-package).
-
-> ❗ The included self-signed certificate is for development purposes only. It should not be used in production.
+> [!IMPORTANT]
+> If the MSIX package has been signed with a self-signed certificate, the certificate must also be installed in the target machine.
+>
+> Refer to [Installing a self-signed certificate from an MSIX package](#Installing-a-self-signed-certificate-from-an-MSIX-package).
 
 ***
 
@@ -94,7 +97,7 @@ Add `C:\Program Files (x86)\Windows Kits\10\bin\<win build>\x64` to the PATH env
 
 ### Regenerating image assets and Resources.pri
 
-Assets images will be generated based on ```server/jpackage/launcher.ico``` file. 
+Assets images will be generated based on ```server/jpackage/launcher.png``` file. 
 Change it to change the icon assets.
 
 
@@ -124,6 +127,6 @@ MakePri.exe dump /if Resources.pri /of Resources.Debug.xml /dt Detailed
 * Win32 Api Docs      (https://learn.microsoft.com/en-us/windows/win32/apiindex/api-index-portal)
 * Java 21.x Docs      (https://docs.oracle.com/en/java/javase/21/docs/api/index.html)
 * JavaFX 20.x Docs    (https://openjfx.io/javadoc/20/)
-* Maven 3.x Docs   (https://maven.apache.org/guides/index.html)
-* Git 2.x Docs    (https://git-scm.com/doc)
-* Node 20.x Docs  (https://nodejs.org/dist/latest-v18.x/docs/api/)
+* Maven 3.x Docs      (https://maven.apache.org/guides/index.html)
+* Git 2.x Docs        (https://git-scm.com/doc)
+* Node 20.x Docs      (https://nodejs.org/dist/latest-v20.x/docs/api/)
