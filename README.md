@@ -108,7 +108,8 @@ If this image is modified, follow the steps below to regenerate the package asse
     MakePri.exe new /cf ".\server\jpackage\Resources.pri.xml" /pr ".\server\jpackage\Assets" /mn ".\server\jpackage\AppxManifest.xml" /o /of ".\server\jpackage\Resources.pri"
     ```
 
-> [!NOTE] To debug the generated Resources.pri file, dump its contents as XML with the command ```MakePri.exe dump /if ".\server\jpackage\Resources.pri" /of ".\server\jpackage\Resources.Debug.xml" /dt Detailed```
+> [!NOTE]
+> To debug the generated Resources.pri file, dump its contents as XML with the command ```MakePri.exe dump /if ".\server\jpackage\Resources.pri" /of ".\server\jpackage\Resources.Debug.xml" /dt Detailed```
 
 ### Installing a self-signed certificate from an MSIX package
 
