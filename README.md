@@ -19,7 +19,7 @@ npm run start
 ### Running the server
 Import this repository as a Maven project in your preferred IDE.
 
-Run ```br.ipt.th.Entrypoint``` class as java application with vm
+Run ```br.ipt.thl.Entrypoint``` class as java application with vm
 options: ```-Dthl.version=dev -Dspring.profiles.active=dev -Djavafx.preloader=br.ipt.thl.UiApplicationSplashScreen -Xms512m -Xmx1g```
 
 ## Build
@@ -73,8 +73,6 @@ Export-PfxCertificate -Cert "Cert:\CurrentUser\My\$thumbprint" -FilePath "$user_
 
 Copy the generated PFX file from `$user_home\THL.pfx` to `server\jpackage\certificate` in the project folder.
 
-Add `C:\Program Files (x86)\Windows Kits\10\bin\<win build>\x64` to the PATH environment variable to use `signtool.exe`
-
 ### Installing the included self-signed certificate
 
 <details open>
@@ -97,28 +95,20 @@ Add `C:\Program Files (x86)\Windows Kits\10\bin\<win build>\x64` to the PATH env
 
 ### Regenerating image assets and Resources.pri
 
-Assets images will be generated based on ```server/jpackage/launcher.png``` file. 
-Change it to change the icon assets.
+The file ```server\jpackage\launcher.png``` contains the image that is displayed on the installer, taskbar and start menu. The image assets and Package Resource Index files used by the MSIX package are generated based on this image.
 
+If this image is modified, follow the steps below to regenerate the package assets:
 
-Run ```br.ipt.thl.assets.MsixAssetGenerator``` class as java application 
-with program arguments: ```"yourprojectlocation"```
+1. Ensure that the `makepri.exe` tool is in the PATH. It is installed with the Windows SDK and can be found at `C:\Program Files (x86)\Windows Kits\10\bin\<win build>\x64`.
 
+2. Run
+    ```
+    java .\server\src\main\java\br\ipt\thl\assets\MsixAssetGenerator.java .
+    MakePri.exe createconfig /cf ".\server\jpackage\Resources.pri.xml" /dq lang-pt-BR /o /pv 10.0.0
+    MakePri.exe new /cf ".\server\jpackage\Resources.pri.xml" /pr ".\server\jpackage\Assets" /mn ".\server\jpackage\AppxManifest.xml" /o /of ".\server\jpackage\Resources.pri"
+    ```
 
-Generate Resources.pri requires the `makepri.exe` tools from the Windows SDK.
-
-Navigate to ```server/jpackage``` folder
-
-Run the following commands in a PowerShell terminal:
-```
-MakePri.exe createconfig /cf Resources.pri.xml /df lang-pt-BR /o /pv 10.0.0
-MakePri.exe new /cf Resources.pri.xml /pr Assets /mn AppXManifest.xml /o /of Resources.pri
-```
-
-To Debug generated Pri Dump to XML with following command
-```
-MakePri.exe dump /if Resources.pri /of Resources.Debug.xml /dt Detailed
-```
+> [!NOTE] To debug the generated Resources.pri file, dump its contents as XML with the command ```MakePri.exe dump /if ".\server\jpackage\Resources.pri" /of ".\server\jpackage\Resources.Debug.xml" /dt Detailed```
 
 ### Installing a self-signed certificate from an MSIX package
 
