@@ -2,7 +2,7 @@
 
 ## Prerequisites
 To run and build this project, the following dependencies must be installed in your machine:
-* Java 21 JDK (https://adoptium.net/temurin/releases/?package=jdk&version=21)
+* Java 21 JDK (https://jdk.java.net/21/)
 * Maven 3.x (https://maven.apache.org/download.cgi)
 * Node 20.x (https://nodejs.org/en/download/)
 * Windows SDK (https://developer.microsoft.com/en-us/windows/downloads/windows-sdk/)
@@ -33,7 +33,7 @@ If there is a need to generate another self-signed certificate, refer to [Genera
 > [!WARNING]
 > The included self-signed certificate is for development purposes only. It should not be used in production.
 
-1. Ensure that the `signtool.exe` and `makeappx.exe` tools are in the PATH.
+1. Ensure that the `signtool.exe`, `makeappx.exe` and `makepri.exe` tools are in the PATH.
 These are installed with the Windows SDK and can be found at `C:\Program Files (x86)\Windows Kits\10\bin\<win build>\x64`.
 
 2. Ensure that the code signing certificate is installed in the Local Machine certificate store.
@@ -42,9 +42,7 @@ For detailed instructions on how to install the included self-signed certificate
 3. Update the `certificate.fingerprint` property in the `server\pom.xml` file to match the fingerprint of the installed code signing certificate.
 If using the included self-signed certificate, this value does not need to be changed.
 
-4. If the `server\jpackage\launcher.png` icon has been modified, image assets must be regenerated. Refer to [Regenerating image assets and Resources.pri](#Regenerating-image-assets-and-Resourcespri).
-
-5. As an administrator, run ```mvn clean install```. Running without administrative privileges will cause the signing tool to be unable to find the certificate.
+4. As an administrator, run ```mvn clean install```. Running without administrative privileges will cause the signing tool to be unable to find the certificate.
 
 > [!IMPORTANT]
 > If the MSIX package has been signed with a self-signed certificate, the certificate must also be installed in the target machine.
@@ -78,13 +76,16 @@ Copy the generated PFX file from `$user_home\THL.pfx` to `server\jpackage\certif
 <details open>
 <summary><b>Option 1: From the CLI</b></summary>
 
-1. From an elevated PowerShell prompt, run ```Import-PfxCertificate -FilePath '.\server\jpackage\certificate\THL.pfx' -CertStoreLocation 'Cert:\LocalMachine\My' -Password (ConvertTo-SecureString '!thl!321#' -AsPlainText -Force)```
+1. From an elevated PowerShell prompt, run the following command:
+   ```
+   Import-PfxCertificate -FilePath '.\server\jpackage\certificate\THL.pfx' -CertStoreLocation 'Cert:\LocalMachine\My' -Password (ConvertTo-SecureString '!thl!321#' -AsPlainText -Force)
+   ```
 </details>
 
 <details open>
 <summary><b>Option 2: From the GUI</b></summary>
 
-1. Double click the file `server\jpackage\certificate\THL.pfx` to open the Certificate Import Wizard.
+1. Double-click the file `server\jpackage\certificate\THL.pfx` to open the Certificate Import Wizard.
 2. Select "Local Machine" as the store location, click Next.
 3. Click Next.
 4. Enter `!thl!321#` as the password, click Next.
@@ -92,24 +93,6 @@ Copy the generated PFX file from `$user_home\THL.pfx` to `server\jpackage\certif
 6. Click Finish.
 
 </details>
-
-### Regenerating image assets and Resources.pri
-
-The file ```server\jpackage\launcher.png``` contains the image that is displayed on the installer, taskbar and start menu. The image assets and Package Resource Index files used by the MSIX package are generated based on this image.
-
-If this image is modified, follow the steps below to regenerate the package assets:
-
-1. Ensure that the `makepri.exe` tool is in the PATH. It is installed with the Windows SDK and can be found at `C:\Program Files (x86)\Windows Kits\10\bin\<win build>\x64`.
-
-2. Run
-    ```
-    java .\server\src\main\java\br\ipt\thl\assets\MsixAssetGenerator.java .
-    MakePri.exe createconfig /cf ".\server\jpackage\Resources.pri.xml" /dq lang-pt-BR /o /pv 10.0.0
-    MakePri.exe new /cf ".\server\jpackage\Resources.pri.xml" /pr ".\server\jpackage\Assets" /mn ".\server\jpackage\AppxManifest.xml" /o /of ".\server\jpackage\Resources.pri"
-    ```
-
-> [!NOTE]
-> To debug the generated Resources.pri file, dump its contents as XML with the command ```MakePri.exe dump /if ".\server\jpackage\Resources.pri" /of ".\server\jpackage\Resources.Debug.xml" /dt Detailed```
 
 ### Installing a self-signed certificate from an MSIX package
 
@@ -124,8 +107,9 @@ To install MSIX packages that have been signed with a self-signed certificate, i
 <summary><b>Option 1: From the CLI</b></summary>
 
 1. Run the following command from an elevated PowerShell prompt. Replace ```THL-1.0.msix``` with the path to the MSIX file.
-
-   ```Get-AuthenticodeSignature 'THL-1.0.msix' | Select-Object -ExpandProperty SignerCertificate | Export-Certificate -FilePath ($TempFile = New-TemporaryFile).FullName; Import-Certificate -FilePath $TempFile.FullName -CertStoreLocation 'Cert:\LocalMachine\TrustedPeople'; Remove-Item -Path $TempFile.FullName```
+   ```
+   Get-AuthenticodeSignature 'THL-1.0.msix' | Select-Object -ExpandProperty SignerCertificate | Export-Certificate -FilePath ($TempFile = New-TemporaryFile).FullName; Import-Certificate -FilePath $TempFile.FullName -CertStoreLocation 'Cert:\LocalMachine\TrustedPeople'; Remove-Item -Path $TempFile.FullName
+   ```
 </details>
 
 <details open>
