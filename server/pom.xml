@@ -173,10 +173,6 @@
                         <phase>install</phase>
                         <configuration>
                             <target>
-                                <copy todir="${project.build.directory}/${project.name}/Assets">
-                                    <fileset
-                                            dir="${project.jpackage.directory}/Assets"/>
-                                </copy>
                                 <copy todir="${project.build.directory}/${project.name}/Icons">
                                     <fileset
                                             dir="${project.jpackage.directory}/Icons"/>
@@ -187,7 +183,6 @@
                                         <include name="**/*.dll"/>
                                         <include name="**/*.exe"/>
                                         <include name="**/*.xml"/>
-                                        <include name="**/*.pri"/>
                                         <include name="**/*.ps1"/>
                                         <include name="**/*.json"/>
                                     </fileset>
@@ -196,6 +191,34 @@
                                     <replacetoken>{THLVERSION}</replacetoken>
                                     <replacevalue>${project.version}</replacevalue>
                                 </replace>
+                                <mkdir dir="${project.build.directory}/${project.name}/Assets"/>
+                                <exec executable="java">
+                                    <arg value="${project.basedir}/src/main/java/br/ipt/thl/assets/MsixAssetGenerator.java"/>
+                                    <arg value="${project.jpackage.directory}/launcher.png"/>
+                                    <arg value="${project.build.directory}/${project.name}/Assets"/>
+                                </exec>
+                                <exec executable="MakePri.exe">
+                                    <arg value="createconfig"/>
+                                    <arg value="/cf"/>
+                                    <arg value="${project.build.directory}/${project.name}/Resources.pri.xml"/>
+                                    <arg value="/dq"/>
+                                    <arg value="lang-pt-BR"/>
+                                    <arg value="/o"/>
+                                    <arg value="/pv"/>
+                                    <arg value="10.0.0"/>
+                                </exec>
+                                <exec executable="MakePri.exe">
+                                    <arg value="new"/>
+                                    <arg value="/cf"/>
+                                    <arg value="${project.build.directory}/${project.name}/Resources.pri.xml"/>
+                                    <arg value="/pr"/>
+                                    <arg value="${project.build.directory}/${project.name}"/>
+                                    <arg value="/mn"/>
+                                    <arg value="${project.build.directory}/${project.name}/AppxManifest.xml"/>
+                                    <arg value="/o"/>
+                                    <arg value="/of"/>
+                                    <arg value="${project.build.directory}/${project.name}/Resources.pri"/>
+                                </exec>
                                 <exec executable="MakeAppx.exe">
                                     <arg value="pack"/>
                                     <arg value="/d"/>
