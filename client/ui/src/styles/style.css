@@ -95,7 +95,11 @@ body {
     color: #444;
     overflow: hidden;
     text-transform: uppercase;
-    font-size: 1.5vw;
+    font-size: min(1.5vh, 1.5vw);
+}
+
+.mouse-container .footer img {
+    width: min(3vh, 3vw);
 }
 
 .mouse-container .footer .left-click {
@@ -238,7 +242,6 @@ button.active.key > span {
     font-size: min(2.66vh, 1.5vw);
     font-weight: bold;
 }
-
 
 /* vertical-split keys */
 .key .vertical-split {
