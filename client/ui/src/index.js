@@ -173,6 +173,7 @@ const setStyleLongPressed = async (element, isLongPressed) => {
 
 const getKeyAndSendRequest = async (element, isLongPress, eventType) => {
     const text = element.dataset[isLongPress ? 'longPress' : 'key'];
+    if(!text) return;
     try {
         await api.keyboard.inputText(text, eventType);
     } catch (error) {
