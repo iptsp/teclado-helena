@@ -35,17 +35,15 @@ const Event = {
 }
 
 const inputText = async (text, event) => {
-    if (text) {
-        const request = {
-            method: 'POST',
-            body: JSON.stringify({text, event}),
-            headers: {
-                'Content-Type': 'application/json'
-            }
+    const request = {
+        method: 'POST',
+        body: JSON.stringify({text, event}),
+        headers: {
+            'Content-Type': 'application/json'
         }
-        const response = await fetch(`${endpoint}/systems/keyboards/inputs`, request);
-        return await response.json();
     }
+    const response = await fetch(`${endpoint}/systems/keyboards/inputs`, request);
+    return await response.json();
 }
 
 const leftClick = async () => {
