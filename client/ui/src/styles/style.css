@@ -171,12 +171,25 @@ body {
     width: 40%;
 }
 
+#root .first-row,
+#root .second-row,
+#root .third-row,
+#root .fourth-row,
+#root .fifth-row,
+#root .sixth-row
+{
+    width: 100%;
+    height: 16.666%;
+    background: #00ff0050;
+    display: flex;
+}
+
 button.key {
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
     width: 10%;
-    height: 16.666%;
+    height: 100%;
     border: none;
     cursor: pointer;
     font-size: min(5.33vh, 3vw);
@@ -190,11 +203,6 @@ button.key {
     touch-action: manipulation;
     background-color: var(--theme);
     outline: none;
-}
-
-button.key:nth-child(-n+12) {
-    width: 9.0909%
-
 }
 
 button.key > span {

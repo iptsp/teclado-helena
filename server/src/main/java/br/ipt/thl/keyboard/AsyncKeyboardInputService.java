@@ -74,6 +74,10 @@ public class AsyncKeyboardInputService {
 
         keyMap.put("backslash", createDefaultKeyMap(KeyEvent.VK_BACK_SLASH));
 
+        keyMap.put("equals", createDefaultKeyMap(KeyEvent.VK_EQUALS));
+
+        keyMap.put("minus", createDefaultKeyMap(KeyEvent.VK_MINUS));
+
         keyMap.put("slash", Map.of(
                 KeyShiftState.UNSHIFTED, Map.of(
                         KeyboardEventType.PRESSED, List.of(
