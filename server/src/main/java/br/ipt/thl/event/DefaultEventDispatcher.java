@@ -35,6 +35,16 @@ public class DefaultEventDispatcher implements EventDispatcher {
     }
 
     @Override
+    public void mouseLeftButtonPress() {
+        this.publish(new MouseLeftButtonPressEvent());
+    }
+
+    @Override
+    public void mouseLeftButtonRelease() {
+        this.publish(new MouseLeftButtonReleaseEvent());
+    }
+
+    @Override
     public void mouseMove(int x, int y) {
         this.publish(new MouseMoveEvent(x, y));
     }

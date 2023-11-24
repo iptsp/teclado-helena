@@ -34,6 +34,18 @@ public class AsyncMouseInputService {
     }
 
     @Async(ExecutorsConfig.OS)
+    public CompletableFuture<Void> leftButtonPress() {
+        osDispatcher.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+        return CompletableFuture.completedFuture(null);
+    }
+
+    @Async(ExecutorsConfig.OS)
+    public CompletableFuture<Void> leftButtonRelease() {
+        osDispatcher.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
+        return CompletableFuture.completedFuture(null);
+    }
+
+    @Async(ExecutorsConfig.OS)
     public CompletableFuture<Void> move(final int x,
                                         final int y) {
         osDispatcher.mouseMove(x, y);

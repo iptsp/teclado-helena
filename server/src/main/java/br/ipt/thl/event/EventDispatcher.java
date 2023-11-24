@@ -10,6 +10,8 @@ public interface EventDispatcher {
     void mouseRightButtonClick();
 
     void mouseLeftButtonClick();
+    void mouseLeftButtonPress();
+    void mouseLeftButtonRelease();
 
     void mouseMove(int x, int y);
 
