@@ -58,6 +58,30 @@ const leftClick = async () => {
     return await response.json();
 }
 
+const leftPress = async () => {
+    const request = {
+        method: 'POST',
+        body: JSON.stringify({}),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }
+    const response = await fetch(`${endpoint}/systems/mouses/buttons/left/events/press`, request);
+    return await response.json();
+}
+
+const leftRelease = async () => {
+    const request = {
+        method: 'POST',
+        body: JSON.stringify({}),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }
+    const response = await fetch(`${endpoint}/systems/mouses/buttons/left/events/release`, request);
+    return await response.json();
+}
+
 const rightClick = async () => {
     const request = {
         method: 'POST',
@@ -113,6 +137,8 @@ const api = {
     },
     mouse: {
         leftClick,
+        leftPress,
+        leftRelease,
         rightClick,
         scrollUp,
         scrollDown,
@@ -145,9 +171,11 @@ const keyPressAllFeedback = async () => {
 
 const setStylePressed = async (element, isPressed) => {
     if (isPressed) {
+        element.classList.remove('active-fade');
         element.classList.add('active');
     } else {
         element.classList.remove('active');
+        element.classList.add('active-fade');
     }
 };
 
@@ -241,6 +269,22 @@ const mouseLeftClick = async () => {
     }
 }
 
+const mouseLeftPress = async () => {
+    try {
+        await api.mouse.leftPress();
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+const mouseLeftRelease = async () => {
+    try {
+        await api.mouse.leftRelease();
+    } catch (error) {
+        console.error(error);
+    }
+}
+
 const mouseRightClick = async () => {
     try {
         await api.mouse.rightClick();
@@ -313,16 +357,19 @@ const bindMouse = () => {
 
             el.addEventListener(pointerMoveEvent, async (ev) => {
                 const {x, y} = calcXY(ev);
-                const wichYDirection = (newPositionY) => {
+                const whichYDirection = (newPositionY) => {
                     return newPositionY - lastPositionY;
                 }
 
-                const wichXDirection = (newPositionX) => {
+                const whichXDirection = (newPositionX) => {
                     return newPositionX - lastPositionX;
                 }
 
-                const xDirection = wichXDirection(x);
-                const yDirection = wichYDirection(y);
+                let xDirection = whichXDirection(x);
+                let yDirection = whichYDirection(y);
+
+                if (Math.abs(xDirection) > 10) xDirection *= 2;
+                if (Math.abs(yDirection) > 10) yDirection *= 2;
 
                 lastPositionX = x;
                 lastPositionY = y;
@@ -339,7 +386,7 @@ const bindMouse = () => {
             el.addEventListener(pointerMoveEvent, async (ev) => {
                 const {y} = calcXY(ev);
 
-                const wichDirection = (newPosition) => {
+                const whichDirection = (newPosition) => {
                     if (newPosition > lastPosition) {
                         return "down"
                     }
@@ -349,7 +396,7 @@ const bindMouse = () => {
                     return "same";
                 }
 
-                const direction = wichDirection(y);
+                const direction = whichDirection(y);
                 lastPosition = y;
 
                 if (direction === "up") {
@@ -371,8 +418,15 @@ const bindMouse = () => {
 
     document.querySelectorAll('[data-mouse="left-click"]')
         .forEach((el) => {
+            el.addEventListener(pointerDownEvent, async (ev) => {
+                await mouseLeftPress();
+                var element = ev.target;
+                if (element.hasAttribute('data-feedback')) {
+                    keyPressAllFeedback();
+                }
+            });
             el.addEventListener(pointerUpEvent, async (ev) => {
-                await mouseLeftClick();
+                await mouseLeftRelease();
             });
         });
 
@@ -380,6 +434,10 @@ const bindMouse = () => {
         .forEach((el) => {
             el.addEventListener(pointerUpEvent, async (ev) => {
                 await mouseRightClick();
+                var element = ev.target;
+                if (element.hasAttribute('data-feedback')) {
+                    keyPressAllFeedback();
+                }
             });
         });
 }

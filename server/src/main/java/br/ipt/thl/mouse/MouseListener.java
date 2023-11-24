@@ -47,6 +47,32 @@ public class MouseListener {
                 });
     }
 
+    @EventListener(MouseLeftButtonPressEvent.class)
+    public void mouseLeftButtonPressEvent() {
+        asyncMouseInputService
+                .leftButtonPress()
+                .exceptionally((e) -> {
+                    LOGGER.error("Error send left mouse button press", e);
+                    return null;
+                })
+                .thenAccept(res -> {
+                    LOGGER.debug("Left mouse button press sent");
+                });
+    }
+
+    @EventListener(MouseLeftButtonReleaseEvent.class)
+    public void mouseLeftButtonReleaseEvent() {
+        asyncMouseInputService
+                .leftButtonRelease()
+                .exceptionally((e) -> {
+                    LOGGER.error("Error send left mouse button release", e);
+                    return null;
+                })
+                .thenAccept(res -> {
+                    LOGGER.debug("Left mouse button release sent");
+                });
+    }
+
     @EventListener
     public void mouseMoveEvent(final MouseMoveEvent mouseMoveEvent) {
 

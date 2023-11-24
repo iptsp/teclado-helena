@@ -17,11 +17,29 @@ public class MouseLeftButtonClickController {
     }
 
     @PostMapping("/api/v1/systems/mouses/buttons/left/events/click")
-    MouseLeftButtonClickControllerResponse handleKeyboardInput() {
+    MouseLeftButtonClickControllerResponse handleKeyboardInputClick() {
         eventDispatcher.mouseLeftButtonClick();
         return new MouseLeftButtonClickControllerResponse();
     }
 
+    @PostMapping("/api/v1/systems/mouses/buttons/left/events/press")
+    MouseLeftButtonPressControllerResponse handleKeyboardInputPress() {
+        eventDispatcher.mouseLeftButtonPress();
+        return new MouseLeftButtonPressControllerResponse();
+    }
+
+    @PostMapping("/api/v1/systems/mouses/buttons/left/events/release")
+    MouseLeftButtonReleaseControllerResponse handleKeyboardInputRelease() {
+        eventDispatcher.mouseLeftButtonRelease();
+        return new MouseLeftButtonReleaseControllerResponse();
+    }
+
     record MouseLeftButtonClickControllerResponse() {
+    }
+
+    record MouseLeftButtonPressControllerResponse() {
+    }
+
+    record MouseLeftButtonReleaseControllerResponse() {
     }
 }
