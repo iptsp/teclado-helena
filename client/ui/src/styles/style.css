@@ -192,9 +192,8 @@ button.key {
     outline: none;
 }
 
-button.key:nth-child(-n+12) {
-    width: 9.0909%
-
+button.key:nth-child(-n+14) {
+    width: 7.69%
 }
 
 button.key > span {
