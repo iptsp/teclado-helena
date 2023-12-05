@@ -88,7 +88,7 @@ body {
     grid-template-rows: 15% auto 20%;
     grid-template-areas: 'toolbar toolbar'
                          'content scroll'
-                         'footer footer';
+                         'content footer';
 }
 
 .mouse-container .toolbar {
@@ -110,11 +110,11 @@ body {
     border-top: 5px solid var(--theme-light);
     display: flex;
     flex-direction: row;
-    border-radius: 0 0 20px 20px;
     color: var(--font);
     overflow: hidden;
     text-transform: uppercase;
     font-size: min(1.5vh, 1.5vw);
+    padding-left: 10px;
 }
 
 .mouse-container .footer img {
@@ -122,25 +122,16 @@ body {
 }
 
 .mouse-container .footer .left-click {
-    width: 60%;
+    width: 100%;
     border-right: 2.5px solid var(--mouse-bg-color);
     display: flex;
     flex-direction: column;
     justify-content: center;
     padding: 2vh;
     align-items: center;
-    background: var(--theme-dark);
+    background: var(--primary);
 }
 
-.mouse-container .footer .right-click {
-    width: 40%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    background: var(--theme-dark);
-    border-left: 2.5px solid var(--theme-light);
-}
 
 .mouse-container .scroll {
     grid-area: scroll;
