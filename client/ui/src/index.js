@@ -199,6 +199,12 @@ const setStyleLongPressed = async (element, isLongPressed) => {
     }
 };
 
+const setFullScreen = async (element) => {
+    if(document.fullscreenElement == null) {
+        document.documentElement.requestFullscreen();
+    }
+};
+
 const getKeyAndSendRequest = async (element, isLongPress, eventType) => {
     const text = element.dataset[isLongPress ? 'longPress' : 'key'];
     if(!text) return;
@@ -232,6 +238,7 @@ const bindKeys = () => {
             });
 
             element.addEventListener(pointerUpEvent, async (event) => {
+                setFullScreen();
                 setStylePressed(element, false);
                 getKeyAndSendRequest(element, false, Event.RELEASED);
 

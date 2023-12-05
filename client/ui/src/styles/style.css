@@ -55,6 +55,11 @@ body {
     align-items: center;
 }
 
+#root .row {
+    display: flex;
+    height: calc(100% / 6);
+    width: 100%;
+}
 
 /* mouse container */
 .mouse-container {
@@ -85,7 +90,6 @@ body {
                          'content scroll'
                          'content footer';
 }
-
 
 .mouse-container .toolbar {
     grid-area: toolbar;
@@ -151,23 +155,25 @@ body {
 }
 
 #root .column-span-2 {
-    width: 20%;
+    flex-basis: 20%;
 }
 
 #root .column-span-5 {
-    width: 50%;
+    flex-basis: 50%;
 }
 
 #root .column-span-4 {
-    width: 40%;
+    flex-basis: 40%;
+}
+
+#root .row-span-2 {
+    height: 200%;
 }
 
 button.key {
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
-    width: 10%;
-    height: 16.666%;
     border: none;
     cursor: pointer;
     font-size: min(5.33vh, 3vw);
@@ -181,11 +187,7 @@ button.key {
     touch-action: manipulation;
     background-color: var(--theme);
     outline: none;
-}
-
-button.key:nth-child(-n+12) {
-    width: 9.0909%
-
+    flex-basis: 10%;
 }
 
 button.key > span {
@@ -262,9 +264,15 @@ button.key.active-fade > span {
 }
 
 .key .delete,
-.key .esc {
+.key .esc,
+.key.enter {
     font-size: min(2.66vh, 1.5vw);
     font-weight: bold;
+}
+
+.key.enter {
+    flex-basis: 11.1%;
+    z-index: 1;
 }
 
 /* vertical-split keys */
