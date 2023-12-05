@@ -158,12 +158,16 @@ body {
     flex-basis: 20%;
 }
 
-#root .column-span-5 {
-    flex-basis: 50%;
+#root .column-span-3 {
+    flex-basis: 30%;
 }
 
 #root .column-span-4 {
     flex-basis: 40%;
+}
+
+#root .column-span-5 {
+    flex-basis: 50%;
 }
 
 #root .row-span-2 {
