@@ -170,6 +170,7 @@ const keyPressAllFeedback = async () => {
 }
 
 const setStylePressed = async (element, isPressed) => {
+    if (element.classList.contains('activated')) return;
     if (isPressed) {
         element.classList.remove('active-fade');
         element.classList.add('active');
@@ -200,9 +201,9 @@ const setStyleLongPressed = async (element, isLongPressed) => {
 };
 
 const setFullScreen = async (element) => {
-    if(document.fullscreenElement == null) {
-        document.documentElement.requestFullscreen();
-    }
+//    if(document.fullscreenElement == null) {
+//        document.documentElement.requestFullscreen();
+//    }
 };
 
 const getKeyAndSendRequest = async (element, isLongPress, eventType) => {
@@ -251,15 +252,22 @@ const bindKeys = () => {
 
     document.querySelectorAll('[data-key="shift"]')
         .forEach((element) => {
-            element.addEventListener(pointerDownEvent, async (event) => {
-                document.querySelectorAll('[data-shiftable]')
-                    .forEach((element) => setStyleShifted(element, true));
+            element.addEventListener(pointerUpEvent, async (event) => {
+                if (element.classList.contains('activated')) {
+                    element.classList.remove('activated');
+                    document.querySelectorAll('[data-shiftable]')
+                        .forEach((element) => setStyleShifted(element, false));
+                } else {
+                    element.classList.add('activated');
+                    document.querySelectorAll('[data-shiftable]')
+                        .forEach((element) => setStyleShifted(element, true));
+                }
             });
 
-            element.addEventListener(pointerUpEvent, async (event) => {
-                document.querySelectorAll('[data-shiftable]')
-                    .forEach((element) => setStyleShifted(element, false));
-            });
+//            element.addEventListener(pointerUpEvent, async (event) => {
+//                document.querySelectorAll('[data-shiftable]')
+//                    .forEach((element) => setStyleShifted(element, false));
+//            });
         });
 
     // Suppress double-tap magnifying glass on Safari

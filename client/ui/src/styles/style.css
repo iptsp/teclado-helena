@@ -202,6 +202,12 @@ button.key > span {
     background-color: var(--theme-light);
 }
 
+button.key.activated > span {
+    background-color: var(--primary-dark);
+    border-color: var(--primary-dark);
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.4);
+}
+
 button.key.active > span {
     background-color: var(--primary-dark);
     border-color: var(--primary-dark);
@@ -321,6 +327,7 @@ button.key.active-fade > span {
     grid-template-rows: 1fr 1fr;
     justify-items: center;
     align-items: center;
+    text-transform: uppercase;
 }
 
 .key .shiftable .tl {
@@ -346,4 +353,8 @@ button.key.active-fade > span {
 .key .shiftable.shifted .bl {
     font-size: min(3.2vh, 1.8vw);
     color: #2632384d;
+}
+
+.key .shifted {
+    text-transform: uppercase;
 }
