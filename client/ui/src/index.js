@@ -19,6 +19,8 @@ let audioBuffer = null;
 
 const timeLimitLongPress = 500;
 
+const scrollSensitivity = 4;
+
 const loadKeyPressAudio = async () => {
     try {
         const response = await fetch("./audio/key-press.mp3");
@@ -390,6 +392,8 @@ const bindMouse = () => {
     document.querySelectorAll('[data-mouse="scroll-y"]')
         .forEach((el) => {
             let lastPosition = 0;
+            let scrollCounterUp = 0;
+            let scrollCounterDown = 0;
             el.addEventListener(pointerMoveEvent, async (ev) => {
                 const {y} = calcXY(ev);
 
@@ -407,10 +411,20 @@ const bindMouse = () => {
                 lastPosition = y;
 
                 if (direction === "up") {
-                    await mouseScrollUp(1);
+                    scrollCounterDown = 0;
+                    scrollCounterUp += 1;
+                    if (scrollCountUp > scrollSensitivity){
+                        await mouseScrollUp(1);
+                        scrollCounterUp = 0;
+                    }
                 }
                 if (direction === "down") {
-                    await mouseScrollDown(1);
+                    scrollCounterUp = 0;
+                    scrollCounterDown += 1;
+                    if (scrollCountDown > scrollSensitivity){
+                        await mouseScrollDown(1);
+                        scrollCounterDown = 0;
+                    }
                 }
 
             });
