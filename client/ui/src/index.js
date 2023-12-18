@@ -170,6 +170,7 @@ const keyPressAllFeedback = async () => {
 }
 
 const setStylePressed = async (element, isPressed) => {
+    if (element.classList.contains('activated')) return;
     if (isPressed) {
         element.classList.remove('active-fade');
         element.classList.add('active');
@@ -199,7 +200,7 @@ const setStyleLongPressed = async (element, isLongPressed) => {
     }
 };
 
-const setFullScreen = async (element) => {
+const setFullScreen = async () => {
     if(document.fullscreenElement == null) {
         document.documentElement.requestFullscreen();
     }
@@ -215,6 +216,27 @@ const getKeyAndSendRequest = async (element, isLongPress, eventType) => {
     }
 }
 
+const deactivateStickyKeys = async (el) => {
+    if (el.dataset['key'] != 'shift' &&
+        el.dataset['key'] != 'ctrl' &&
+        el.dataset['key'] != 'alt')
+    document.querySelectorAll('[data-key=shift], [data-key=ctrl], [data-key=alt]')
+        .forEach((element) => {
+            if (el != element && element.classList.contains('activated')) {
+                getKeyAndSendRequest(element, false, Event.RELEASED);
+                element.classList.remove('activated');
+            }
+        });
+    shiftingKeys(false);
+}
+
+const shiftingKeys = async (active) => {
+    document.querySelectorAll('[data-shiftable]')
+        .forEach((element) => {
+            setStyleShifted(element, active);
+        });
+}
+
 const bindKeys = () => {
     document.querySelectorAll('button.key')
         .forEach((element) => {
@@ -223,8 +245,15 @@ const bindKeys = () => {
             element.addEventListener(pointerDownEvent, async (event) => {
                 element.setPointerCapture(event.pointerId);
                 setStylePressed(element, true);
-                getKeyAndSendRequest(element, false, Event.PRESSED);
-
+                if ((element.dataset['key'] != 'shift' &&
+                    element.dataset['key'] != 'ctrl' &&
+                    element.dataset['key'] != 'alt') ||
+                    (element.dataset['key'] == 'shift' && !element.classList.contains('activated')) ||
+                    (element.dataset['key'] == 'ctrl' && !element.classList.contains('activated')) ||
+                    (element.dataset['key'] == 'alt' && !element.classList.contains('activated'))
+                ) {
+                    getKeyAndSendRequest(element, false, Event.PRESSED);
+                }
                 if (element.hasAttribute('data-long-press')) {
                     pressTimer = setTimeout(async () => {
                         setStyleLongPressed(element, true);
@@ -240,7 +269,16 @@ const bindKeys = () => {
             element.addEventListener(pointerUpEvent, async (event) => {
                 setFullScreen();
                 setStylePressed(element, false);
-                getKeyAndSendRequest(element, false, Event.RELEASED);
+                if ((element.dataset['key'] != 'shift' &&
+                    element.dataset['key'] != 'ctrl' &&
+                    element.dataset['key'] != 'alt') ||
+                    (element.dataset['key'] == 'shift' && element.classList.contains('activated')) ||
+                    (element.dataset['key'] == 'ctrl' && element.classList.contains('activated')) ||
+                    (element.dataset['key'] == 'alt' && element.classList.contains('activated'))
+                    ) {
+                    getKeyAndSendRequest(element, false, Event.RELEASED);
+                    deactivateStickyKeys(element);
+                }
 
                 if (element.getAttribute('data-long-press')) {
                     setStyleLongPressed(element, false);
@@ -249,18 +287,35 @@ const bindKeys = () => {
             });
         });
 
-    document.querySelectorAll('[data-key="shift"]')
-        .forEach((element) => {
-            element.addEventListener(pointerDownEvent, async (event) => {
-                document.querySelectorAll('[data-shiftable]')
-                    .forEach((element) => setStyleShifted(element, true));
+    const shiftingKey = async () => {
+        document.querySelectorAll('[data-key="shift"]')
+            .forEach((element) => {
+                element.addEventListener(pointerUpEvent, async (event) => {
+                    if (element.classList.contains('activated')) {
+                        element.classList.remove('activated');
+                        shiftingKeys(false);
+                    } else {
+                        element.classList.add('activated');
+                        element.classList.remove('active-fade');
+                        shiftingKeys(true);
+                    }
+                });
             });
+        }
 
-            element.addEventListener(pointerUpEvent, async (event) => {
-                document.querySelectorAll('[data-shiftable]')
-                    .forEach((element) => setStyleShifted(element, false));
-            });
-        });
+        shiftingKey();
+
+        document.querySelectorAll('[data-key="ctrl"], [data-key="alt"]')
+                .forEach((element) => {
+                    element.addEventListener(pointerUpEvent, async (event) => {
+                        if (element.classList.contains('activated')) {
+                            element.classList.remove('activated');
+                        } else {
+                            element.classList.add('activated');
+                            element.classList.remove('active-fade');
+                        }
+                    });
+                });
 
     // Suppress double-tap magnifying glass on Safari
     document.querySelector('#root').addEventListener('touchend', (event) => {
