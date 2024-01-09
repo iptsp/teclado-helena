@@ -194,7 +194,7 @@ const playKeyPressAudio = async (element) => {
 
 const playAudio = async (name) => {
     try {
-        if (name || isMuted(name)) name = 'key-press';
+        if (!name || isMuted(name)) name = 'key-press';
         const response = await fetch(`./audio/${name}.mp3`);
         const buffer = await response.arrayBuffer();
         const audioBuffer = await audioCtx.decodeAudioData(buffer);
