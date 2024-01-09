@@ -177,7 +177,6 @@ const playKeyPressAudio = async (element) => {
             if (element.dataset['key'] != undefined) {
                 var audioName = element.dataset['key'].toUpperCase();
             }
-            console.log(element.dataset);
             if (element.dataset['shiftable'] != undefined
             && element.dataset['shiftable'] != "") {
                 var shiftActive = document.querySelector('[data-key=shift]').classList.contains("activated");
@@ -198,6 +197,7 @@ const playAudio = async (name) => {
         const response = await fetch(`./audio/${name}.mp3`);
         const buffer = await response.arrayBuffer();
         const audioBuffer = await audioCtx.decodeAudioData(buffer);
+
         const source = audioCtx.createBufferSource();
         source.buffer = audioBuffer;
         source.connect(audioCtx.destination);
