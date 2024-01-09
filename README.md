@@ -106,9 +106,9 @@ To install MSIX packages that have been signed with a self-signed certificate, i
 <details open>
 <summary><b>Option 1: From the CLI</b></summary>
 
-1. Run the following command from an elevated PowerShell prompt. Replace ```THL-1.0.msix``` with the path to the MSIX file.
+1. Run the following command from an elevated PowerShell prompt. Replace ```THL-0.2.msix``` with the path to the MSIX file.
    ```
-   Get-AuthenticodeSignature 'THL-1.0.msix' | Select-Object -ExpandProperty SignerCertificate | Export-Certificate -FilePath ($TempFile = New-TemporaryFile).FullName; Import-Certificate -FilePath $TempFile.FullName -CertStoreLocation 'Cert:\LocalMachine\TrustedPeople'; Remove-Item -Path $TempFile.FullName
+   Get-AuthenticodeSignature 'THL-0.2.msix' | Select-Object -ExpandProperty SignerCertificate | Export-Certificate -FilePath ($TempFile = New-TemporaryFile).FullName; Import-Certificate -FilePath $TempFile.FullName -CertStoreLocation 'Cert:\LocalMachine\TrustedPeople'; Remove-Item -Path $TempFile.FullName
    ```
 </details>
 

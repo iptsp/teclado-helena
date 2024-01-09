@@ -131,6 +131,9 @@ body {
     background: var(--primary);
 }
 
+.mouse-container .footer .left-click img {
+    pointer-events: none;
+}
 
 .mouse-container .scroll {
     grid-area: scroll;

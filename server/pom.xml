@@ -7,7 +7,7 @@
     <parent>
         <groupId>br.ipt</groupId>
         <artifactId>teclado-helena</artifactId>
-        <version>0.0.1</version>
+        <version>0.0.2</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -224,7 +224,7 @@
                                     <arg value="/d"/>
                                     <arg value="${project.build.directory}/${project.name}"/>
                                     <arg value="/p"/>
-                                    <arg value="${project.build.directory}/${project.name}-1.0.msix"/>
+                                    <arg value="${project.build.directory}/${project.name}-0.2.msix"/>
                                 </exec>
                             </target>
                         </configuration>
@@ -237,7 +237,7 @@
                         <phase>install</phase>
                         <configuration>
                             <target>
-                                <attrib file="${project.build.directory}/${project.name}-1.0.msix" readonly="false"/>
+                                <attrib file="${project.build.directory}/${project.name}-0.2.msix" readonly="false"/>
                                 <exec executable="signtool.exe">
                                     <arg value="sign"/>
                                     <arg value="/debug"/>
@@ -254,7 +254,7 @@
                                     <arg value="http://timestamp.sectigo.com"/>
                                     <arg value="/td"/>
                                     <arg value="SHA256"/>
-                                    <arg value="${project.build.directory}/${project.name}-1.0.msix"/>
+                                    <arg value="${project.build.directory}/${project.name}-0.2.msix"/>
                                 </exec>
                                 <exec executable="signtool.exe">
                                     <arg value="sign"/>
@@ -276,9 +276,9 @@
                                     <arg value="1.2.840.113549.1.7.2"/>
                                     <arg value="/p7ce"/>
                                     <arg value="pkcs7DetachedSignedData"/>
-                                    <arg value="${project.build.directory}/${project.name}-1.0.msix"/>
+                                    <arg value="${project.build.directory}/${project.name}-0.2.msix"/>
                                 </exec>
-                                <attrib file="${project.build.directory}/${project.name}-1.0.msix" readonly="true"/>
+                                <attrib file="${project.build.directory}/${project.name}-0.2.msix" readonly="true"/>
                             </target>
                         </configuration>
                         <goals>
