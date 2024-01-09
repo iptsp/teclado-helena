@@ -31,6 +31,12 @@ const loadKeyPressAudio = async () => {
     }
 }
 
+const MutedKeys = {
+    DELETE: 'DELETE',
+    BACKSPACE: 'BACKSPACE',
+    MOUSE: 'MOUSE'
+};
+
 const Event = {
     PRESSED: "PRESSED",
     RELEASED: "RELEASED"
@@ -148,15 +154,51 @@ const api = {
     }
 }
 
-const playKeyPressAudio = async () => {
+const playLongPressAudio = async (element) => {
     try {
-        const keyPressAudio = await audioCtx.createBufferSource();
-        keyPressAudio.buffer = audioBuffer;
-        keyPressAudio.connect(audioCtx.destination);
-        keyPressAudio.start(0);
+        var audioName = 'key-press';
+        if (element != undefined && element.dataset != undefined && element.dataset['longPress'] != undefined) {
+            var audioName = element.dataset['longPress'].toUpperCase();
+        }
+        playAudio(audioName);
     } catch (error) {
         console.error(error);
     }
+}
+
+const isMuted = (keyName) => {
+     return Object.values(MutedKeys).indexOf(keyName) > -1;
+}
+
+const playKeyPressAudio = async (element) => {
+    try {
+        var audioName = 'key-press';
+        if (element != undefined && element.dataset != undefined) {
+            if (element.dataset['key'] != undefined) {
+                var audioName = element.dataset['key'].toUpperCase();
+            }
+            console.log(element.dataset);
+            if (element.dataset['shiftable'] != undefined
+            && element.dataset['shiftable'] != "") {
+                var shiftActive = document.querySelector('[data-key=shift]').classList.contains("activated");
+                if (shiftActive) {
+                    audioName = element.dataset['shiftable'].toUpperCase();
+                }
+            }
+        }
+        playAudio(audioName);
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+const playAudio = async (name) => {
+console.log(name);
+    if (name == undefined || isMuted(name)) name = 'key-press';
+    let basePath = `./audio/${name}.mp3`;
+    var audio = new Audio(basePath);
+    audio.onerror = (ev) => audio.src = './audio/key-press.mp3';
+    audio.addEventListener("canplaythrough", (event) => { audio.play(); });
 }
 
 const vibrateOnKeyPress = async () => {
@@ -166,8 +208,8 @@ const vibrateOnKeyPress = async () => {
     return navigator.vibrate(100);
 }
 
-const keyPressAllFeedback = async () => {
-    await playKeyPressAudio();
+const keyPressAllFeedback = async (element) => {
+    await playKeyPressAudio(element);
     await vibrateOnKeyPress();
 }
 
@@ -260,11 +302,12 @@ const bindKeys = () => {
                     pressTimer = setTimeout(async () => {
                         setStyleLongPressed(element, true);
                         getKeyAndSendRequest(element, true, Event.PRESSED);
+                        playLongPressAudio(element);
                     }, timeLimitLongPress);
                 }
 
                 if (element.hasAttribute('data-feedback')) {
-                    keyPressAllFeedback();
+                    keyPressAllFeedback(element);
                 }
             });
 
@@ -468,7 +511,7 @@ const bindMouse = () => {
                 if (direction === "up") {
                     scrollCounterDown = 0;
                     scrollCounterUp += 1;
-                    if (scrollCountUp > scrollSensitivity){
+                    if (scrollCounterUp > scrollSensitivity){
                         await mouseScrollUp(1);
                         scrollCounterUp = 0;
                     }
@@ -476,7 +519,7 @@ const bindMouse = () => {
                 if (direction === "down") {
                     scrollCounterUp = 0;
                     scrollCounterDown += 1;
-                    if (scrollCountDown > scrollSensitivity){
+                    if (scrollCounterDown > scrollSensitivity){
                         await mouseScrollDown(1);
                         scrollCounterDown = 0;
                     }
