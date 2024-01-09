@@ -79,10 +79,9 @@ body {
 
 .mouse-container .body {
     margin: 0 auto;
-    border-radius: 22px;
     background-color: var(--theme-light);
-    width: 95%;
-    height: 95%;
+    width: 100%;
+    height: 100%;
     display: grid;
     grid-template-columns: auto 20%;
     grid-template-rows: 15% auto 20%;
