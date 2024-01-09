@@ -193,12 +193,18 @@ const playKeyPressAudio = async (element) => {
 }
 
 const playAudio = async (name) => {
-console.log(name);
-    if (name == undefined || isMuted(name)) name = 'key-press';
-    let basePath = `./audio/${name}.mp3`;
-    var audio = new Audio(basePath);
-    audio.onerror = (ev) => audio.src = './audio/key-press.mp3';
-    audio.addEventListener("canplaythrough", (event) => { audio.play(); });
+    try {
+        if (name == undefined || isMuted(name)) name = 'key-press';
+        const response = await fetch(`./audio/${name}.mp3`);
+        const buffer = await response.arrayBuffer();
+        const audioBuffer = await audioCtx.decodeAudioData(buffer);
+        const source = audioCtx.createBufferSource();
+        source.buffer = audioBuffer;
+        source.connect(audioCtx.destination);
+        source.start();
+    } catch (error) {
+        console.error(error);
+    }
 }
 
 const vibrateOnKeyPress = async () => {
