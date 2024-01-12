@@ -101,7 +101,7 @@ public class AsyncKeyboardInputService {
                         KeyboardEventType.RELEASED, Collections.emptyList())
         ));
 
-        keyMap.put("colon", Map.of(
+        keyMap.put("comma", Map.of(
                 KeyShiftState.UNSHIFTED, Map.of(
                         KeyboardEventType.PRESSED, List.of(
                                 new KeyMap(KeyMapEvent.PRESS, KeyEvent.VK_ALT),
