@@ -9,7 +9,7 @@
     "build": "webpack --mode production"
   },
   "author": "",
-  "license": "IPT",
+  "license": "GPL-3.0",
   "devDependencies": {
     "copy-webpack-plugin": "^11.0.0",
     "css-loader": "^6.8.1",

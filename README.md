@@ -137,3 +137,18 @@ To install MSIX packages that have been signed with a self-signed certificate, i
 * Maven 3.x Docs      (https://maven.apache.org/guides/index.html)
 * Git 2.x Docs        (https://git-scm.com/doc)
 * Node 20.x Docs      (https://nodejs.org/dist/latest-v20.x/docs/api/)
+
+# License
+
+Teclado Helena is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Teclado Helena is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License 
+along with this program (COPYING.txt).  If not, see <https://www.gnu.org/licenses/>
