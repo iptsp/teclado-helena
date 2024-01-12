@@ -79,5 +79,11 @@
             </plugin>
         </plugins>
     </build>
+    <licenses>
+        <license>
+            <name>GNU General Public License, version 3.0</name>
+            <url>https://www.gnu.org/licenses/gpl-3.0.html</url>
+        </license>
+    </licenses>
 
 </project>
