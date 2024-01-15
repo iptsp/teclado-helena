@@ -17,27 +17,36 @@
 
 import './styles/style.css';
 
+/** Representa a URL atual. */
 const currentUrl = new URL(window.location.href);
+/** Representa o Host atual. */
 const currentHost = currentUrl.hostname;
-
+/** Endereço da API. */
 const endpoint = `http://${currentHost}:8080/api/v1`;
-
+/** Verificação se há eventos do mouse. */
 let hasPointerEvents = (('PointerEvent' in window) || (window.navigator && 'msPointerEnabled' in window.navigator));
+/** Verificação se há comandos sensíveis ao toque. */
 let isTouch = (('ontouchstart' in window) || (navigator.MaxTouchPoints > 0) || (navigator.msMaxTouchPoints > 0));
-
+/** Evento de mouse ou toque pressionado. */
 let pointerDownEvent = hasPointerEvents ? 'pointerdown' : isTouch ? 'touchstart' : 'mousedown';
+/** Evento de mouse ou toque liberado. */
 let pointerUpEvent = hasPointerEvents ? 'pointerup' : isTouch ? 'touchend' : 'mouseup';
+/** Evento de movimento do mouse ou toque. */
 let pointerMoveEvent = hasPointerEvents ? 'pointermove' : isTouch ? 'touchmove' : 'mousemove';
-
+/** Condicional do modal do mouse aberta ou não. */
 let isMouseEnabled = false;
 
+/** Contexto de áudio para reprodução. */
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 let audioBuffer = null;
 
+/** Tempo limite de toque longo em milissegundos. */
 const timeLimitLongPress = 500;
 
+/** Sensibilidade da rolagem de tela. */
 const scrollSensitivity = 4;
 
+/** Método que faz o carregamento prévio o áudio de clique. */
 const loadKeyPressAudio = async () => {
     try {
         const response = await fetch("./audio/key-press.mp3");
@@ -48,17 +57,25 @@ const loadKeyPressAudio = async () => {
     }
 }
 
+/** Teclas que não reproduzirão sons falados. */
 const MutedKeys = {
     DELETE: 'DELETE',
     BACKSPACE: 'BACKSPACE',
     MOUSE: 'MOUSE'
 };
 
+/** Eventos de mouse/toque. */
 const Event = {
     PRESSED: "PRESSED",
     RELEASED: "RELEASED"
 }
 
+/**
+ * Envio da tecla para o servidor
+ * @param {string} text - Tecla a ser enviada
+ * @param {event} event - Tipo de evento
+ * @return {json} Resposta de execução
+ */
 const inputText = async (text, event) => {
     const request = {
         method: 'POST',
@@ -71,6 +88,10 @@ const inputText = async (text, event) => {
     return await response.json();
 }
 
+/**
+ * Envio do comando completo do botão esquerdo do mouse
+ * @return {json} Resposta de execução
+ */
 const leftClick = async () => {
     const request = {
         method: 'POST',
@@ -83,6 +104,10 @@ const leftClick = async () => {
     return await response.json();
 }
 
+/**
+ * Envio do comando pressionar do esquerdo direito do mouse
+ * @return {json} Resposta de execução
+ */
 const leftPress = async () => {
     const request = {
         method: 'POST',
@@ -95,6 +120,10 @@ const leftPress = async () => {
     return await response.json();
 }
 
+/**
+ * Envio do comando liberar do botão esquerdo do mouse
+ * @return {json} Resposta de execução
+ */
 const leftRelease = async () => {
     const request = {
         method: 'POST',
@@ -107,6 +136,10 @@ const leftRelease = async () => {
     return await response.json();
 }
 
+/**
+ * Envio do comando completo do botão direito do mouse
+ * @return {json} Resposta de execução
+ */
 const rightClick = async () => {
     const request = {
         method: 'POST',
@@ -119,6 +152,9 @@ const rightClick = async () => {
     return await response.json();
 }
 
+/**
+ * Envio do comando rolar página para cima
+ */
 const scrollUp = async (units) => {
     const request = {
         method: 'POST',
@@ -131,6 +167,9 @@ const scrollUp = async (units) => {
     return await response.json();
 }
 
+/**
+ * Envio do comando rolar página para baixo
+ */
 const scrollDown = async (units) => {
     const request = {
         method: 'POST',
@@ -143,6 +182,9 @@ const scrollDown = async (units) => {
     return await response.json();
 }
 
+/**
+ * Envio do comando de movimento do mouse
+ */
 const move = async (x, y) => {
     const request = {
         method: 'POST',
@@ -171,6 +213,10 @@ const api = {
     }
 }
 
+/**
+ * Reproduz áudio de tecla com toque longo
+ * @param {element} element - Tecla que será reproduzido o áudio.
+ */
 const playLongPressAudio = async (element) => {
     try {
         var audioName = 'key-press';
@@ -183,10 +229,18 @@ const playLongPressAudio = async (element) => {
     }
 }
 
+/**
+ * Verifica se a tecla deve reproduzir áudio.
+ * @param {string} keyName - Nome da tecla.
+ */
 const isMuted = (keyName) => {
      return Object.values(MutedKeys).indexOf(keyName) > -1;
 }
 
+/**
+ * Reproduzir áudio da tecla acionada.
+ * @param {element} element - Tecla para reprodução do áudio.
+ */
 const playKeyPressAudio = async (element) => {
     try {
         var audioName = 'key-press';
@@ -208,6 +262,10 @@ const playKeyPressAudio = async (element) => {
     }
 }
 
+/**
+ * Reproduzir áudio.
+ * @param {string} name - Nome do áudio a ser reproduzido
+ */
 const playAudio = async (name) => {
     try {
         if (!name || isMuted(name)) name = 'key-press';
@@ -224,6 +282,9 @@ const playAudio = async (name) => {
     }
 }
 
+/**
+ * Reproduzir a vibração do dispositivo, se houver.
+ */
 const vibrateOnKeyPress = async () => {
     if (!navigator.vibrate) {
         return;
@@ -231,11 +292,19 @@ const vibrateOnKeyPress = async () => {
     return navigator.vibrate(100);
 }
 
+/**
+ * Reproduzir os feedbacks da tecla.
+ * @param {element} element - Tecla a ter feedback acionado
+ */
 const keyPressAllFeedback = async (element) => {
     await playKeyPressAudio(element);
     await vibrateOnKeyPress();
 }
 
+/**
+ * Altera a aparência da tecla acionada.
+ * @param {string} name - Nome do áudio a ser reproduzido
+ */
 const setStylePressed = async (element, isPressed) => {
     if (element.classList.contains('activated')) return;
     if (isPressed) {
