@@ -1,0 +1,25 @@
+name: Rust CI
+
+on:
+  push:
+    branches: [ "draft/rust-rewrite" ]
+  pull_request:
+    branches: [ "draft/rust-rewrite" ]
+
+jobs:
+  build:
+
+    runs-on: windows-latest  
+
+    steps:
+    - run: choco install nodejs
+    - run: node --version
+    - uses: actions/checkout@v3
+    - uses: actions-rs/toolchain@v1
+      with:
+          toolchain: stable
+    - run: cargo build --release
+    - uses: actions/upload-artifact@v4
+      with:
+        name: binary
+        path: target/release/*.exe
