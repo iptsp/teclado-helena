@@ -27,3 +27,4 @@ jobs:
       with:
         name: msi-installer
         path: server/target/*.msi
+        compression-level: 0
