@@ -18,7 +18,7 @@
         <project.name>THL</project.name>
         <project.jpackage.directory>${project.basedir}/jpackage</project.jpackage.directory>
         <project.build.dist.directory>${project.build.directory}/dist</project.build.dist.directory>
-        <certificate.fingerprint>6DBE75B10AC32E435A5118805C3FB8CDB012BAF2</certificate.fingerprint>
+        <project.upgradecode>6AE0D5DD-A282-4B61-91E9-BDF9828EE240</project.upgradecode>
     </properties>
 
     <dependencies>
@@ -108,7 +108,7 @@
                                 <argument>--temp</argument>
                                 <argument>${project.build.directory}/jpackagetmp</argument>
                                 <argument>--type</argument>
-                                <argument>app-image</argument>
+                                <argument>msi</argument>
                                 <argument>--input</argument>
                                 <argument>${project.build.dist.directory}</argument>
                                 <argument>--dest</argument>
@@ -122,7 +122,7 @@
                                 <argument>--icon</argument>
                                 <argument>favicon.ico</argument>
                                 <argument>--app-version</argument>
-                                <argument>1.0</argument>
+                                <argument>0.0.2</argument>
                                 <argument>--resource-dir</argument>
                                 <argument>${project.jpackage.directory}</argument>
                                 <argument>--main-jar</argument>
@@ -139,6 +139,12 @@
                                 <argument>-Xms512m</argument>
                                 <argument>--java-options</argument>
                                 <argument>-Xmx1g</argument>
+                                <argument>--win-menu</argument>
+                                <argument>--win-shortcut</argument>
+                                <argument>--win-menu-group</argument>
+                                <argument>IPT</argument>
+                                <argument>--win-upgrade-uuid</argument>
+                                <argument>${project.upgradecode}</argument>
                             </arguments>
                         </configuration>
                     </execution>
@@ -162,123 +168,6 @@
                                     <fileset
                                             file="${project.jpackage.directory}/favicon.ico"/>
                                 </copy>
-                            </target>
-                        </configuration>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>msix-pack</id>
-                        <phase>install</phase>
-                        <configuration>
-                            <target>
-                                <copy todir="${project.build.directory}/${project.name}/Icons">
-                                    <fileset
-                                            dir="${project.jpackage.directory}/Icons"/>
-                                </copy>
-                                <copy todir="${project.build.directory}/${project.name}">
-                                    <fileset dir="${project.jpackage.directory}"
-                                             casesensitive="yes">
-                                        <include name="**/*.dll"/>
-                                        <include name="**/*.exe"/>
-                                        <include name="**/*.xml"/>
-                                        <include name="**/*.ps1"/>
-                                        <include name="**/*.json"/>
-                                    </fileset>
-                                </copy>
-                                <replace file="${project.build.directory}/${project.name}/AppxManifest.xml">
-                                    <replacetoken>{THLVERSION}</replacetoken>
-                                    <replacevalue>${project.version}</replacevalue>
-                                </replace>
-                                <mkdir dir="${project.build.directory}/${project.name}/Assets"/>
-                                <exec executable="java">
-                                    <arg value="${project.basedir}/src/main/java/br/ipt/thl/assets/MsixAssetGenerator.java"/>
-                                    <arg value="${project.jpackage.directory}/launcher.png"/>
-                                    <arg value="${project.build.directory}/${project.name}/Assets"/>
-                                </exec>
-                                <exec executable="MakePri.exe">
-                                    <arg value="createconfig"/>
-                                    <arg value="/cf"/>
-                                    <arg value="${project.build.directory}/${project.name}/Resources.pri.xml"/>
-                                    <arg value="/dq"/>
-                                    <arg value="lang-pt-BR"/>
-                                    <arg value="/o"/>
-                                    <arg value="/pv"/>
-                                    <arg value="10.0.0"/>
-                                </exec>
-                                <exec executable="MakePri.exe">
-                                    <arg value="new"/>
-                                    <arg value="/cf"/>
-                                    <arg value="${project.build.directory}/${project.name}/Resources.pri.xml"/>
-                                    <arg value="/pr"/>
-                                    <arg value="${project.build.directory}/${project.name}"/>
-                                    <arg value="/mn"/>
-                                    <arg value="${project.build.directory}/${project.name}/AppxManifest.xml"/>
-                                    <arg value="/o"/>
-                                    <arg value="/of"/>
-                                    <arg value="${project.build.directory}/${project.name}/Resources.pri"/>
-                                </exec>
-                                <exec executable="MakeAppx.exe">
-                                    <arg value="pack"/>
-                                    <arg value="/d"/>
-                                    <arg value="${project.build.directory}/${project.name}"/>
-                                    <arg value="/p"/>
-                                    <arg value="${project.build.directory}/${project.name}-0.2.msix"/>
-                                </exec>
-                            </target>
-                        </configuration>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>msix-sign</id>
-                        <phase>install</phase>
-                        <configuration>
-                            <target>
-                                <attrib file="${project.build.directory}/${project.name}-0.2.msix" readonly="false"/>
-                                <exec executable="signtool.exe">
-                                    <arg value="sign"/>
-                                    <arg value="/debug"/>
-                                    <arg value="/sm"/>
-                                    <arg value="/s"/>
-                                    <arg value="My"/>
-                                    <arg value="/sha1"/>
-                                    <arg value="${certificate.fingerprint}"/>
-                                    <arg value="/fd"/>
-                                    <arg value="SHA256"/>
-                                    <arg value="/d"/>
-                                    <arg value="IPT THL"/>
-                                    <arg value="/tr"/>
-                                    <arg value="http://timestamp.sectigo.com"/>
-                                    <arg value="/td"/>
-                                    <arg value="SHA256"/>
-                                    <arg value="${project.build.directory}/${project.name}-0.2.msix"/>
-                                </exec>
-                                <exec executable="signtool.exe">
-                                    <arg value="sign"/>
-                                    <arg value="/debug"/>
-                                    <arg value="/sm"/>
-                                    <arg value="/s"/>
-                                    <arg value="My"/>
-                                    <arg value="/sha1"/>
-                                    <arg value="${certificate.fingerprint}"/>
-                                    <arg value="/fd"/>
-                                    <arg value="SHA256"/>
-                                    <arg value="/tr"/>
-                                    <arg value="http://timestamp.sectigo.com"/>
-                                    <arg value="/td"/>
-                                    <arg value="SHA256"/>
-                                    <arg value="/p7"/>
-                                    <arg value="${project.build.directory}"/>
-                                    <arg value="/p7co"/>
-                                    <arg value="1.2.840.113549.1.7.2"/>
-                                    <arg value="/p7ce"/>
-                                    <arg value="pkcs7DetachedSignedData"/>
-                                    <arg value="${project.build.directory}/${project.name}-0.2.msix"/>
-                                </exec>
-                                <attrib file="${project.build.directory}/${project.name}-0.2.msix" readonly="true"/>
                             </target>
                         </configuration>
                         <goals>

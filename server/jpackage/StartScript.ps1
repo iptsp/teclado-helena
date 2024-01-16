@@ -1,1 +1,0 @@
-./CreateShortcuts.ps1
