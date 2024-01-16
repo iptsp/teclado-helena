@@ -1,3 +1,20 @@
+//Teclado Helena is a keyboard designed to better the experience mainly of users with cerebral palsy.
+//        Copyright (C) 2024  Instituto de Pesquisas Tecnológicas
+// This file is part of Teclado Helena.
+//
+//     Teclado Helena is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+//     Teclado Helena is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+//     You should have received a copy of the GNU General Public License
+// along with Teclado Helena. If not, see <https://www.gnu.org/licenses/>6.
+
 import './styles/style.css';
 
 const currentUrl = new URL(window.location.href);
@@ -56,55 +73,6 @@ const Event = {
 const inputText = async (text, event) => {
     socket.send(JSON.stringify({"action": "KeyPress", "data": {"key": text, "state": event}}));
 }
-/*
-const inputText = async (text, event) => {
-    const request = {
-        method: 'POST',
-        body: JSON.stringify({text, event}),
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    }
-    const response = await fetch(`${endpoint}/systems/keyboards/inputs`, request);
-    return await response.json();
-}*/
-
-
-const leftClick = async () => {
-    const request = {
-        method: 'POST',
-        body: JSON.stringify({}),
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    }
-    const response = await fetch(`${endpoint}/systems/mouses/buttons/left/events/click`, request);
-    return await response.json();
-}
-/*
-const leftPress = async () => {
-    const request = {
-        method: 'POST',
-        body: JSON.stringify({}),
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    }
-    const response = await fetch(`${endpoint}/systems/mouses/buttons/left/events/press`, request);
-    return await response.json();
-}
-
-const leftRelease = async () => {
-    const request = {
-        method: 'POST',
-        body: JSON.stringify({}),
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    }
-    const response = await fetch(`${endpoint}/systems/mouses/buttons/left/events/release`, request);
-    return await response.json();
-}*/
 
 const leftPress = async () => {
     socket.send(JSON.stringify({"action": "MouseClick", "data": {"button": "left", "state": "press"}}));
@@ -115,6 +83,7 @@ const leftRelease = async () => {
 }
 
 const rightClick = async () => {
+    socket.send(JSON.stringify({"action": "MouseClick", "data": {"button": "right", "state": "press"}}));
     const request = {
         method: 'POST',
         body: {},
@@ -125,30 +94,6 @@ const rightClick = async () => {
     const response = await fetch(`${endpoint}/systems/mouses/buttons/right/events/click`, request);
     return await response.json();
 }
-/*
-const scrollUp = async (units) => {
-    const request = {
-        method: 'POST',
-        body: JSON.stringify({units}),
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    }
-    const response = await fetch(`${endpoint}/systems/mouses/scrolls/events/up`, request);
-    return await response.json();
-}
-
-const scrollDown = async (units) => {
-    const request = {
-        method: 'POST',
-        body: JSON.stringify({units}),
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    }
-    const response = await fetch(`${endpoint}/systems/mouses/scrolls/events/down`, request);
-    return await response.json();
-}*/
 
 const scrollUp = async (units) => {
     socket.send(JSON.stringify({"action": "MouseScroll", "data": {"direction": "up", "amount": units}}));
@@ -158,19 +103,6 @@ const scrollDown = async (units) => {
     socket.send(JSON.stringify({"action": "MouseScroll", "data": {"direction": "down", "amount": units}}));
 }
 
-/*
-const move = async (x, y) => {
-    const request = {
-        method: 'POST',
-        body: JSON.stringify({x, y}),
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    }
-    const response = await fetch(`${endpoint}/systems/mouses/events/move`, request);
-    return await response.json();
-}
-*/
 const move = async (x, y) => {
     socket.send(JSON.stringify({"action": "MouseMove", "data": {"dx": x, "dy": y}}));
 }
@@ -181,10 +113,8 @@ const api = {
         inputText
     },
     mouse: {
-        leftClick,
         leftPress,
         leftRelease,
-        rightClick,
         scrollUp,
         scrollDown,
         move
@@ -214,7 +144,6 @@ const playKeyPressAudio = async (element) => {
             if (element.dataset['key'] != undefined) {
                 var audioName = element.dataset['key'].toUpperCase();
             }
-            console.log(element.dataset);
             if (element.dataset['shiftable'] != undefined
             && element.dataset['shiftable'] != "") {
                 var shiftActive = document.querySelector('[data-key=shift]').classList.contains("activated");
@@ -231,7 +160,7 @@ const playKeyPressAudio = async (element) => {
 
 const playAudio = async (name) => {
     try {
-        if (name == undefined || isMuted(name)) name = 'key-press';
+        if (!name || isMuted(name)) name = 'key-press';
         const response =  await fetch(`./audio/${name}.mp3`);
         const buffer = await response.arrayBuffer();
         const audioBuffer = await audioCtx.decodeAudioData(buffer);
@@ -243,17 +172,6 @@ const playAudio = async (name) => {
     } catch (error) {
         console.error(error);
     }
-}
-const playAudio2 = async (name) => {
-console.log(name);
-    if (name == undefined || isMuted(name)) name = 'key-press';
-    let basePath = `./audio/${name}.mp3`;
-    const AudioContext = window.AudioContext || window.webkitAudioContext;
-    const audioCtx = new AudioContext();
-    var audio = new Audio(basePath);
-    audio.onerror = (ev) => audio.src = './audio/key-press.mp3';
-    audio.load();
-    audio.addEventListener("canplaythrough", (event) => { audio.play(); });
 }
 
 const vibrateOnKeyPress = async () => {
