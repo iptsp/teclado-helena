@@ -2,6 +2,7 @@
 name = "teclado-helena"
 version = "0.1.0"
 edition = "2021"
+build = "build.rs"
 
 [dependencies]
 axum = { version = "0.7.3", features = ["ws"] }
@@ -30,3 +31,6 @@ features = [
     "Win32_System_SystemServices",
     "Win32_UI_WindowsAndMessaging"
 ]
+
+[build-dependencies]
+winres = "0.1.12"
