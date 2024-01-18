@@ -11,7 +11,7 @@ mod window;
 async fn main() {
     let instance_a = SingleInstance::new("Teclado Helena").unwrap();
     assert!(instance_a.is_single());
-    
+
     let ip_url = get_ip_url();
 
     tokio::spawn(server::serve());

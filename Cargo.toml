@@ -4,6 +4,13 @@ version = "0.1.0"
 edition = "2021"
 build = "build.rs"
 
+[package.metadata.winres]
+ProductName = "Teclado Helena"
+FileDescription = "Teclado Helena"
+OriginalFilename = "teclado-helena.exe"
+CompanyName = "Instituto de Pesquisas Tecnológicas"
+LegalCopyright = "Copyright © 2024"
+
 [dependencies]
 axum = { version = "0.7.3", features = ["ws"] }
 futures = "0.3.30"
