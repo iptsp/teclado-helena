@@ -44,7 +44,6 @@ pub enum ScrollDirection {
     Down,
 }
 
-// Helper function to deserialize JSON to an InputAction
 pub fn deserialize_action(json: &str) -> Result<InputAction, serde_json::Error> {
     serde_json::from_str(json)
 }
