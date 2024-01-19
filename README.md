@@ -8,10 +8,8 @@ Para compilar este projeto, as seguintes dependências devem estar instaladas em
 * Git (https://git-scm.com/downloads)
 
 ## Desenvolvimento
-```
-cd client
-npm install
-npm run build
-cd ..
-cargo build --release
-```
+Para executar em modo de desenvolvimento, utilize o comando
+```./run.bat```
+
+Para compilar para release, utilize o comando
+```./build.bat```
