@@ -54,7 +54,7 @@ fn load_icon() -> HICON {
     let icon = unsafe {
         LoadImageW(
             GetModuleHandleW(std::ptr::null()),
-            (1usize as *const u16),
+            1usize as *const u16,
             IMAGE_ICON,
             0,
             0,
