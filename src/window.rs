@@ -50,6 +50,20 @@ fn create_hbitmap_from_vec(bitmap_data: &Vec<u8>) -> HBITMAP {
     hbitmap
 }
 
+fn load_icon() -> HICON {
+    let icon = unsafe {
+        LoadImageW(
+            GetModuleHandleW(std::ptr::null()),
+            (1usize as *const u16),
+            IMAGE_ICON,
+            0,
+            0,
+            LR_DEFAULTSIZE,
+        )
+    };
+    icon
+}
+
 pub fn create_window(ip: String) {
     let image = generate_qr_code(&ip);
     unsafe {
@@ -73,8 +87,8 @@ pub fn create_window(ip: String) {
             lpfnWndProc: Some(wndproc),
             cbClsExtra: 0,
             cbWndExtra: 0,
-            hIcon: 0,
-            hIconSm: 0,
+            hIcon: load_icon(),
+            hIconSm: load_icon(),
             hbrBackground: 0,
             lpszMenuName: std::ptr::null(),
         };
