@@ -2,6 +2,9 @@
   <Package Name="Teclado Helena" Manufacturer="Instituto de Pesquisas Tecnológicas" Version="1.0.0.0" UpgradeCode="91924ec2-6320-4c04-aa83-019e26150883">
     <MediaTemplate EmbedCab="yes" />
 
+    <Icon Id="icon.ico" SourceFile="..\..\assets\favicon.ico"/>
+    <Property Id="ARPPRODUCTICON" Value="icon.ico" />
+
 	  <StandardDirectory Id="ProgramFiles6432Folder">
 		  <Directory Id="INSTALLFOLDER" Name="!(bind.Property.ProductName)" />
 	  </StandardDirectory>
