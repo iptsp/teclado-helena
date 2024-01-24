@@ -40,15 +40,13 @@
       <ComponentRef Id="ApplicationDesktopShortcut" />
     </Feature>
 
-    <CustomAction Id="EXECUTE_AFTER_FINALIZE"                  
-                  Execute="commit" 
-                  Impersonate="no"
+    <CustomAction Id="ExecuteAfterInstall"
                   Return="asyncNoWait"
-                  FileRef="ApplicationExecutable"
-                  ExeCommand="" />
+                  Directory="INSTALLFOLDER"
+                  ExeCommand="[SystemFolder]cmd.exe /C start teclado-helena.exe" />
 
     <InstallExecuteSequence>
-      <Custom Action="EXECUTE_AFTER_FINALIZE" After="InstallFinalize" Condition="NOT Installed" />
+      <Custom Action="ExecuteAfterInstall" After="InstallFinalize" Condition="NOT Installed" />
     </InstallExecuteSequence>
 
   </Package>
