@@ -39,14 +39,13 @@ jobs:
         path: target/release/*.msi
 
     - run: cargo doc
-    - run: robocopy target/doc docs/server /s /e
-    - run: echo ^<meta http-equiv="refresh" content="0; url=server/teclado_helena/index.html"^> > docs/index.html
+    - run: echo ^<meta http-equiv="refresh" content="0; url=server/teclado_helena/index.html"^> > target/doc/index.html
     - name: Setup Pages
       uses: actions/configure-pages@v3
     - name: Upload Artifact
       uses: actions/upload-pages-artifact@v1
       with:
-        path: "./docs"
+        path: "./target/doc"
   
   deploy:
     runs-on: windows-latest
