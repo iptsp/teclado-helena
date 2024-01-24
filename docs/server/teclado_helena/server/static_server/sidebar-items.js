@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["index_handler","not_found","static_handler"],"struct":["Asset","StaticFile"]};

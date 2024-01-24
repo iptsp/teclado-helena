@@ -1,0 +1,3 @@
+(function() {var implementors = {
+"teclado_helena":[["impl&lt;T&gt; IntoResponse for <a class=\"struct\" href=\"teclado_helena/server/static_server/struct.StaticFile.html\" title=\"struct teclado_helena::server::static_server::StaticFile\">StaticFile</a>&lt;T&gt;<span class=\"where fmt-newline\">where\n    T: <a class=\"trait\" href=\"https://doc.rust-lang.org/1.72.1/core/convert/trait.Into.html\" title=\"trait core::convert::Into\">Into</a>&lt;<a class=\"struct\" href=\"https://doc.rust-lang.org/1.72.1/alloc/string/struct.String.html\" title=\"struct alloc::string::String\">String</a>&gt;,</span>"]]
+};if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

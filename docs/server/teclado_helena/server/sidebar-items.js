@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["serve"],"mod":["static_server","websocket"]};

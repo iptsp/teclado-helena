@@ -14,3 +14,6 @@ Para executar em modo de desenvolvimento, utilize o comando
 
 Para compilar para release, utilize o comando
 ```./build.bat```
+
+Para gerar a documentação, utilize o comando
+```./gendoc.bat```
