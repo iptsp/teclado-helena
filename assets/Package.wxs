@@ -1,0 +1,55 @@
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  <Package Name="Teclado Helena" Manufacturer="Instituto de Pesquisas Tecnológicas" Version="1.0.0.0" UpgradeCode="91924ec2-6320-4c04-aa83-019e26150883">
+    <MediaTemplate EmbedCab="yes" />
+
+	  <StandardDirectory Id="ProgramFiles6432Folder">
+		  <Directory Id="INSTALLFOLDER" Name="!(bind.Property.ProductName)" />
+	  </StandardDirectory>
+
+    <DirectoryRef Id="INSTALLFOLDER">
+      <Component Id="ApplicationExecutable" Guid="e3ce254b-d910-4df5-87a3-feaf76dddce6">
+        <File Id="ApplicationExecutable" Source="teclado-helena.exe" KeyPath="yes" Checksum="yes"/>
+      </Component>
+    </DirectoryRef>
+
+    <StandardDirectory Id="ProgramMenuFolder">
+      <Component Id="ApplicationStartMenuShortcut" Guid="438b0d9b-08d7-466a-ad7a-37971f5934ea">
+        <Shortcut Id="ApplicationStartMenuShortcut"
+                  Name="Teclado Helena"
+                  Description="Teclado Helena"
+                  Target="[#ApplicationExecutable]"
+                  WorkingDirectory="INSTALLFOLDER"/>
+        <RegistryValue Root="HKCU" Key="Software\IPT\Teclado Helena" Name="InstalledStartMenuShortcut" Type="integer" Value="1" KeyPath="yes"/>
+      </Component>
+    </StandardDirectory>
+
+    <StandardDirectory Id="DesktopFolder">
+      <Component Id="ApplicationDesktopShortcut" Guid="de2ece32-1966-452a-a79e-27bce12dbcb5">
+        <Shortcut Id="ApplicationDesktopShortcut"
+                  Name="Teclado Helena"
+                  Description="Teclado Helena"
+                  Target="[#ApplicationExecutable]"
+                  WorkingDirectory="INSTALLFOLDER"/>
+        <RegistryValue Root="HKCU" Key="Software\IPT\Teclado Helena" Name="InstalledDesktopShortcut" Type="integer" Value="1" KeyPath="yes"/>
+      </Component>
+    </StandardDirectory>
+
+    <Feature Id="MainApplication" Title="Main Application" Level="1">
+      <ComponentRef Id="ApplicationExecutable" />
+      <ComponentRef Id="ApplicationStartMenuShortcut" />
+      <ComponentRef Id="ApplicationDesktopShortcut" />
+    </Feature>
+
+    <CustomAction Id="EXECUTE_AFTER_FINALIZE"                  
+                  Execute="commit" 
+                  Impersonate="no"
+                  Return="asyncNoWait"
+                  FileRef="ApplicationExecutable"
+                  ExeCommand="" />
+
+    <InstallExecuteSequence>
+      <Custom Action="EXECUTE_AFTER_FINALIZE" After="InstallFinalize" Condition="NOT Installed" />
+    </InstallExecuteSequence>
+
+  </Package>
+</Wix>
