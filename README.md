@@ -5,6 +5,7 @@ Para compilar este projeto, as seguintes dependências devem estar instaladas em
 
 * Rust (https://www.rust-lang.org/pt-BR/tools/install)
 * Node 20.x (https://nodejs.org/en/download/)
+* Wix (https://wixtoolset.org/docs/intro/)
 * Git (https://git-scm.com/downloads)
 
 ## Desenvolvimento
