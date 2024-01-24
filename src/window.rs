@@ -1,3 +1,7 @@
+//! # Janela do QR code do Teclado Helena
+//!
+//! Módulo para gerar e exibir o QR code com o link para a interface do cliente, utilizando a API Win32.
+
 use image::{codecs::bmp::BmpEncoder, ColorType, ImageEncoder};
 use qrcode_generator::{to_image, QrCodeEcc};
 use windows_sys::{
@@ -13,6 +17,19 @@ use windows_sys::{
     },
 };
 
+/// Gera um QR code a partir de um `ip_url`, retornando uma handle para a imagem bitmap (HBITMAP).
+///
+/// # Parâmetros
+///
+/// * `ip_url` - Uma string slice contendo a URL ou texto a ser codificada em um QR code.
+///
+/// # Pânico
+///
+/// Esta função entra em pânico se a geração do QR code falhar ou se a codificação do BMP falhar.
+///
+/// # Retorno
+///
+/// Uma handle para o bitmap criado (HBITMAP) que representa o QR code.
 fn generate_qr_code(ip_url: &str) -> HBITMAP {
     let mut bmp = Vec::with_capacity(4096);
     let img_raw = to_image(&ip_url, QrCodeEcc::Low, 290).unwrap();
@@ -24,6 +41,20 @@ fn generate_qr_code(ip_url: &str) -> HBITMAP {
     hbitmap
 }
 
+/// Cria um device-independent bitmap (DIB) a partir do vetor de dados bitmap.
+///
+/// # Parâmetros
+///
+/// * `bitmap_data` - Um vetor contendo dados de arquivo BMP.
+///
+/// # Segurança
+///
+/// Esta função utiliza blocos unsafe para interagir com a API Win32 e realiza conversões de ponteiro bruto
+/// O chamador deve garantir que os dados bitmap sejam uma imagem BMP válida.
+///
+/// # Retorno
+///
+/// Uma handle para o bitmap criado (HBITMAP) que representa os dados da imagem carregada.
 fn create_hbitmap_from_vec(bitmap_data: &Vec<u8>) -> HBITMAP {
     let bitmap_file_header: &BITMAPFILEHEADER = unsafe { std::mem::transmute(&bitmap_data[0]) };
     let bmi: &BITMAPINFO =
@@ -50,6 +81,15 @@ fn create_hbitmap_from_vec(bitmap_data: &Vec<u8>) -> HBITMAP {
     hbitmap
 }
 
+/// Carrega um recurso de ícone do executável atual e returna uma handle para o ícone (HICON).
+///
+/// # Segurança
+///
+/// Esta função utiliza um bloco unsafe para chamar a API do Windows.
+///
+/// # Retorno
+///
+/// Uma handle para o ícone carregado (HICON).
 fn load_icon() -> HICON {
     let icon = unsafe {
         LoadImageW(
@@ -63,6 +103,17 @@ fn load_icon() -> HICON {
     };
     icon
 }
+
+/// Cria e exibe uma janela que contém a imagem do QR code gerado a partir da string `ip` fornecida
+/// e exibe o endereço de IP.
+///
+/// # Parâmetros
+///
+/// * `ip` - Uma string representando um endereço de IP em URL, que será exibida e codificada em um QR code.
+///
+/// # Segurança
+///
+/// Esta função utiliza blocos unsafe para criar, manipular e interagir com as janelas da API Win32.
 
 pub fn create_window(ip: String) {
     let image = generate_qr_code(&ip);
@@ -161,6 +212,9 @@ pub fn create_window(ip: String) {
     }
 }
 
+/// Uma função de retorno de chamada que processa mensagens enviadas para uma janela.
+///
+/// Documentação Win32: <https://learn.microsoft.com/pt-br/windows/win32/api/winuser/nc-winuser-wndproc>
 extern "system" fn wndproc(window: HWND, message: u32, wparam: WPARAM, lparam: LPARAM) -> LRESULT {
     unsafe {
         match message {

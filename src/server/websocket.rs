@@ -1,3 +1,7 @@
+//! Módulo responsável pelo gerenciamento de conexões WebSocket
+//!
+//! Este módulo provê funções para tratar requisições de upgrade do WebSocket
+//! e para processar mensagens recebidas através do WebSocket.
 use axum::{
     extract::{ws::WebSocket, WebSocketUpgrade},
     response::Response,
