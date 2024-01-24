@@ -39,10 +39,34 @@ const timeLimitLongPress = 500;
 
 const scrollSensitivity = 4;
 
-const socket = new WebSocket(websocketEndpoint);
-socket.addEventListener("open", (event) => {
-    socket.send("Hello Server!");
-});
+let socket;
+const connect = () => {
+    if (socket && socket.readyState === WebSocket.OPEN) {
+        socket.close();
+    }
+
+    socket = new WebSocket(websocketEndpoint);
+
+    socket.addEventListener("open", (event) => {
+        console.log("Connected to the WebSocket server");
+    });
+
+    socket.addEventListener("close", (event) => {
+        console.log("WebSocket connection closed by the server, reconnecting...");
+        handleReconnect();
+    });
+    
+    socket.addEventListener("error", (event) => {
+        console.error("WebSocket error observed:", event);
+        handleReconnect();
+    });
+}
+
+const handleReconnect = () => {
+    setTimeout(connect, 5000);
+}
+
+connect();
   
 // Listen for messages
 socket.addEventListener("message", (event) => {
