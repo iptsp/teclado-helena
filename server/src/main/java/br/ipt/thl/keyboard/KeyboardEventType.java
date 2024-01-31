@@ -17,6 +17,9 @@
 
 package br.ipt.thl.keyboard;
 
+/**
+ * Enums de tipos de evento do teclado.
+ */
 public enum KeyboardEventType {
     PRESSED,
     RELEASED

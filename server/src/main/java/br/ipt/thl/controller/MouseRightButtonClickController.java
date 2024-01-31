@@ -22,23 +22,31 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-
+/**
+ * Controlador para o botão direito do mouse.
+ */
 @RestController
 public class MouseRightButtonClickController {
 
     private final EventDispatcher eventDispatcher;
 
+    /** Inicialização do controlador */
     @Autowired
     public MouseRightButtonClickController(final EventDispatcher eventDispatcher) {
         this.eventDispatcher = eventDispatcher;
     }
 
+    /**
+     * Ativa o comando de acionamento do clique.
+     * @return Resposta do comando executado.
+     */
     @PostMapping("/api/v1/systems/mouses/buttons/right/events/click")
     MouseRightButtonClickControllerResponse handleKeyboardInput() {
         eventDispatcher.mouseRightButtonClick();
         return new MouseRightButtonClickControllerResponse();
     }
 
+    /** Mensagem de resposta do botão liberado. */
     record MouseRightButtonClickControllerResponse() {
     }
 }

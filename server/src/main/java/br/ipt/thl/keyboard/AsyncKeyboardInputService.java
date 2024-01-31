@@ -30,13 +30,24 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * Componente de preparo e envio dos comandos de tecla ao sistema operacional.
+ */
 @Component
-
 public class AsyncKeyboardInputService {
+    /** Define a variável do envio de comandos para o sistema operacional. */
     private final OsDispatcher osDispatcher;
+    /** Variável para o armazenamento das teclas do teclado. */
     private static final Map<String, Map<KeyShiftState, Map<KeyboardEventType, List<KeyMap>>>> keyMap = new HashMap<>();
+    /** Inicializar com o SHIFT desligado. */
     private boolean isShiftPressed = false;
 
+    /*
+      Atribuição a variável de armazenamento das teclas (keyMap)
+      das definições de cada tecla, nome e sua chave de código.
+      Chave de código - Corresponde ao código correspondente
+      ao comando de tecla para o sistema operacional.
+     */
     static {
 
         keyMap.put("esc", createDefaultKeyMap(KeyEvent.VK_ESCAPE));
@@ -169,6 +180,10 @@ public class AsyncKeyboardInputService {
         ));
     }
 
+    /**
+     * Atribui o comando SHIFT para a tecla indicada.
+     * @param keyCode Tecla a ser atribuida o comando SHIFT.
+     */
     private static Map<KeyShiftState, Map<KeyboardEventType, List<KeyMap>>> createDefaultKeyMap(int keyCode) {
         return Map.of(
                 KeyShiftState.UNSHIFTED, createDefaultEventMap(keyCode),
@@ -176,6 +191,10 @@ public class AsyncKeyboardInputService {
         );
     }
 
+    /**
+     * Atribui os eventos de ACIONADO e LIBERADO a tecla indicada.
+     * @param keyCode Tecla a ser atribuido os eventos.
+     */
     private static Map<KeyboardEventType, List<KeyMap>> createDefaultEventMap(int keyCode) {
         return Map.of(
                 KeyboardEventType.PRESSED, List.of(new KeyMap(KeyMapEvent.PRESS, keyCode)),
@@ -183,21 +202,31 @@ public class AsyncKeyboardInputService {
         );
     }
 
+    /** Inicializador do Componente */
     @Autowired
     public AsyncKeyboardInputService(final OsDispatcher osDispatcher) {
         this.osDispatcher = osDispatcher;
     }
 
+    /**
+     * Envia o comando ao sistema operacional.
+     * @param text      Em formato de texto, tecla acionada no Teclado Helena.
+     * @param event     Tipo de evento realizado, ACIONADO ou LIBERADO.
+     */
     @Async(ExecutorsConfig.OS)
     public CompletableFuture<Void> sendText(final String text, final KeyboardEventType event) {
 
+        /* Verifica se a tecla acionada é a tecla SHIFT, caso seja, define a variável como acionada. */
         if ("shift".equals(text)) {
             isShiftPressed = event == KeyboardEventType.PRESSED;
         }
 
+        /* Define o estado da tecla, se está com o SHIFT acionado ou não. */
         var keyState = isShiftPressed ? KeyShiftState.SHIFTED : KeyShiftState.UNSHIFTED;
+        /* Resgata a tecla a ser acionada. */
         var keyCodes = keyMap.getOrDefault(text, toKeyMap(text));
 
+        /* Envia a tecla para ser acionada no sistema operacional. */
         keyCodes.get(keyState).get(event).forEach(keyMap -> {
             switch (keyMap.keyMapEvent) {
                 case PRESS -> osDispatcher.keyPress(keyMap.keyCode);
@@ -208,19 +237,30 @@ public class AsyncKeyboardInputService {
         return CompletableFuture.completedFuture(null);
     }
 
+    /**
+     * Atribui a tecla a uma nova variável utilizada pelo keyMap.
+     * @param text Tecla a ser atribuída.
+     */
     private Map<KeyShiftState, Map<KeyboardEventType, List<KeyMap>>> toKeyMap(final String text) {
         var keyCode = KeyEvent.getExtendedKeyCodeForChar(text.charAt(0));
         return createDefaultKeyMap(keyCode);
     }
 
+    /** Objeto KeyMap */
     record KeyMap(KeyMapEvent keyMapEvent, int keyCode) {
     }
 
+    /**
+     * Enum dos eventos ACIONADO (PRESS) e LIBERADO (RELEASE).
+     */
     enum KeyMapEvent {
         PRESS,
         RELEASE
     }
 
+    /**
+     * Enum dos estados do SHIFT, SHIFT ACIONADO (SHIFTED) e SHIFT LIBERADO (UNSHIFTED).
+     */
     enum KeyShiftState {
         SHIFTED,
         UNSHIFTED

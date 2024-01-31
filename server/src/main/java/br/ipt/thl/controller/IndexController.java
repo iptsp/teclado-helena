@@ -21,12 +21,16 @@ package br.ipt.thl.controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controlador principal da aplicação.
+ * Retorna uma mensagem de aviso sobre o estado da aplicação.
+ */
 @RestController
 public class IndexController {
 
     @GetMapping("/api/v1")
     IndexControllerResponse index() {
-        return new IndexControllerResponse("Teclado Helena its up and running");
+        return new IndexControllerResponse("O Teclado Helena está de pé e rodando!");
     }
 
     record IndexControllerResponse(String message) {

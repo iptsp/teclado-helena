@@ -17,5 +17,8 @@
 
 package br.ipt.thl.event;
 
+/**
+ * Objeto de apoio para o evento de clique do botão direito do mouse.
+ */
 public class MouseRightButtonClickEvent extends NoPayloadApplicationEvent {
 }

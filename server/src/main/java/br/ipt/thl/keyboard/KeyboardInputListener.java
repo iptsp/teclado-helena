@@ -23,17 +23,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
+/**
+ * Componente de escuta dos eventos de teclado.
+ */
 @Component
 public class KeyboardInputListener {
 
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(KeyboardInputListener.class);
     private final AsyncKeyboardInputService asyncKeyboardInputService;
 
+    /** Inicializador do componente */
     @Autowired
     public KeyboardInputListener(final AsyncKeyboardInputService asyncKeyboardInputService) {
         this.asyncKeyboardInputService = asyncKeyboardInputService;
     }
 
+    /**
+     * Acionado por evento, envia o comando da tecla acionada ao sistema operacional.
+     * @param keyboardInputEvent Objeto de apoio para o evento de acionamento de tecla.
+     */
     @EventListener
     public void keyboardInputEvent(final KeyboardInputEvent keyboardInputEvent) {
         var keyboardInputEventInfo = keyboardInputEvent.source();
@@ -46,9 +54,6 @@ public class KeyboardInputListener {
                     LOGGER.error("Error sending keyboard input: {}, {}", text, event, e);
                     return null;
                 })
-                .thenAccept((res) -> {
-                    LOGGER.debug("Keyboard input sent: {}, {}", text, event);
-                });
+                .thenAccept((res) -> LOGGER.debug("Keyboard input sent: {}, {}", text, event));
     }
-
 }

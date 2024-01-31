@@ -29,6 +29,10 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 
+/**
+ * Classe que lida com caminhos de arquivos.
+ * Encapsulamento para fácil uso.
+ */
 public final class Classpaths {
 
     private Classpaths() {

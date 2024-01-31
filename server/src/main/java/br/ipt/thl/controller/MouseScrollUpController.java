@@ -23,17 +23,24 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-
+/**
+ * Controlador para o evento de rolagem de página para cima.
+ */
 @RestController
 public class MouseScrollUpController {
 
     private final EventDispatcher eventDispatcher;
 
+    /** Inicialização do controlador */
     @Autowired
     public MouseScrollUpController(final EventDispatcher eventDispatcher) {
         this.eventDispatcher = eventDispatcher;
     }
 
+    /**
+     * Ativa o comando de acionamento da rolagem de página para cima.
+     * @return Resposta do comando executado.
+     */
     @PostMapping("/api/v1/systems/mouses/scrolls/events/up")
     MouseScrollUpControllerResponse handleKeyboardInput(@RequestBody MouseScrollUpControllerRequest
                                                             mouseScrollUpControllerRequest) {
@@ -42,9 +49,14 @@ public class MouseScrollUpController {
         return new MouseScrollUpControllerResponse();
     }
 
+    /**
+     * Dados enviados pelo Teclado Helena.
+     * @param units Quantidade de rolagem de página para cima.
+     */
     record MouseScrollUpControllerRequest(int units) {
     }
 
+    /** Mensagem de resposta. */
     record MouseScrollUpControllerResponse() {
     }
 

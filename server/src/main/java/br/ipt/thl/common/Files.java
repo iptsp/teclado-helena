@@ -34,6 +34,10 @@ import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+/**
+ * Classe que lida com arquivos.
+ * Encapsulamento para fácil uso.
+ */
 public final class Files {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Files.class);

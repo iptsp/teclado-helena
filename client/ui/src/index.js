@@ -17,11 +17,11 @@
 
 import './styles/style.css';
 
-/** Representa a URL atual. */
+/** Representa a URL atual da página. */
 const currentUrl = new URL(window.location.href);
 /** Representa o Host atual. */
 const currentHost = currentUrl.hostname;
-/** Endereço da API. */
+/** Endereço da API do servidor. */
 const endpoint = `http://${currentHost}:8080/api/v1`;
 /** Verificação se há eventos do mouse. */
 let hasPointerEvents = (('PointerEvent' in window) || (window.navigator && 'msPointerEnabled' in window.navigator));
@@ -57,7 +57,7 @@ const loadKeyPressAudio = async () => {
     }
 }
 
-/** Teclas que não reproduzirão sons falados. */
+/** Teclas sem reprodução de sons falados. */
 const MutedKeys = {
     DELETE: 'DELETE',
     BACKSPACE: 'BACKSPACE',
@@ -71,7 +71,7 @@ const Event = {
 }
 
 /**
- * Envio da tecla para o servidor
+ * Envio da tecla ativada para o servidor
  * @param {string} text - Tecla a ser enviada
  * @param {event} event - Tipo de evento
  * @return {json} Resposta de execução
@@ -316,6 +316,11 @@ const setStylePressed = async (element, isPressed) => {
     }
 };
 
+/**
+ * Altera a aparência da tecla quando houver o atributo 'data-shiftable'.
+ * @param {element} element - Tecla que terá sua aparência alterada.
+ * @param {boolean} isShifted - Váriavel verdadeira se shift acionado.
+ */
 const setStyleShifted = async (element, isShifted) => {
     if (element.hasAttribute('data-shiftable')) {
         if (isShifted) {
@@ -326,6 +331,11 @@ const setStyleShifted = async (element, isShifted) => {
     }
 };
 
+/**
+ * Altera a aparência da tecla quando houver o atributo 'data-long-press'.
+ * @param {element} element - Tecla que terá sua aparência alterada.
+ * @param {boolean} isLongPressed - Váriavel verdadeira se toque longo foi acionado.
+ */
 const setStyleLongPressed = async (element, isLongPressed) => {
     if (element.hasAttribute('data-long-press')) {
         if (isLongPressed) {
@@ -336,12 +346,21 @@ const setStyleLongPressed = async (element, isLongPressed) => {
     }
 };
 
+/**
+ * Aciona a tela cheia.
+ */
 const setFullScreen = async () => {
     if(document.fullscreenElement == null) {
         document.documentElement.requestFullscreen();
     }
 };
 
+/**
+ * Altera a aparência da tecla quando houver o atributo 'data-long-press'.
+ * @param {element} element - Tecla que terá sua aparência alterada.
+ * @param {boolean} isLongPress - Váriavel verdadeira se toque longo foi acionado.
+ * @param {event} isLongPress - Váriavel verdadeira se toque longo foi acionado.
+ */
 const getKeyAndSendRequest = async (element, isLongPress, eventType) => {
     const text = element.dataset[isLongPress ? 'longPress' : 'key'];
     if(!text) return;
@@ -352,6 +371,12 @@ const getKeyAndSendRequest = async (element, isLongPress, eventType) => {
     }
 }
 
+/**
+ * Desativar as teclas de aderência.
+ * @param {element} element - Tecla que terá sua aparência alterada.
+ * @param {boolean} isLongPress - Váriavel verdadeira se toque longo foi acionado.
+ * @param {event} isLongPress - Váriavel verdadeira se toque longo foi acionado.
+ */
 const deactivateStickyKeys = async (el) => {
     if (el.dataset['key'] != 'shift' &&
         el.dataset['key'] != 'ctrl' &&
@@ -366,6 +391,10 @@ const deactivateStickyKeys = async (el) => {
     shiftingKeys(false);
 }
 
+/**
+ * Altera o estilo das teclas com "data-shiftable".
+ * @param {boolean} active - Identifica se deve ser ativado ou desativado.
+ */
 const shiftingKeys = async (active) => {
     document.querySelectorAll('[data-shiftable]')
         .forEach((element) => {
@@ -373,14 +402,17 @@ const shiftingKeys = async (active) => {
         });
 }
 
+/** Atribuição de eventos nas teclas. */
 const bindKeys = () => {
     document.querySelectorAll('button.key')
         .forEach((element) => {
             let pressTimer;
 
+            /** Atribuição do evento de clique ao pressionar a tecla. */
             element.addEventListener(pointerDownEvent, async (event) => {
                 element.setPointerCapture(event.pointerId);
                 setStylePressed(element, true);
+                /** Case seja uma das teclas de aderência, não é enviado o comando para o servidor quando ativo. */
                 if ((element.dataset['key'] != 'shift' &&
                     element.dataset['key'] != 'ctrl' &&
                     element.dataset['key'] != 'alt') ||
@@ -390,6 +422,9 @@ const bindKeys = () => {
                 ) {
                     getKeyAndSendRequest(element, false, Event.PRESSED);
                 }
+                /** Inicia a contagem de tempo ao pressionar a tecla caso tenha a opção de pressionamento longo,
+                 * altera o estilo da tecla e envia o comando quando a contagem de tempo se zerar.
+                 */
                 if (element.hasAttribute('data-long-press')) {
                     pressTimer = setTimeout(async () => {
                         setStyleLongPressed(element, true);
@@ -398,14 +433,21 @@ const bindKeys = () => {
                     }, timeLimitLongPress);
                 }
 
+                /** Executa os eventos de feedback da tecla. */
                 if (element.hasAttribute('data-feedback')) {
                     keyPressAllFeedback(element);
                 }
             });
 
+            /** Atribuição do evento de clique ao liberar a tecla. */
             element.addEventListener(pointerUpEvent, async (event) => {
                 setFullScreen();
                 setStylePressed(element, false);
+                /**
+                 * Caso não seja uma das teclas de aderência,
+                 * todas as teclas de aderência são desativadas
+                 * e o comando é enviado ao servidor.
+                 */
                 if ((element.dataset['key'] != 'shift' &&
                     element.dataset['key'] != 'ctrl' &&
                     element.dataset['key'] != 'alt') ||
@@ -417,6 +459,7 @@ const bindKeys = () => {
                     deactivateStickyKeys(element);
                 }
 
+                /** Encerra a contagem de tempo e altera o estilo para o estado inicial. */
                 if (element.getAttribute('data-long-press')) {
                     setStyleLongPressed(element, false);
                     clearTimeout(pressTimer);
@@ -424,6 +467,7 @@ const bindKeys = () => {
             });
         });
 
+    /** Ativa a tecla shift ao pressionar e altera o estilo de teclas referentes ao shift. */
     const shiftingKey = async () => {
         document.querySelectorAll('[data-key="shift"]')
             .forEach((element) => {
@@ -440,8 +484,10 @@ const bindKeys = () => {
             });
         }
 
+        /** Inicia o estilo das teclas para o padrão. */
         shiftingKey();
 
+        /** Ativa a tecla ctrl e alt ao pressionar. */
         document.querySelectorAll('[data-key="ctrl"], [data-key="alt"]')
                 .forEach((element) => {
                     element.addEventListener(pointerUpEvent, async (event) => {
@@ -454,12 +500,13 @@ const bindKeys = () => {
                     });
                 });
 
-    // Suppress double-tap magnifying glass on Safari
+    /** Impede o evento de aumentar no navegador Safari */
     document.querySelector('#root').addEventListener('touchend', (event) => {
         event.preventDefault();
     });
 }
 
+/** Envia o comando de clique do botão esquerdo do mouse para o servidor */
 const mouseLeftClick = async () => {
     try {
         await api.mouse.leftClick();
@@ -468,6 +515,7 @@ const mouseLeftClick = async () => {
     }
 }
 
+/** Envia o comando de clique ao pressionar o botão esquerdo do mouse para o servidor */
 const mouseLeftPress = async () => {
     try {
         await api.mouse.leftPress();
@@ -476,6 +524,7 @@ const mouseLeftPress = async () => {
     }
 }
 
+/** Envia o comando de clique ao liberar o botão esquerdo do mouse para o servidor */
 const mouseLeftRelease = async () => {
     try {
         await api.mouse.leftRelease();
@@ -484,6 +533,7 @@ const mouseLeftRelease = async () => {
     }
 }
 
+/** Envia o comando de clique do botão direito do mouse para o servidor */
 const mouseRightClick = async () => {
     try {
         await api.mouse.rightClick();
@@ -492,6 +542,7 @@ const mouseRightClick = async () => {
     }
 }
 
+/** Envia o comando de rolagem de página para cima do mouse para o servidor */
 const mouseScrollUp = async (units) => {
     try {
         await api.mouse.scrollUp(units);
@@ -500,6 +551,7 @@ const mouseScrollUp = async (units) => {
     }
 }
 
+/** Envia o comando de rolagem de página para baixo do mouse para o servidor */
 const mouseScrollDown = async (units) => {
     try {
         await api.mouse.scrollDown(units);
@@ -508,6 +560,7 @@ const mouseScrollDown = async (units) => {
     }
 }
 
+/** Envia o comando de movimento do ponteiro do mouse para o servidor */
 const mouseMove = async (x, y) => {
     try {
         await api.mouse.move(x, y);
@@ -516,6 +569,7 @@ const mouseMove = async (x, y) => {
     }
 }
 
+/** Ativa a tela de comandos do mouse. */
 const toggleMouse = () => {
 
     const mouse = document.getElementById('mouse');
@@ -528,6 +582,11 @@ const toggleMouse = () => {
     isMouseEnabled = !isMouseEnabled;
 }
 
+/**
+ * Coleta os dados de X e Y ao clique na área de touchpad do mouse.
+ * @param {event} ev - Evento
+ * @return {object} - Objeto contendo X e Y do evento de clique.
+ */
 const calcXY = (ev) => {
     if (isTouch && ev.touches !== undefined) {
         return {
@@ -541,19 +600,23 @@ const calcXY = (ev) => {
     }
 }
 
+/** Atribuição dos eventos do mouse. */
 const bindMouse = () => {
-
     document.querySelectorAll('[data-mouse="scroll-x-y"]')
         .forEach((el) => {
             let lastPositionX = 0;
             let lastPositionY = 0;
 
+            /** Evento de clique ao pressionar área de controle do mouse. */
             el.addEventListener(pointerDownEvent, async (ev) => {
                 const {x, y} = calcXY(ev);
                 lastPositionX = x;
                 lastPositionY = y;
             })
 
+            /** Evento de reposisionamento do ponteiro do mouse na tela
+             * ao movimentar na área de controle do mouse.
+             */
             el.addEventListener(pointerMoveEvent, async (ev) => {
                 const {x, y} = calcXY(ev);
                 const whichYDirection = (newPositionY) => {
@@ -579,11 +642,13 @@ const bindMouse = () => {
             })
         });
 
+    /** Evento da tela de rolagem de página. */
     document.querySelectorAll('[data-mouse="scroll-y"]')
         .forEach((el) => {
             let lastPosition = 0;
             let scrollCounterUp = 0;
             let scrollCounterDown = 0;
+            /** Evento de movimento ao movimentar na tela de rolagem de página. */
             el.addEventListener(pointerMoveEvent, async (ev) => {
                 const {y} = calcXY(ev);
 
@@ -620,6 +685,7 @@ const bindMouse = () => {
             });
         });
 
+    /** Atribui o evento de clique. */
     document.querySelectorAll('[data-mouse="toggle"]')
         .forEach((el) => {
             el.addEventListener(pointerUpEvent, async (ev) => {
@@ -627,6 +693,7 @@ const bindMouse = () => {
             });
         });
 
+    /** Atribui o evento de clique ao pressionar o botão esquerdo do mouse. */
     document.querySelectorAll('[data-mouse="left-click"]')
         .forEach((el) => {
             el.addEventListener(pointerDownEvent, async (ev) => {
@@ -641,6 +708,7 @@ const bindMouse = () => {
             });
         });
 
+    /** Atribui o evento de clique ao pressionar o botão direito do mouse. */
     document.querySelectorAll('[data-mouse="right-click"]')
         .forEach((el) => {
             el.addEventListener(pointerUpEvent, async (ev) => {
@@ -653,6 +721,7 @@ const bindMouse = () => {
         });
 }
 
+/** Executa as funções ao iniciar a página. */
 document.addEventListener('DOMContentLoaded', async () => {
     await loadKeyPressAudio();
     bindMouse();

@@ -23,6 +23,15 @@ import java.nio.file.Path;
 
 public class MsixAssetGenerator {
 
+    /**
+     * Redimensiona o tamanho da imagem e a salva em um diretório definido
+     *
+     * @param inputFile     Caminho da imagem a ser redimensionada
+     * @param width         Largura da imagem final
+     * @param height        Altura da imagem final
+     * @param outputFile    Caminho da imagem redimensionada
+     * @throws IOException  Identifica erros de entrada, como o caminho do arquivo
+     */
     private static void resize(final Path inputFile,
                                final int width,
                                final int height,
@@ -37,6 +46,13 @@ public class MsixAssetGenerator {
 
     }
 
+    /**
+     * Redimensiona e define os nomes, largura e altura das imagens que serão utilizadas pelo instalador MSIX
+     *
+     * @param args          Use launcherImage e outputFolder para definir o caminho da imagem de entrada
+     *                      e o caminho onde as imagens processadas serão armazenadas
+     * @throws IOException  Identifica erros de entrada, como o caminho do arquivo
+     */
     public static void main(String[] args) throws IOException {
 
         if (args.length != 2) throw new RuntimeException("Arguments <launcherImage> and <outputFolder> are required");

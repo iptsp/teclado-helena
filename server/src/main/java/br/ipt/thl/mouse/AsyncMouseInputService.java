@@ -26,16 +26,21 @@ import org.springframework.stereotype.Component;
 import java.awt.event.InputEvent;
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * Componente de preparo e envio dos comandos de mouse ao sistema operacional.
+ */
 @Component
 public class AsyncMouseInputService {
-
+    /** Define a variável do envio de comandos para o sistema operacional. */
     private final OsDispatcher osDispatcher;
 
+    /** Inicializador do Componente */
     @Autowired
     public AsyncMouseInputService(final OsDispatcher osDispatcher) {
         this.osDispatcher = osDispatcher;
     }
 
+    /** Envia o comando de clique do botão direito do mouse ao sistema operacional. */
     @Async(ExecutorsConfig.OS)
     public CompletableFuture<Void> rightButtonClick() {
         osDispatcher.mousePress(InputEvent.BUTTON3_DOWN_MASK);
@@ -43,6 +48,7 @@ public class AsyncMouseInputService {
         return CompletableFuture.completedFuture(null);
     }
 
+    /** Envia o comando de clique do botão esquerdo do mouse ao sistema operacional. */
     @Async(ExecutorsConfig.OS)
     public CompletableFuture<Void> leftButtonClick() {
         osDispatcher.mousePress(InputEvent.BUTTON1_DOWN_MASK);
@@ -50,18 +56,21 @@ public class AsyncMouseInputService {
         return CompletableFuture.completedFuture(null);
     }
 
+    /** Envia o comando de botão direito do mouse ao sistema operacional. */
     @Async(ExecutorsConfig.OS)
     public CompletableFuture<Void> leftButtonPress() {
         osDispatcher.mousePress(InputEvent.BUTTON1_DOWN_MASK);
         return CompletableFuture.completedFuture(null);
     }
 
+    /** Envia o comando de acionar do direito do mouse ao sistema operacional. */
     @Async(ExecutorsConfig.OS)
     public CompletableFuture<Void> leftButtonRelease() {
         osDispatcher.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
         return CompletableFuture.completedFuture(null);
     }
 
+    /** Envia o comando de movimento do mouse ao sistema operacional. */
     @Async(ExecutorsConfig.OS)
     public CompletableFuture<Void> move(final int x,
                                         final int y) {
@@ -69,12 +78,14 @@ public class AsyncMouseInputService {
         return CompletableFuture.completedFuture(null);
     }
 
+    /** Envia o comando de rolagem de página para cima ao sistema operacional. */
     @Async(ExecutorsConfig.OS)
     public CompletableFuture<Void> scrollUp(final int amount) {
         osDispatcher.mouseWheel(-amount);
         return CompletableFuture.completedFuture(null);
     }
 
+    /** Envia o comando de rolagem de página para baixo ao sistema operacional. */
     @Async(ExecutorsConfig.OS)
     public CompletableFuture<Void> scrollDown(final int amount) {
         osDispatcher.mouseWheel(amount);

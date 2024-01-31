@@ -20,9 +20,17 @@ package br.ipt.thl.event;
 import br.ipt.thl.keyboard.KeyboardEventType;
 import org.springframework.context.ApplicationEvent;
 
+/**
+ * Objeto de apoio para o evento de acionamento de tecla.
+ */
 public class KeyboardInputEvent extends ApplicationEvent
         implements SystemApplicationEvent<KeyboardInputEvent.KeyboardInputEventInfo> {
 
+    /**
+     * Inicializador da classe.
+     * @param text Caracter ou comando em formato de texto.
+     * @param event Tipo de evento realizado, ACIONADO ou LIBERADO.
+     */
     public KeyboardInputEvent(final String text,
                               final KeyboardEventType event) {
         super(new KeyboardInputEventInfo(text, event));

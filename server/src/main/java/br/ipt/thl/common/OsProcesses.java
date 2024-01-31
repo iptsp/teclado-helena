@@ -20,6 +20,10 @@ package br.ipt.thl.common;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Classe que lida com processos do sistema operacional.
+ * Encapsulamento para fácil uso.
+ */
 public class OsProcesses {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OsProcesses.class);
