@@ -19,6 +19,9 @@ package br.ipt.thl.event;
 
 import br.ipt.thl.keyboard.KeyboardEventType;
 
+/**
+ * Interface da classe na qual dispara os eventos do Teclado Helena no computador.
+ */
 public interface EventDispatcher {
 
     void keyboardInput(final String text,

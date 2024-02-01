@@ -28,18 +28,29 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-
+/**
+ * Controlador para o acionamento do teclado.
+ * Ao acionar uma tecla, o comando é enviado para este controlador.
+ */
 @RestController
 @Validated
 public class KeyboardInputController {
 
     private final EventDispatcher eventDispatcher;
 
+    /** Inicializador do controlador */
     @Autowired
     public KeyboardInputController(final EventDispatcher eventDispatcher) {
         this.eventDispatcher = eventDispatcher;
     }
 
+    /**
+     * Recebe os dados enviados pelo Teclado Helena e os processa.
+     *
+     * @param keyboardInputControllerRequest    Dados enviados pelo Teclado Helena.
+     * @return                                  Retorna uma mensagem para o Teclado, garantindo que
+     *                                          o controlador recebeu a mensagem.
+     */
     @PostMapping("/api/v1/systems/keyboards/inputs")
     KeyboardInputControllerResponse handleKeyboardInput(@RequestBody @Valid final KeyboardInputControllerRequest
                                                                 keyboardInputControllerRequest) {
@@ -51,9 +62,16 @@ public class KeyboardInputController {
         return new KeyboardInputControllerResponse();
     }
 
+    /** Mensagem de resposta. */
     record KeyboardInputControllerResponse() {
     }
 
+    /**
+     * Dados enviados pelo Teclado Helena.
+     *
+     * @param text      Caracter ou comando em formato de texto.
+     * @param event     Tipo de evento realizado, ACIONADO ou LIBERADO.
+     */
     record KeyboardInputControllerRequest(@NotBlank String text,
                                           @NotNull KeyboardEventType event) {
     }

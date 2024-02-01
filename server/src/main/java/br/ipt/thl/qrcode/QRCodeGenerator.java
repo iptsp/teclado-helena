@@ -23,15 +23,27 @@ import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.qrcode.QRCodeWriter;
 import org.springframework.stereotype.Component;
 
+/**
+ * Gerador de QRCode.
+ */
 @Component
 public class QRCodeGenerator {
 
+    /** Gerador de QRCode do java. */
     private final QRCodeWriter qrCodeWriter;
 
+    /**  */
     public QRCodeGenerator() {
         this.qrCodeWriter = new QRCodeWriter();
     }
 
+    /**
+     * Converte um texto simples em um QRCode.
+     * @param height    Altura da imagem do QRCode.
+     * @param width     Largura da imagem do QRCode.
+     * @param text      Texto a ser convertido em QRCode.
+     * @return          Imagem em bytes do QRCode.
+     */
     public Try<byte[]> createAsPng(int height,
                                    int width,
                                    final String text) {

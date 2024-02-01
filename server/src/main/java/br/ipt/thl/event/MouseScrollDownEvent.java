@@ -19,6 +19,9 @@ package br.ipt.thl.event;
 
 import org.springframework.context.ApplicationEvent;
 
+/**
+ * Objeto de apoio para o evento de rolagem de página para baixo.
+ */
 public class MouseScrollDownEvent extends
         ApplicationEvent implements SystemApplicationEvent<MouseScrollDownEvent.MouseScrollDownEventInfo> {
     public MouseScrollDownEvent(int units) {

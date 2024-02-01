@@ -22,41 +22,59 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-
+/**
+ * Controlador para o botão esquerda do mouse.
+ */
 @RestController
 public class MouseLeftButtonClickController {
 
     private final EventDispatcher eventDispatcher;
 
+    /** Inicializador do controlador */
     @Autowired
     public MouseLeftButtonClickController(final EventDispatcher eventDispatcher) {
         this.eventDispatcher = eventDispatcher;
     }
 
+    /**
+     * Ativa o comando de acionamento do clique.
+     * @return Resposta do comando executado.
+     */
     @PostMapping("/api/v1/systems/mouses/buttons/left/events/click")
     MouseLeftButtonClickControllerResponse handleKeyboardInputClick() {
         eventDispatcher.mouseLeftButtonClick();
         return new MouseLeftButtonClickControllerResponse();
     }
 
+    /**
+     * Ativa o comando de clique.
+     * @return Resposta do comando executado.
+     */
     @PostMapping("/api/v1/systems/mouses/buttons/left/events/press")
     MouseLeftButtonPressControllerResponse handleKeyboardInputPress() {
         eventDispatcher.mouseLeftButtonPress();
         return new MouseLeftButtonPressControllerResponse();
     }
 
+    /**
+     * Ativa o comando de liberação do clique.
+     * @return Resposta do comando executado.
+     */
     @PostMapping("/api/v1/systems/mouses/buttons/left/events/release")
     MouseLeftButtonReleaseControllerResponse handleKeyboardInputRelease() {
         eventDispatcher.mouseLeftButtonRelease();
         return new MouseLeftButtonReleaseControllerResponse();
     }
 
+    /** Mensagem de resposta do clique. */
     record MouseLeftButtonClickControllerResponse() {
     }
 
+    /** Mensagem de resposta do botão acionado. */
     record MouseLeftButtonPressControllerResponse() {
     }
 
+    /** Mensagem de resposta do botão liberado. */
     record MouseLeftButtonReleaseControllerResponse() {
     }
 }

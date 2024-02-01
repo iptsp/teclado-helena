@@ -25,17 +25,24 @@ import org.springframework.stereotype.Component;
 
 import java.awt.MouseInfo;
 
+/**
+ * Componente de escuta dos eventos de mouse.
+ */
 @Component
 public class MouseListener {
 
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(MouseListener.class);
     private final AsyncMouseInputService asyncMouseInputService;
 
+    /** Inicializador do componente */
     @Autowired
     public MouseListener(final AsyncMouseInputService asyncMouseInputService) {
         this.asyncMouseInputService = asyncMouseInputService;
     }
 
+    /**
+     * Acionado por evento, envia o comando de clique do botão direito do mouse ao sistema operacional.
+     */
     @EventListener(MouseRightButtonClickEvent.class)
     public void mouseRightButtonClickEvent() {
 
@@ -45,11 +52,12 @@ public class MouseListener {
                     LOGGER.error("Error send right mouse button click", e);
                     return null;
                 })
-                .thenAccept(res -> {
-                    LOGGER.debug("Right mouse button click sent");
-                });
+                .thenAccept(res -> LOGGER.debug("Right mouse button click sent"));
     }
 
+    /**
+     * Acionado por evento, envia o comando de clique do botão esquerdo do mouse ao sistema operacional.
+     */
     @EventListener(MouseLeftButtonClickEvent.class)
     public void mouseLeftButtonClickEvent() {
 
@@ -59,11 +67,12 @@ public class MouseListener {
                     LOGGER.error("Error send left mouse button click", e);
                     return null;
                 })
-                .thenAccept(res -> {
-                    LOGGER.debug("Left mouse button click sent");
-                });
+                .thenAccept(res -> LOGGER.debug("Left mouse button click sent"));
     }
 
+    /**
+     * Acionado por evento, envia o comando de acionar botão esquerdo do mouse ao sistema operacional.
+     */
     @EventListener(MouseLeftButtonPressEvent.class)
     public void mouseLeftButtonPressEvent() {
         asyncMouseInputService
@@ -72,11 +81,12 @@ public class MouseListener {
                     LOGGER.error("Error send left mouse button press", e);
                     return null;
                 })
-                .thenAccept(res -> {
-                    LOGGER.debug("Left mouse button press sent");
-                });
+                .thenAccept(res -> LOGGER.debug("Left mouse button press sent"));
     }
 
+    /**
+     * Acionado por evento, envia o comando de acionar botão esquerdo do mouse ao sistema operacional.
+     */
     @EventListener(MouseLeftButtonReleaseEvent.class)
     public void mouseLeftButtonReleaseEvent() {
         asyncMouseInputService
@@ -85,11 +95,12 @@ public class MouseListener {
                     LOGGER.error("Error send left mouse button release", e);
                     return null;
                 })
-                .thenAccept(res -> {
-                    LOGGER.debug("Left mouse button release sent");
-                });
+                .thenAccept(res -> LOGGER.debug("Left mouse button release sent"));
     }
 
+    /**
+     * Acionado por evento, envia o comando de movimento do mouse ao sistema operacional.
+     */
     @EventListener
     public void mouseMoveEvent(final MouseMoveEvent mouseMoveEvent) {
 
@@ -107,11 +118,12 @@ public class MouseListener {
                     LOGGER.error("Error send mouse move", e);
                     return null;
                 })
-                .thenAccept(res -> {
-                    LOGGER.debug("Mouse move sent to x: {} and y: {}", x, y);
-                });
+                .thenAccept(res -> LOGGER.debug("Mouse move sent to x: {} and y: {}", x, y));
     }
 
+    /**
+     * Acionado por evento, envia o comando de rolagem de página para cima ao sistema operacional.
+     */
     @EventListener
     public void mouseScrollUpEvent(final MouseScrollUpEvent mouseScrollUpEvent) {
 
@@ -124,11 +136,12 @@ public class MouseListener {
                     LOGGER.error("Error send mouse scroll up", e);
                     return null;
                 })
-                .thenAccept(res -> {
-                    LOGGER.debug("Mouse scroll up sent");
-                });
+                .thenAccept(res -> LOGGER.debug("Mouse scroll up sent"));
     }
 
+    /**
+     * Acionado por evento, envia o comando de rolagem de página para baixo ao sistema operacional.
+     */
     @EventListener
     public void mouseScrollDownEvent(final MouseScrollDownEvent mouseScrollDownEvent) {
 
@@ -141,9 +154,7 @@ public class MouseListener {
                     LOGGER.error("Error send mouse scroll down", e);
                     return null;
                 })
-                .thenAccept(res -> {
-                    LOGGER.debug("Mouse scroll down sent");
-                });
+                .thenAccept(res -> LOGGER.debug("Mouse scroll down sent"));
     }
 
 }

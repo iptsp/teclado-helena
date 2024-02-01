@@ -17,6 +17,10 @@
 
 package br.ipt.thl.common;
 
+/**
+ * Classe que lida com o uso de Strings.
+ * Encapsulamento para fácil uso.
+ */
 public class Strings {
 
     public static final String SPACE = " ";

@@ -22,6 +22,9 @@ import br.ipt.thl.ioc.IocContainer;
 import br.ipt.thl.keyboard.KeyboardEventType;
 import org.springframework.stereotype.Component;
 
+/**
+ * Classe na qual dispara os eventos do Teclado Helena no computador.
+ */
 @Component
 public class DefaultEventDispatcher implements EventDispatcher {
 

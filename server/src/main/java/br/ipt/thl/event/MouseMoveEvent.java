@@ -19,8 +19,16 @@ package br.ipt.thl.event;
 
 import org.springframework.context.ApplicationEvent;
 
+/**
+ * Objeto de apoio para o evento de movimento do mouse.
+ */
 public class MouseMoveEvent extends ApplicationEvent
         implements SystemApplicationEvent<MouseMoveEvent.MoveMouseEventInfo> {
+    /**
+     * Inicializador do controlador.
+     * @param x     Quantidade de movimento na horizontal.
+     * @param y     Quantidade de movimento na vertical.
+     */
     public MouseMoveEvent(int x, int y) {
         super(new MoveMouseEventInfo(x, y));
     }
@@ -30,6 +38,11 @@ public class MouseMoveEvent extends ApplicationEvent
         return (MoveMouseEventInfo) super.getSource();
     }
 
+    /**
+     * Dados enviados pelo Teclado Helena.
+     * @param x     Quantidade de movimento na horizontal.
+     * @param y     Quantidade de movimento na vertical.
+     */
     public record MoveMouseEventInfo(int x, int y) {
     }
 

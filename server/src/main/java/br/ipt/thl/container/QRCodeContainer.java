@@ -26,11 +26,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+/**
+ * Container da tela do QRCode.
+ */
 @Component
 public class QRCodeContainer extends FxStackPane {
 
+    /** Porta do servidor. Ex.: 8080 */
     private final Integer serverPort;
+    /** Interface de conexão. */
     private final NetworkInterfaceResolver networkInterfaceResolver;
+    /** Gerador de QRCode */
     private final QRCodeGenerator qrCodeGenerator;
 
     @Autowired
