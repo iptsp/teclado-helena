@@ -479,7 +479,7 @@ const bindMouse = () => {
                 lastPositionY = y;
 
                 if (xDirection != 0 && yDirection != 0) {
-                    await mouseMove(xDirection, yDirection);
+                    await mouseMove(Math.round(xDirection), Math.round(yDirection));
                 }
             })
         });
