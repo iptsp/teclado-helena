@@ -2,9 +2,9 @@ name: Rust CI
 
 on:
   push:
-    branches: [ "draft/rust-rewrite" ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ "draft/rust-rewrite" ]
+    branches: [ "main" ]
 
 jobs:
   build:
@@ -37,28 +37,4 @@ jobs:
       with:
         name: installer
         path: target/release/*.msi
-
-    - run: cargo doc
-    - run: echo ^<meta http-equiv="refresh" content="0; url=server/teclado_helena/index.html"^> > target/doc/index.html
-    - name: Setup Pages
-      uses: actions/configure-pages@v3
-    - name: Upload Artifact
-      uses: actions/upload-pages-artifact@v1
-      with:
-        path: "./target/doc"
-  
-  deploy:
-    runs-on: windows-latest
-    needs: build
-
-    permissions:
-      pages: write
-      id-token: write
-
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v2
+        

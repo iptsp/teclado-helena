@@ -91,17 +91,18 @@ pub fn deserialize_action(json: &str) -> Result<InputAction, serde_json::Error> 
 ///
 /// * `dx` - O delta a mover na direção X.
 /// * `dy` - O delta a mover na direção Y.
+/// * `enigo` - Uma referência mutável para um objeto [`Enigo`] para simular a ação.
 ///
 /// # Exemplo
 ///
 /// ```
-/// process_mouse_move(10, 5);
+/// let mut enigo = Enigo::new(&Settings::default()).unwrap();
+/// process_mouse_move(10, 5, enigo);
 /// // Isso moverá o mouse por (10, 5)
 /// ```
-pub fn process_mouse_move(dx: i32, dy: i32) {
+pub fn process_mouse_move(dx: i32, dy: i32, enigo: &mut Enigo) {
     println!("Move mouse by ({}, {})", dx, dy);
-    let mut enigo = Enigo::new();
-    enigo.mouse_move_relative(dx, dy);
+    enigo.move_mouse(dx, dy, Coordinate::Rel).unwrap();
 }
 
 /// Simula uma ação de clique
@@ -110,27 +111,27 @@ pub fn process_mouse_move(dx: i32, dy: i32) {
 ///
 /// * `button` - O botão [`MouseButton`] que foi clicado.
 /// * `state` - O estado [`ButtonState`] do botão.
+/// * `enigo` - Uma referência mutável para um objeto [`Enigo`] para simular a ação.
 ///
 /// # Exemplo
 ///
 /// ```
-/// process_mouse_click(MouseButton::Left, ButtonState::Press);
+/// let mut enigo = Enigo::new(&Settings::default()).unwrap();
+/// process_mouse_click(MouseButton::Left, ButtonState::Press, enigo);
 /// // Isso simulará um pressionamento do botão esquerdo do mouse
 /// 
-/// process_mouse_click(MouseButton::Left, ButtonState::Release);
+/// process_mouse_click(MouseButton::Left, ButtonState::Release, enigo);
 /// // Isso simulará um soltamento do botão esquerdo do mouse
 /// ```
-pub fn process_mouse_click(button: MouseButton, state: ButtonState) {
+pub fn process_mouse_click(button: MouseButton, state: ButtonState, enigo: &mut Enigo) {
     match (button, state) {
         (MouseButton::Left, ButtonState::Press) => {
             println!("Press left button");
-            let mut enigo = Enigo::new();
-            enigo.mouse_down(enigo::MouseButton::Left);
+            enigo.button(enigo::Button::Left, enigo::Direction::Press).unwrap();
         }
         (MouseButton::Left, ButtonState::Release) => {
             println!("Release left button");
-            let mut enigo = Enigo::new();
-            enigo.mouse_up(enigo::MouseButton::Left);
+            enigo.button(enigo::Button::Left, enigo::Direction::Release).unwrap();
         }
         (MouseButton::Right, ButtonState::Press) => println!("Press right button"),
         (MouseButton::Right, ButtonState::Release) => println!("Release right button"),
@@ -143,24 +144,24 @@ pub fn process_mouse_click(button: MouseButton, state: ButtonState) {
 ///
 /// * `direction` - A direção [`ScrollDirection`] de rolagem da roda do mouse.
 /// * `amount` - A quantidade de scroll a ser aplicada.
+/// * `enigo` - Uma referência mutável para um objeto [`Enigo`] para simular a ação.
 ///
 /// # Exemplo
 ///
 /// ```
-/// process_scroll(ScrollDirection::Up, 3);
+/// let mut enigo = Enigo::new(&Settings::default()).unwrap();
+/// process_scroll(ScrollDirection::Up, 3, enigo);
 /// // Isso simulará uma rolagem da roda de mouse para cima de 3 unidades
 /// ```
-pub fn process_scroll(direction: ScrollDirection, amount: i32) {
+pub fn process_scroll(direction: ScrollDirection, amount: i32, enigo: &mut Enigo) {
     match direction {
         ScrollDirection::Up => {
             println!("Scroll up by {}", amount);
-            let mut enigo = Enigo::new();
-            enigo.mouse_scroll_y(-amount);
+            enigo.scroll(-amount, enigo::Axis::Vertical).unwrap();
         }
         ScrollDirection::Down => {
             println!("Scroll down by {}", amount);
-            let mut enigo = Enigo::new();
-            enigo.mouse_scroll_y(amount);
+            enigo.scroll(amount, enigo::Axis::Vertical).unwrap();
         }
     }
 }
@@ -181,68 +182,68 @@ pub fn process_scroll(direction: ScrollDirection, amount: i32) {
 /// ```
 /// let key = get_key("a".to_string()).unwrap();
 /// ```
-fn get_key(key: String) -> Result<enigo::keycodes::Key, &'static str> {
+fn get_key(key: String) -> Result<enigo::Key, &'static str> {
     match key.as_str() {
-        "esc" => Ok(enigo::keycodes::Key::Escape),
-        "1" => Ok(enigo::keycodes::Key::Layout('1')),
-        "2" => Ok(enigo::keycodes::Key::Layout('2')),
-        "3" => Ok(enigo::keycodes::Key::Layout('3')),
-        "4" => Ok(enigo::keycodes::Key::Layout('4')),
-        "5" => Ok(enigo::keycodes::Key::Layout('5')),
-        "6" => Ok(enigo::keycodes::Key::Layout('6')),
-        "7" => Ok(enigo::keycodes::Key::Layout('7')),
-        "8" => Ok(enigo::keycodes::Key::Layout('8')),
-        "9" => Ok(enigo::keycodes::Key::Layout('9')),
-        "0" => Ok(enigo::keycodes::Key::Layout('0')),
-        "minus" => Ok(enigo::keycodes::Key::Layout('-')),
-        "equals" => Ok(enigo::keycodes::Key::Layout('=')),
-        "quote" => Ok(enigo::keycodes::Key::Layout('\'')),
-        "slash" => Ok(enigo::keycodes::Key::AbntC1),
-        "semicolon" => Ok(enigo::keycodes::Key::Layout(';')),
-        "comma" => Ok(enigo::keycodes::Key::Layout(',')),
-        "period" => Ok(enigo::keycodes::Key::Layout('.')),
-        "tilde" => Ok(enigo::keycodes::Key::Layout('~')),
-        "acute" => Ok(enigo::keycodes::Key::Layout('´')),
-        "delete" => Ok(enigo::keycodes::Key::Delete),
-        "backspace" => Ok(enigo::keycodes::Key::Backspace),
-        "q" => Ok(enigo::keycodes::Key::Layout('q')),
-        "w" => Ok(enigo::keycodes::Key::Layout('w')),
-        "e" => Ok(enigo::keycodes::Key::Layout('e')),
-        "r" => Ok(enigo::keycodes::Key::Layout('r')),
-        "t" => Ok(enigo::keycodes::Key::Layout('t')),
-        "y" => Ok(enigo::keycodes::Key::Layout('y')),
-        "u" => Ok(enigo::keycodes::Key::Layout('u')),
-        "i" => Ok(enigo::keycodes::Key::Layout('i')),
-        "o" => Ok(enigo::keycodes::Key::Layout('o')),
-        "p" => Ok(enigo::keycodes::Key::Layout('p')),
-        "a" => Ok(enigo::keycodes::Key::Layout('a')),
-        "s" => Ok(enigo::keycodes::Key::Layout('s')),
-        "d" => Ok(enigo::keycodes::Key::Layout('d')),
-        "f" => Ok(enigo::keycodes::Key::Layout('f')),
-        "g" => Ok(enigo::keycodes::Key::Layout('g')),
-        "h" => Ok(enigo::keycodes::Key::Layout('h')),
-        "j" => Ok(enigo::keycodes::Key::Layout('j')),
-        "k" => Ok(enigo::keycodes::Key::Layout('k')),
-        "l" => Ok(enigo::keycodes::Key::Layout('l')),
-        "enter" => Ok(enigo::keycodes::Key::Return),
-        "z" => Ok(enigo::keycodes::Key::Layout('z')),
-        "x" => Ok(enigo::keycodes::Key::Layout('x')),
-        "c" => Ok(enigo::keycodes::Key::Layout('c')),
-        "v" => Ok(enigo::keycodes::Key::Layout('v')),
-        "b" => Ok(enigo::keycodes::Key::Layout('b')),
-        "n" => Ok(enigo::keycodes::Key::Layout('n')),
-        "m" => Ok(enigo::keycodes::Key::Layout('m')),
-        "up-arrow" => Ok(enigo::keycodes::Key::UpArrow),
-        "ctrl" => Ok(enigo::keycodes::Key::Control),
-        "alt" => Ok(enigo::keycodes::Key::Alt),
-        "space" => Ok(enigo::keycodes::Key::Space),
-        "left-arrow" => Ok(enigo::keycodes::Key::LeftArrow),
-        "home" => Ok(enigo::keycodes::Key::Home),
-        "down-arrow" => Ok(enigo::keycodes::Key::DownArrow),
-        "right-arrow" => Ok(enigo::keycodes::Key::RightArrow),
-        "end" => Ok(enigo::keycodes::Key::End),
-        "cedilla" => Ok(enigo::keycodes::Key::OEM1),
-        "shift" => Ok(enigo::keycodes::Key::Raw(0x2A)),
+        "esc" => Ok(enigo::Key::Escape),
+        "1" => Ok(enigo::Key::Num1),
+        "2" => Ok(enigo::Key::Num2),
+        "3" => Ok(enigo::Key::Num3),
+        "4" => Ok(enigo::Key::Num4),
+        "5" => Ok(enigo::Key::Num5),
+        "6" => Ok(enigo::Key::Num6),
+        "7" => Ok(enigo::Key::Num7),
+        "8" => Ok(enigo::Key::Num8),
+        "9" => Ok(enigo::Key::Num9),
+        "0" => Ok(enigo::Key::Num0),
+        "minus" => Ok(enigo::Key::Unicode('-')),
+        "equals" => Ok(enigo::Key::Unicode('=')),
+        "quote" => Ok(enigo::Key::Unicode('\'')),
+        "slash" => Ok(enigo::Key::AbntC1),
+        "semicolon" => Ok(enigo::Key::Unicode(';')),
+        "comma" => Ok(enigo::Key::Unicode(',')),
+        "period" => Ok(enigo::Key::Unicode('.')),
+        "tilde" => Ok(enigo::Key::Unicode('~')),
+        "acute" => Ok(enigo::Key::Unicode('´')),
+        "delete" => Ok(enigo::Key::Delete),
+        "backspace" => Ok(enigo::Key::Backspace),
+        "q" => Ok(enigo::Key::Q),
+        "w" => Ok(enigo::Key::W),
+        "e" => Ok(enigo::Key::E),
+        "r" => Ok(enigo::Key::R),
+        "t" => Ok(enigo::Key::T),
+        "y" => Ok(enigo::Key::Y),
+        "u" => Ok(enigo::Key::U),
+        "i" => Ok(enigo::Key::I),
+        "o" => Ok(enigo::Key::O),
+        "p" => Ok(enigo::Key::P),
+        "a" => Ok(enigo::Key::A),
+        "s" => Ok(enigo::Key::S),
+        "d" => Ok(enigo::Key::D),
+        "f" => Ok(enigo::Key::F),
+        "g" => Ok(enigo::Key::G),
+        "h" => Ok(enigo::Key::H),
+        "j" => Ok(enigo::Key::J),
+        "k" => Ok(enigo::Key::K),
+        "l" => Ok(enigo::Key::L),
+        "enter" => Ok(enigo::Key::Return),
+        "z" => Ok(enigo::Key::Z),
+        "x" => Ok(enigo::Key::X),
+        "c" => Ok(enigo::Key::C),
+        "v" => Ok(enigo::Key::V),
+        "b" => Ok(enigo::Key::B),
+        "n" => Ok(enigo::Key::N),
+        "m" => Ok(enigo::Key::M),
+        "up-arrow" => Ok(enigo::Key::UpArrow),
+        "ctrl" => Ok(enigo::Key::Control),
+        "alt" => Ok(enigo::Key::Alt),
+        "space" => Ok(enigo::Key::Space),
+        "left-arrow" => Ok(enigo::Key::LeftArrow),
+        "home" => Ok(enigo::Key::Home),
+        "down-arrow" => Ok(enigo::Key::DownArrow),
+        "right-arrow" => Ok(enigo::Key::RightArrow),
+        "end" => Ok(enigo::Key::End),
+        "cedilla" => Ok(enigo::Key::OEM1),
+        "shift" => Ok(enigo::Key::Shift),
         _ => Err("Unknown key"),
     }
 }
@@ -253,29 +254,29 @@ fn get_key(key: String) -> Result<enigo::keycodes::Key, &'static str> {
 ///
 /// * `key` - A tecla representada em uma string.
 /// * `state` - O estado [`ButtonState`] da tecla (pressionado ou soltado).
+/// * `enigo` - Uma referência mutável para um objeto [`Enigo`] para simular a ação.
 ///
 /// # Exemplo
 ///
 /// ```
-/// process_key_press("a".to_string(), ButtonState::Press);
+/// let mut enigo = Enigo::new(&Settings::default()).unwrap();
+/// process_key_press("a".to_string(), ButtonState::Press, enigo);
 /// // Isso simulará o pressionamento da tecla 'a'
 /// ```
-pub fn process_key_press(key: String, state: ButtonState) {
+pub fn process_key_press(key: String, state: ButtonState, enigo: &mut Enigo) {
     match state {
         ButtonState::Press => {
             println!("Press {:?} key", key);
-            let mut enigo = Enigo::new();
             if let Ok(key) = get_key(key) {
-                enigo.key_down(key);
+                enigo.key(key, enigo::Direction::Press).unwrap();
             } else {
                 println!("Unknown key");
             }
         }
         ButtonState::Release => {
             println!("Release {:?} key", key);
-            let mut enigo = Enigo::new();
             if let Ok(key) = get_key(key) {
-                enigo.key_up(key);
+                enigo.key(key, enigo::Direction::Release).unwrap();
             } else {
                 println!("Unknown key");
             }
@@ -288,19 +289,21 @@ pub fn process_key_press(key: String, state: ButtonState) {
 /// # Parâmetros
 ///
 /// * `action` - A ação [`InputAction`] a ser processada.
+/// * `enigo` - Uma referência mutável para um objeto [`Enigo`] para simular a ação.
 ///
 /// # Exemplo
 ///
 /// ```
+/// let mut enigo = Enigo::new(&Settings::default()).unwrap();
 /// let action = InputAction::MouseMove { dx: 10, dy: 5 };
-/// process_action(action);
+/// process_action(action, enigo);
 /// // Isso moverá o mouse por (10, 5)
 /// ```
-pub fn process_action(action: InputAction) {
+pub fn process_action(action: InputAction, enigo: &mut Enigo) {
     match action {
-        InputAction::MouseMove { dx, dy } => process_mouse_move(dx, dy),
-        InputAction::MouseClick { button, state } => process_mouse_click(button, state),
-        InputAction::MouseScroll { direction, amount } => process_scroll(direction, amount),
-        InputAction::KeyPress { key, state } => process_key_press(key, state),
+        InputAction::MouseMove { dx, dy } => process_mouse_move(dx, dy, enigo),
+        InputAction::MouseClick { button, state } => process_mouse_click(button, state, enigo),
+        InputAction::MouseScroll { direction, amount } => process_scroll(direction, amount, enigo),
+        InputAction::KeyPress { key, state } => process_key_press(key, state, enigo),
     }
 }
