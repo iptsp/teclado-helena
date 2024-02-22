@@ -39,6 +39,11 @@ pub enum InputAction {
         /// O estado da tecla (pressionada ou soltada)
         state: ButtonState,
     },
+    /// Representa uma ação de entrada de texto
+    StringInput {
+        /// O texto a ser inserido
+        text: String,
+    },
 }
 
 /// Representa os botões do mouse esquerdo e direito
@@ -284,6 +289,22 @@ pub fn process_key_press(key: String, state: ButtonState, enigo: &mut Enigo) {
     }
 }
 
+/// Simula uma inserção de texto
+///
+/// # Parâmetros
+/// * `text` - O texto a ser inserido.
+///
+/// # Exemplo
+///
+/// ```
+/// let mut enigo = Enigo::new(&Settings::default()).unwrap();
+/// process_string_input("Hello, World!".to_string(), enigo);
+/// ```
+pub fn process_string_input(text: String, enigo: &mut Enigo) {
+    println!("Input text: {}", text);
+    enigo.text(&text).unwrap();
+}
+
 /// Processa uma ação de entrada do usuário
 ///
 /// # Parâmetros
@@ -305,5 +326,6 @@ pub fn process_action(action: InputAction, enigo: &mut Enigo) {
         InputAction::MouseClick { button, state } => process_mouse_click(button, state, enigo),
         InputAction::MouseScroll { direction, amount } => process_scroll(direction, amount, enigo),
         InputAction::KeyPress { key, state } => process_key_press(key, state, enigo),
+        InputAction::StringInput { text } => process_string_input(text, enigo),
     }
 }

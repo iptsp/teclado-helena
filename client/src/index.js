@@ -39,6 +39,213 @@ const timeLimitLongPress = 500;
 
 const scrollSensitivity = 4;
 
+let wordBuffer = '';
+let diacriticBuffer = '';
+let wordsList = [];
+
+const fetchWordsList = async () => {
+    try {
+        const response = await fetch('dataset/wordsList');
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const text = await response.text();
+  
+        const words = text.split('\n').filter(Boolean);
+  
+        return words;
+    } catch (error) {
+        console.error("There was a problem fetching the words list: ", error);
+    }
+}
+
+fetchWordsList().then(words => {
+    wordsList = words;
+});
+
+const findAllWordsStartingWith = (searchString) => {
+    const matchingWords = [];
+    
+    for (const word of wordsList) {
+        if (word.startsWith(searchString)) {
+            matchingWords.push(word);
+        }
+    }
+
+    return matchingWords;
+}
+
+const clearWordBuffer = () => {
+    wordBuffer = '';
+}
+
+const appendToWordBuffer = (text) => {
+    wordBuffer += text;
+}
+
+const clearDiacriticsBuffer = () => {
+    diacriticBuffer = '';
+}
+
+const processKeyWordBuffer = (text) => {
+    const diacritics = ["tilde", "circumflex", "acute", "crasis"];
+    const charRegex = /^[a-z]$/i;
+
+    if (diacriticBuffer === "") {
+        if (charRegex.test(text)) {
+            appendToWordBuffer(text);
+        } else if (text === "cedilla") {
+            appendToWordBuffer("ç");
+        } else if (diacritics.includes(text)) {
+            var shiftActive = document.querySelector('[data-key=shift]').classList.contains("activated");
+            if (shiftActive && text === "tilde") {
+                diacriticBuffer = "circumflex";
+            } else if (shiftActive && text === "acute") {
+                diacriticBuffer = "crasis";
+            } else {
+                diacriticBuffer = text;
+            }
+        } else {
+            clearWordBuffer();
+        }
+    } else {
+        if (diacriticBuffer === "tilde") {
+            if (text === "a") {
+                appendToWordBuffer("ã");
+                clearDiacriticsBuffer()
+            } else if (text === "o") {
+                appendToWordBuffer("õ");
+                clearDiacriticsBuffer()
+            } else {
+                clearWordBuffer();
+                clearDiacriticsBuffer()
+
+            }
+        } else if (diacriticBuffer === "circumflex") {
+            if (text === "a") {
+                appendToWordBuffer("â");
+                clearDiacriticsBuffer()
+            } else if (text === "e") {
+                appendToWordBuffer("ê");
+                clearDiacriticsBuffer()
+            } else if (text === "o") {
+                appendToWordBuffer("ô");
+                clearDiacriticsBuffer()
+            } else {
+                clearWordBuffer();
+                clearDiacriticsBuffer()
+
+            }
+        } else if (diacriticBuffer === "acute") {
+            if (text === "a") {
+                appendToWordBuffer("á");
+                clearDiacriticsBuffer()
+            } else if (text === "e") {
+                appendToWordBuffer("é");
+                clearDiacriticsBuffer()
+            } else if (text === "i") {
+                appendToWordBuffer("í");
+                clearDiacriticsBuffer()
+            } else if (text === "o") {
+                appendToWordBuffer("ó");
+                clearDiacriticsBuffer()
+            } else if (text === "u") {
+                appendToWordBuffer("ú");
+                clearDiacriticsBuffer()
+            } else {
+                clearWordBuffer();
+                clearDiacriticsBuffer()
+
+            }
+        } else if (diacriticBuffer === "crasis") {
+            if (text === "a") {
+                appendToWordBuffer("à");
+                clearDiacriticsBuffer()
+            } else if (text === "e") {
+                appendToWordBuffer("è");
+                clearDiacriticsBuffer()
+            } else if (text === "i") {
+                appendToWordBuffer("ì");
+                clearDiacriticsBuffer()
+            } else if (text === "o") {
+                appendToWordBuffer("ò");
+                clearDiacriticsBuffer()
+            } else if (text === "u") {
+                appendToWordBuffer("ù");
+                clearDiacriticsBuffer()
+            } else {
+                clearWordBuffer();
+                clearDiacriticsBuffer()
+            }
+        }
+    }
+
+    updateWordSuggestions();
+}
+
+const updateWordSuggestions = () => {
+    const matchingWords = findAllWordsStartingWith(wordBuffer);
+    let suggestionAButton = document.getElementById('word-suggestion-a');
+    let suggestionBButton = document.getElementById('word-suggestion-b');
+    let suggestionCButton = document.getElementById('word-suggestion-c');
+
+    suggestionAButton.textContent = "";
+    suggestionBButton.textContent = "";
+    suggestionCButton.textContent = "";
+    suggestionAButton.disabled = true;
+    suggestionBButton.disabled = true;
+    suggestionCButton.disabled = true;
+
+    if (wordBuffer.length > 0) {
+        const words = findAllWordsStartingWith(wordBuffer);
+        suggestionAButton.textContent = `"${wordBuffer}"`;
+        suggestionAButton.disabled = false;
+
+        if (words.length > 0) {
+            suggestionBButton.textContent = words[0];
+            suggestionBButton.disabled = false;
+        }
+
+        if (words.length > 1) {
+            suggestionCButton.textContent = words[1];
+            suggestionCButton.disabled = false;
+        }
+    }
+}
+
+const bindSuggestions = () => {
+    let suggestionAButton = document.getElementById('word-suggestion-a');
+    let suggestionBButton = document.getElementById('word-suggestion-b');
+    let suggestionCButton = document.getElementById('word-suggestion-c');
+
+    suggestionAButton.addEventListener(pointerUpEvent, async (event) => {
+        await stringInput(" ");
+        clearWordBuffer();
+        clearDiacriticsBuffer();
+        updateWordSuggestions();
+        playKeyPressAudio();
+    });
+
+    suggestionBButton.addEventListener(pointerUpEvent, async (event) => {
+        await stringInput(suggestionBButton.textContent.slice(wordBuffer.length) + " ");
+        clearWordBuffer();
+        clearDiacriticsBuffer();
+        updateWordSuggestions();
+        playKeyPressAudio();
+    });
+
+    suggestionCButton.addEventListener(pointerUpEvent, async (event) => {
+        await stringInput(suggestionCButton.textContent.slice(wordBuffer.length) + " ");
+        clearWordBuffer();
+        clearDiacriticsBuffer();
+        updateWordSuggestions();
+        playKeyPressAudio();
+    });
+}
+bindSuggestions();
+
 let socket;
 const connect = () => {
     if (socket && socket.readyState === WebSocket.OPEN) {
@@ -131,6 +338,9 @@ const move = async (x, y) => {
     socket.send(JSON.stringify({"action": "MouseMove", "data": {"dx": x, "dy": y}}));
 }
 
+const stringInput = async (text) => {
+    socket.send(JSON.stringify({"action": "StringInput", "data": {"text": text}}));
+}
 
 const api = {
     keyboard: {
@@ -250,6 +460,7 @@ const setFullScreen = async () => {
 const getKeyAndSendRequest = async (element, isLongPress, eventType) => {
     const text = element.dataset[isLongPress ? 'longPress' : 'key'];
     if(!text) return;
+    if (eventType == Event.PRESSED) processKeyWordBuffer(text);
     try {
         await api.keyboard.inputText(text, eventType);
     } catch (error) {
@@ -529,6 +740,9 @@ const bindMouse = () => {
         .forEach((el) => {
             el.addEventListener(pointerUpEvent, async (ev) => {
                 toggleMouse();
+                clearDiacriticsBuffer();
+                clearWordBuffer();
+                updateWordSuggestions();
             });
         });
 
