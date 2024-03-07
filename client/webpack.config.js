@@ -32,6 +32,10 @@ module.exports = {
                     to: 'images',
                 },
                 {
+                    from: 'src/dataset',
+                    to: 'dataset'
+                },
+                {
                     from: 'src/manifest.json',
                     to: 'manifest.json',
                 }

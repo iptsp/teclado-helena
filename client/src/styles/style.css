@@ -74,8 +74,50 @@ body {
 
 #root .row {
     display: flex;
-    height: calc(100% / 6);
+    height: calc(100% / 6.5);
     width: 100%;
+}
+
+#root .word-suggestions {
+    display: flex;
+    height: calc(100% / 13);
+    width: 100%;
+    padding: 0px min(.354vh, .2vw) 0px min(.354vh, .2vw);
+}
+
+.word-suggestions button {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    color: var(--font);
+    appearance: none;
+    border: none;
+    cursor: pointer;
+    width: calc(100% / 3);
+    font-size: min(3.02vh, 1.7vw);
+    font-family: 'Montserrat', sans-serif;
+    font-weight: normal;
+    margin: 0;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+    touch-action: manipulation;
+    background-color: var(--theme-light);
+    outline: none;
+
+    border: min(.177vh, .1vw) solid var(--theme-darker);
+    box-shadow: 0 min(.177vh, .1vw) min(.53vh, .3vw) 0 rgba(0, 0, 0, 0.2);
+    border-radius: 0;
+    margin: min(.354vh, .2vw) 0px min(.354vh, .2vw) 0px;
+}
+
+.word-suggestions button:disabled {
+    display: none;
+}
+
+.word-suggestions button:active {
+    background-color: var(--primary-dark);
+    border-color: var(--primary-dark);
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.4);
 }
 
 /* mouse container */
