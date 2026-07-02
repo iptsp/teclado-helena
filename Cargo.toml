@@ -26,18 +26,5 @@ serde = "1.0.195"
 serde_derive = "1.0.195"
 serde_json = "1.0.111"
 single-instance = "0.3.3"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
-[dependencies.windows-sys]
-version = "0.52"
-features = [
-    "Win32_System_LibraryLoader",
-    "Win32_Foundation",
-    "Win32_Graphics_Gdi",
-    "Win32_System_SystemServices",
-    "Win32_UI_WindowsAndMessaging"
-]
-
-[build-dependencies]
-winres = "0.1.12"
+winit = "0.30"
+softbuffer = "0.4"

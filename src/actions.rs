@@ -6,7 +6,7 @@ use enigo::*;
 use serde_derive::{Deserialize, Serialize};
 
 /// Um enum representando todas as ações possíveis que o usuário pode enviar.
-/// 
+///
 /// Cada ação pode ser serializada e desserializada em JSON.
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(tag = "action", content = "data")]
@@ -124,7 +124,7 @@ pub fn process_mouse_move(dx: i32, dy: i32, enigo: &mut Enigo) {
 /// let mut enigo = Enigo::new(&Settings::default()).unwrap();
 /// process_mouse_click(MouseButton::Left, ButtonState::Press, enigo);
 /// // Isso simulará um pressionamento do botão esquerdo do mouse
-/// 
+///
 /// process_mouse_click(MouseButton::Left, ButtonState::Release, enigo);
 /// // Isso simulará um soltamento do botão esquerdo do mouse
 /// ```
@@ -132,11 +132,15 @@ pub fn process_mouse_click(button: MouseButton, state: ButtonState, enigo: &mut 
     match (button, state) {
         (MouseButton::Left, ButtonState::Press) => {
             println!("Press left button");
-            enigo.button(enigo::Button::Left, enigo::Direction::Press).unwrap();
+            enigo
+                .button(enigo::Button::Left, enigo::Direction::Press)
+                .unwrap();
         }
         (MouseButton::Left, ButtonState::Release) => {
             println!("Release left button");
-            enigo.button(enigo::Button::Left, enigo::Direction::Release).unwrap();
+            enigo
+                .button(enigo::Button::Left, enigo::Direction::Release)
+                .unwrap();
         }
         (MouseButton::Right, ButtonState::Press) => println!("Press right button"),
         (MouseButton::Right, ButtonState::Release) => println!("Release right button"),
@@ -190,20 +194,20 @@ pub fn process_scroll(direction: ScrollDirection, amount: i32, enigo: &mut Enigo
 fn get_key(key: String) -> Result<enigo::Key, &'static str> {
     match key.as_str() {
         "esc" => Ok(enigo::Key::Escape),
-        "1" => Ok(enigo::Key::Num1),
-        "2" => Ok(enigo::Key::Num2),
-        "3" => Ok(enigo::Key::Num3),
-        "4" => Ok(enigo::Key::Num4),
-        "5" => Ok(enigo::Key::Num5),
-        "6" => Ok(enigo::Key::Num6),
-        "7" => Ok(enigo::Key::Num7),
-        "8" => Ok(enigo::Key::Num8),
-        "9" => Ok(enigo::Key::Num9),
-        "0" => Ok(enigo::Key::Num0),
+        "1" => Ok(enigo::Key::Unicode('1')),
+        "2" => Ok(enigo::Key::Unicode('2')),
+        "3" => Ok(enigo::Key::Unicode('3')),
+        "4" => Ok(enigo::Key::Unicode('4')),
+        "5" => Ok(enigo::Key::Unicode('5')),
+        "6" => Ok(enigo::Key::Unicode('6')),
+        "7" => Ok(enigo::Key::Unicode('7')),
+        "8" => Ok(enigo::Key::Unicode('8')),
+        "9" => Ok(enigo::Key::Unicode('9')),
+        "0" => Ok(enigo::Key::Unicode('0')),
         "minus" => Ok(enigo::Key::Unicode('-')),
         "equals" => Ok(enigo::Key::Unicode('=')),
         "quote" => Ok(enigo::Key::Unicode('\'')),
-        "slash" => Ok(enigo::Key::AbntC1),
+        "slash" => Ok(enigo::Key::Unicode('/')),
         "semicolon" => Ok(enigo::Key::Unicode(';')),
         "comma" => Ok(enigo::Key::Unicode(',')),
         "period" => Ok(enigo::Key::Unicode('.')),
@@ -211,33 +215,33 @@ fn get_key(key: String) -> Result<enigo::Key, &'static str> {
         "acute" => Ok(enigo::Key::Unicode('´')),
         "delete" => Ok(enigo::Key::Delete),
         "backspace" => Ok(enigo::Key::Backspace),
-        "q" => Ok(enigo::Key::Q),
-        "w" => Ok(enigo::Key::W),
-        "e" => Ok(enigo::Key::E),
-        "r" => Ok(enigo::Key::R),
-        "t" => Ok(enigo::Key::T),
-        "y" => Ok(enigo::Key::Y),
-        "u" => Ok(enigo::Key::U),
-        "i" => Ok(enigo::Key::I),
-        "o" => Ok(enigo::Key::O),
-        "p" => Ok(enigo::Key::P),
-        "a" => Ok(enigo::Key::A),
-        "s" => Ok(enigo::Key::S),
-        "d" => Ok(enigo::Key::D),
-        "f" => Ok(enigo::Key::F),
-        "g" => Ok(enigo::Key::G),
-        "h" => Ok(enigo::Key::H),
-        "j" => Ok(enigo::Key::J),
-        "k" => Ok(enigo::Key::K),
-        "l" => Ok(enigo::Key::L),
+        "q" => Ok(enigo::Key::Unicode('q')),
+        "w" => Ok(enigo::Key::Unicode('w')),
+        "e" => Ok(enigo::Key::Unicode('e')),
+        "r" => Ok(enigo::Key::Unicode('r')),
+        "t" => Ok(enigo::Key::Unicode('t')),
+        "y" => Ok(enigo::Key::Unicode('y')),
+        "u" => Ok(enigo::Key::Unicode('u')),
+        "i" => Ok(enigo::Key::Unicode('i')),
+        "o" => Ok(enigo::Key::Unicode('o')),
+        "p" => Ok(enigo::Key::Unicode('p')),
+        "a" => Ok(enigo::Key::Unicode('a')),
+        "s" => Ok(enigo::Key::Unicode('s')),
+        "d" => Ok(enigo::Key::Unicode('d')),
+        "f" => Ok(enigo::Key::Unicode('f')),
+        "g" => Ok(enigo::Key::Unicode('g')),
+        "h" => Ok(enigo::Key::Unicode('h')),
+        "j" => Ok(enigo::Key::Unicode('j')),
+        "k" => Ok(enigo::Key::Unicode('k')),
+        "l" => Ok(enigo::Key::Unicode('l')),
         "enter" => Ok(enigo::Key::Return),
-        "z" => Ok(enigo::Key::Z),
-        "x" => Ok(enigo::Key::X),
-        "c" => Ok(enigo::Key::C),
-        "v" => Ok(enigo::Key::V),
-        "b" => Ok(enigo::Key::B),
-        "n" => Ok(enigo::Key::N),
-        "m" => Ok(enigo::Key::M),
+        "z" => Ok(enigo::Key::Unicode('z')),
+        "x" => Ok(enigo::Key::Unicode('x')),
+        "c" => Ok(enigo::Key::Unicode('c')),
+        "v" => Ok(enigo::Key::Unicode('v')),
+        "b" => Ok(enigo::Key::Unicode('b')),
+        "n" => Ok(enigo::Key::Unicode('n')),
+        "m" => Ok(enigo::Key::Unicode('m')),
         "up-arrow" => Ok(enigo::Key::UpArrow),
         "ctrl" => Ok(enigo::Key::Control),
         "alt" => Ok(enigo::Key::Alt),
@@ -247,7 +251,7 @@ fn get_key(key: String) -> Result<enigo::Key, &'static str> {
         "down-arrow" => Ok(enigo::Key::DownArrow),
         "right-arrow" => Ok(enigo::Key::RightArrow),
         "end" => Ok(enigo::Key::End),
-        "cedilla" => Ok(enigo::Key::OEM1),
+        "cedilla" => Ok(enigo::Key::Unicode('ç')),
         "shift" => Ok(enigo::Key::Shift),
         _ => Err("Unknown key"),
     }
