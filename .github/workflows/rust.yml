@@ -17,7 +17,7 @@ jobs:
     - name: Add msbuild to PATH
       uses: microsoft/setup-msbuild@v1.1
     - name: Install WiX
-      run: dotnet tool install --global wix
+      run: dotnet tool install --global wix --version 5.0.2
     - uses: actions/checkout@v3
     - run: npm install
       working-directory: ./client
