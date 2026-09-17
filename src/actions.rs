@@ -3,7 +3,7 @@
 //! Módulo para processar e simular ações do usuário como movimento do mouse, cliques, roda do mouse e teclas do teclado.
 
 use enigo::*;
-use serde_derive::{Deserialize, Serialize};
+use serde::{Deserialize, Serialize};
 
 /// Um enum representando todas as ações possíveis que o usuário pode enviar.
 /// 

@@ -1,5 +1,5 @@
 //Teclado Helena is a keyboard designed to better the experience mainly of users with cerebral palsy.
-//        Copyright (C) 2024  Instituto de Pesquisas Tecnológicas
+//        Copyright (C) 2024-2026  Instituto de Pesquisas Tecnológicas
 // This file is part of Teclado Helena.
 //
 //     Teclado Helena is free software: you can redistribute it and/or modify

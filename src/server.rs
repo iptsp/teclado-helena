@@ -13,7 +13,7 @@ mod websocket;
 /// # Rotas
 /// - `/`: Serve a página inicial fornecida pelo [`static_server::index_handler`].
 /// - `/index.html`: Serve a mesma página que a rota `/`.
-/// - `/*file`: Serve arquivos estáticos correspondentes ao caminho, manipulados por [`static_server::static_handler`].
+/// - `/{*file}`: Serve arquivos estáticos correspondentes ao caminho, manipulados por [`static_server::static_handler`].
 /// - `/websocket`: Estabelece conexões WebSocket utilizando [`websocket::handler`].
 /// - Outros caminhos não especificados acima irão acionar o [`static_server::not_found`] para responder com uma página de erro 404.
 /// 
@@ -22,7 +22,7 @@ pub async fn serve() {
     let app = Router::new()
         .route("/", get(static_server::index_handler))
         .route("/index.html", get(static_server::index_handler))
-        .route("/*file", get(static_server::static_handler))
+        .route("/{*file}", get(static_server::static_handler))
         .route("/websocket", get(websocket::handler))
         .fallback_service(get(static_server::not_found));
 
