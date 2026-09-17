@@ -3,7 +3,10 @@
 //! Módulo para gerar e exibir o QR code com o link para a interface do cliente, utilizando a API Win32.
 
 use image::{codecs::bmp::BmpEncoder, ColorType, ImageEncoder};
-use qrcode_generator::{to_image, QrCodeEcc};
+use qrcode_generator::{
+    qr::{Encoder, ErrorCorrection},
+    Renderer,
+};
 use windows_sys::{
     w,
     Win32::{
@@ -32,10 +35,13 @@ use windows_sys::{
 /// Uma handle para o bitmap criado (HBITMAP) que representa o QR code.
 fn generate_qr_code(ip_url: &str) -> HBITMAP {
     let mut bmp = Vec::with_capacity(4096);
-    let img_raw = to_image(&ip_url, QrCodeEcc::Low, 290).unwrap();
+    let symbol = Encoder::new(ErrorCorrection::Low)
+        .encode_text(ip_url)
+        .unwrap();
+    let img_raw = Renderer::new(&symbol, 290).to_luma8().unwrap();
     let encoder = BmpEncoder::new(&mut bmp);
     encoder
-        .write_image(&img_raw, 290, 290, ColorType::L8)
+        .write_image(&img_raw, 290, 290, ColorType::L8.into())
         .unwrap();
     let hbitmap = create_hbitmap_from_vec(&bmp);
     hbitmap
@@ -63,7 +69,7 @@ fn create_hbitmap_from_vec(bitmap_data: &Vec<u8>) -> HBITMAP {
     let pixel_data_offset = bitmap_file_header.bfOffBits;
     let pixel_data: &[u8] = &bitmap_data[pixel_data_offset as usize..];
 
-    let hdc = unsafe { GetDC(0) };
+    let hdc = unsafe { GetDC(std::ptr::null_mut()) };
 
     let hbitmap;
     unsafe {
@@ -75,7 +81,7 @@ fn create_hbitmap_from_vec(bitmap_data: &Vec<u8>) -> HBITMAP {
             &*bmi,
             DIB_RGB_COLORS,
         );
-        ReleaseDC(0, hdc);
+        ReleaseDC(std::ptr::null_mut(), hdc);
     }
 
     hbitmap
@@ -119,7 +125,7 @@ pub fn create_window(ip: String) {
     let image = generate_qr_code(&ip);
     unsafe {
         let instance = GetModuleHandleW(std::ptr::null());
-        debug_assert!(instance != 0);
+        debug_assert!(!instance.is_null());
 
         let mut rect = RECT {
             left: 0,
@@ -131,7 +137,7 @@ pub fn create_window(ip: String) {
 
         let wc = WNDCLASSEXW {
             cbSize: std::mem::size_of::<WNDCLASSEXW>() as u32,
-            hCursor: LoadCursorW(0, IDC_ARROW),
+            hCursor: LoadCursorW(std::ptr::null_mut(), IDC_ARROW),
             hInstance: instance,
             lpszClassName: w!("window"),
             style: CS_HREDRAW | CS_VREDRAW,
@@ -140,7 +146,7 @@ pub fn create_window(ip: String) {
             cbWndExtra: 0,
             hIcon: load_icon(),
             hIconSm: load_icon(),
-            hbrBackground: 0,
+            hbrBackground: std::ptr::null_mut(),
             lpszMenuName: std::ptr::null(),
         };
 
@@ -156,8 +162,8 @@ pub fn create_window(ip: String) {
             CW_USEDEFAULT,
             rect.right - rect.left,
             rect.bottom - rect.top,
-            0,
-            0,
+            std::ptr::null_mut(),
+            std::ptr::null_mut(),
             instance,
             std::ptr::null(),
         );
@@ -172,8 +178,8 @@ pub fn create_window(ip: String) {
             290,
             290,
             hwnd,
-            0,
-            0,
+            std::ptr::null_mut(),
+            std::ptr::null_mut(),
             std::ptr::null(),
         );
 
@@ -181,7 +187,7 @@ pub fn create_window(ip: String) {
             image_hwnd,
             STM_SETIMAGE,
             IMAGE_BITMAP.try_into().unwrap(),
-            image,
+            image as LPARAM,
         );
 
         let ip_text_control = CreateWindowExW(
@@ -194,8 +200,8 @@ pub fn create_window(ip: String) {
             350,
             30,
             hwnd,
-            0,
-            0,
+            std::ptr::null_mut(),
+            std::ptr::null_mut(),
             std::ptr::null(),
         );
 
@@ -206,7 +212,7 @@ pub fn create_window(ip: String) {
 
         let mut message = std::mem::zeroed();
 
-        while GetMessageW(&mut message, 0, 0, 0) != 0 {
+        while GetMessageW(&mut message, std::ptr::null_mut(), 0, 0) != 0 {
             DispatchMessageW(&message);
         }
     }
